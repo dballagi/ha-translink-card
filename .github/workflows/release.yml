@@ -1,0 +1,136 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version without the v prefix (for example, 0.1.0)
+        required: true
+        type: string
+      prerelease:
+        description: Publish as a prerelease
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Validate version
+        id: version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import tomllib
+          from pathlib import Path
+
+          version = os.environ["VERSION"]
+          if not re.fullmatch(
+              r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)"
+              r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?",
+              version,
+          ):
+              raise SystemExit(f"Invalid semantic version: {version}")
+
+          manifest = json.loads(
+              Path(
+                  "custom_components/translink_schedule/manifest.json"
+              ).read_text()
+          )["version"]
+          package = json.loads(Path("frontend/package.json").read_text())["version"]
+          lock = json.loads(Path("frontend/package-lock.json").read_text())["version"]
+          project = tomllib.loads(Path("pyproject.toml").read_text())["project"][
+              "version"
+          ]
+          versions = {
+              "integration manifest": manifest,
+              "frontend package": package,
+              "frontend lockfile": lock,
+              "Python project": project,
+          }
+          mismatches = {
+              name: value for name, value in versions.items() if value != version
+          }
+          if mismatches:
+              details = ", ".join(
+                  f"{name}={value}" for name, value in mismatches.items()
+              )
+              raise SystemExit(
+                  f"Requested {version}, but version files do not match: {details}"
+              )
+
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
+              output.write(f"tag=v{version}\n")
+          PY
+
+      - name: Install backend dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Validate backend
+        run: |
+          ruff check .
+          pytest
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Validate frontend
+        working-directory: frontend
+        run: |
+          npm run check
+          npm test
+          npm run build
+
+      - name: Verify committed bundle
+        run: |
+          git diff --exit-code -- \
+            custom_components/translink_schedule/frontend/translink-schedule-card.js
+
+      - name: Ensure tag does not exist
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists"
+            exit 1
+          fi
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          args=(
+            "$TAG"
+            --target "$GITHUB_SHA"
+            --title "$TAG"
+            --generate-notes
+          )
+          if [ "$PRERELEASE" = "true" ]; then
+            args+=(--prerelease)
+          fi
+          gh release create "${args[@]}"

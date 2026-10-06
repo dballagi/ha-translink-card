@@ -1,5 +1,5 @@
 import { LitElement, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 
 import { findScheduleEntity } from "./entity-selection";
 import type {
@@ -24,7 +24,6 @@ function timeLabel(value: string, language?: string): string {
   }).format(new Date(value));
 }
 
-@customElement("translink-schedule-card")
 export class TransLinkScheduleCard extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private config?: CardConfig;
@@ -242,7 +241,6 @@ export class TransLinkScheduleCard extends LitElement {
   `;
 }
 
-@customElement("translink-schedule-card-editor")
 export class TransLinkScheduleCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private config?: CardConfig;
@@ -308,6 +306,16 @@ declare global {
   interface Window {
     customCards?: Array<Record<string, unknown>>;
   }
+}
+
+if (!customElements.get("translink-schedule-card")) {
+  customElements.define("translink-schedule-card", TransLinkScheduleCard);
+}
+if (!customElements.get("translink-schedule-card-editor")) {
+  customElements.define(
+    "translink-schedule-card-editor",
+    TransLinkScheduleCardEditor,
+  );
 }
 
 window.customCards = window.customCards ?? [];

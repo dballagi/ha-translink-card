@@ -81,6 +81,26 @@ npm test
 npm run build
 ```
 
+## Releases
+
+HACS uses published GitHub Releases for semantic versions. To prepare a
+release:
+
+1. Update the version in `pyproject.toml` and
+   `custom_components/translink_schedule/manifest.json`.
+2. From `frontend`, run
+   `npm version <version> --no-git-tag-version` to update `package.json` and
+   `package-lock.json`.
+3. Run the backend and frontend validation commands above.
+4. Commit and push the version bump and rebuilt card bundle.
+5. In GitHub Actions, run the **Release** workflow and enter the exact version
+   without a `v` prefix.
+
+The workflow verifies that all version files match, reruns the test suites,
+checks that the committed frontend bundle is current, and publishes a
+`v<version>` GitHub Release. HACS will then display that release instead of a
+commit hash.
+
 ## Data attribution
 
 Route and arrival data used in this product or service is provided by
