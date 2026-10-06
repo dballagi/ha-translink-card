@@ -52,7 +52,7 @@ or realtime-first list.
 The same card adapts to narrow dashboards with compact headings and rows.
 
 <p align="center">
-  <img src="docs/screenshots/mobile-dark.png" alt="Compact TransLink departures on mobile" width="430">
+  <img src="docs/screenshots/mobile-dark.png" alt="Compact TransLink departures on mobile" width="390">
 </p>
 
 ## Status
