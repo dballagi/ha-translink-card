@@ -114,6 +114,13 @@ export class TransLinkScheduleCard extends LitElement {
     };
   }
 
+  public getGridOptions() {
+    return {
+      columns: 12,
+      min_columns: 6,
+    };
+  }
+
   public setConfig(config: CardConfig): void {
     if (!config.entity) {
       throw new Error("A TransLink Schedule entity is required");

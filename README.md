@@ -90,6 +90,10 @@ The integration bundles and serves the card. Registering the dashboard
 resource is a one-time step because dashboard resources belong to the user's
 Lovelace configuration.
 
+In Sections dashboards, the card defaults to the full 12-column width and can
+be resized down to 6 columns. Its height remains automatic so expanded stops,
+notices, and departure rows are never clipped by a fixed grid size.
+
 ```yaml
 type: custom:translink-schedule-card
 entity: sensor.nearby_departures
