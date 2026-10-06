@@ -68,15 +68,14 @@ This project is under active development and is not ready for general use yet.
 4. Enter a TransLink developer API key and one or more comma-separated GTFS
    stop IDs or public five-digit stop numbers.
 5. Open **Settings → Dashboards → ⋮ → Resources**, add
-   `/translink_schedule/translink-schedule-card.js?v=<installed-version>` as a
-   **JavaScript module**, then refresh the browser. Replace
-   `<installed-version>` with the installed release, such as `0.1.0`.
+   `/translink_schedule/translink-schedule-card.js` as a **JavaScript module**,
+   then refresh the browser.
 
 API keys are available from the
 [TransLink Developer Portal](https://developer.translink.ca/).
 
-After upgrades, update the version in the resource URL and perform a hard
-refresh so the browser does not keep an older card bundle.
+After upgrades, perform a hard refresh so the browser does not keep an older
+card bundle.
 
 ## Integration configuration
 
@@ -103,30 +102,6 @@ The first Configure screen also controls:
 - the order of stops, using the order of the entered stop IDs;
 - the future schedule window, from 15 to 360 minutes; and
 - how long cancelled departures remain available after their scheduled time.
-
-## Data cache and performance
-
-The first setup downloads the TransLink static GTFS feed and builds a local
-SQLite stop-time index. This one-time operation can take several seconds,
-especially on lower-powered Home Assistant hardware.
-
-The integration keeps the source ZIP and index under Home Assistant's
-`.storage` directory. Together they currently use approximately 100 MB. On
-later restarts, the index avoids reparsing roughly 1.8 million stop-time rows.
-The static feed is refreshed daily.
-
-All boards using the same API configuration share one static feed, one decoded
-realtime feed, and one polling coordinator. Adding more boards therefore does
-not duplicate downloads, parsing, or minute-by-minute API requests.
-
-Only recently used stops are retained in memory, and shared feeds are released
-when their last board is unloaded. Config-flow validation also releases its
-temporary feed immediately. A daily refresh compares the downloaded digest
-before parsing so unchanged feeds do not create a second in-memory copy.
-
-Trip updates and schedules remain available when the optional service-alert
-endpoint is temporarily unavailable. The sensor exposes `alerts_error` while
-the next polling cycle retries alerts.
 
 ## Card configuration
 
