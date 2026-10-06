@@ -16,6 +16,61 @@ const DEFAULT_PER_STOP = 3;
 const MAX_PER_STOP = 12;
 const DEFAULT_MAX = 12;
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+const VIEW_OPTIONS: SelectOption[] = [
+  { value: "grouped", label: "Grouped by stop" },
+  { value: "combined", label: "Combined by time" },
+];
+const ORDER_OPTIONS: SelectOption[] = [
+  { value: "chronological", label: "Chronological" },
+  { value: "balanced", label: "Balance stops" },
+  { value: "route", label: "Group routes" },
+  { value: "realtime", label: "Realtime first" },
+];
+const TIME_OPTIONS: SelectOption[] = [
+  { value: "both", label: "Countdown and clock" },
+  { value: "countdown", label: "Countdown only" },
+  { value: "clock", label: "Clock only" },
+];
+const DELAY_OPTIONS: SelectOption[] = [
+  { value: "compact", label: "+7 min" },
+  { value: "text", label: "7 min late" },
+];
+const CANCELLED_OPTIONS: SelectOption[] = [
+  { value: "show", label: "Show in schedule order" },
+  { value: "move", label: "Move below active departures" },
+  { value: "hide", label: "Hide" },
+];
+const DENSITY_OPTIONS: SelectOption[] = [
+  { value: "comfortable", label: "Comfortable" },
+  { value: "compact", label: "Compact" },
+  { value: "minimal", label: "Minimal" },
+];
+const ROUTE_COLOR_OPTIONS: SelectOption[] = [
+  { value: "official", label: "Official route colors" },
+  { value: "theme", label: "Theme primary color" },
+  { value: "monochrome", label: "Monochrome" },
+];
+const EMPTY_STOP_OPTIONS: SelectOption[] = [
+  { value: "show", label: "Show in configured order" },
+  { value: "move", label: "Move to bottom" },
+  { value: "hide", label: "Hide" },
+];
+const HEADER_STYLE_OPTIONS: SelectOption[] = [
+  { value: "primary", label: "Theme primary" },
+  { value: "surface", label: "Card surface" },
+  { value: "transparent", label: "Transparent" },
+];
+const STOP_HEADING_OPTIONS: SelectOption[] = [
+  { value: "accent", label: "Accent" },
+  { value: "plain", label: "Plain" },
+  { value: "compact", label: "Compact" },
+];
+
 function minutesUntil(value: string, now = Date.now()): number {
   return Math.max(0, Math.round((new Date(value).getTime() - now) / 60_000));
 }
@@ -518,28 +573,18 @@ export class TransLinkScheduleCardEditor extends LitElement {
           data-key="title"
           @input=${this.valueChanged}
         ></ha-textfield>
-        <ha-select
-          .value=${this.config.view ?? "grouped"}
-          label="Layout"
-          data-key="view"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="grouped">Grouped by stop</ha-list-item>
-          <ha-list-item value="combined">Combined by time</ha-list-item>
-        </ha-select>
-        <ha-select
-          .value=${this.config.combined_order ?? "chronological"}
-          label="Combined ordering"
-          data-key="combined_order"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="chronological">Chronological</ha-list-item>
-          <ha-list-item value="balanced">Balance stops</ha-list-item>
-          <ha-list-item value="route">Group routes</ha-list-item>
-          <ha-list-item value="realtime">Realtime first</ha-list-item>
-        </ha-select>
+        ${this.selectField(
+          "view",
+          "Layout",
+          this.config.view ?? "grouped",
+          VIEW_OPTIONS,
+        )}
+        ${this.selectField(
+          "combined_order",
+          "Combined ordering",
+          this.config.combined_order ?? "chronological",
+          ORDER_OPTIONS,
+        )}
         <ha-textfield
           type="number"
           min="1"
@@ -566,17 +611,12 @@ export class TransLinkScheduleCardEditor extends LitElement {
         ></ha-textfield>
 
         <h3>Timing and status</h3>
-        <ha-select
-          .value=${this.config.time_display ?? "both"}
-          label="Time display"
-          data-key="time_display"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="both">Countdown and clock</ha-list-item>
-          <ha-list-item value="countdown">Countdown only</ha-list-item>
-          <ha-list-item value="clock">Clock only</ha-list-item>
-        </ha-select>
+        ${this.selectField(
+          "time_display",
+          "Time display",
+          this.config.time_display ?? "both",
+          TIME_OPTIONS,
+        )}
         <ha-textfield
           type="number"
           min="1"
@@ -588,27 +628,18 @@ export class TransLinkScheduleCardEditor extends LitElement {
           data-max="30"
           @input=${this.numberChanged}
         ></ha-textfield>
-        <ha-select
-          .value=${this.config.delay_format ?? "compact"}
-          label="Delay label"
-          data-key="delay_format"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="compact">+7 min</ha-list-item>
-          <ha-list-item value="text">7 min late</ha-list-item>
-        </ha-select>
-        <ha-select
-          .value=${this.config.cancelled_behavior ?? "show"}
-          label="Cancelled departures"
-          data-key="cancelled_behavior"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="show">Show in schedule order</ha-list-item>
-          <ha-list-item value="move">Move below active departures</ha-list-item>
-          <ha-list-item value="hide">Hide</ha-list-item>
-        </ha-select>
+        ${this.selectField(
+          "delay_format",
+          "Delay label",
+          this.config.delay_format ?? "compact",
+          DELAY_OPTIONS,
+        )}
+        ${this.selectField(
+          "cancelled_behavior",
+          "Cancelled departures",
+          this.config.cancelled_behavior ?? "show",
+          CANCELLED_OPTIONS,
+        )}
         ${this.booleanField(
           "show_scheduled_time",
           "Show struck-through scheduled time",
@@ -637,40 +668,25 @@ export class TransLinkScheduleCardEditor extends LitElement {
         ></ha-textfield>
 
         <h3>Appearance</h3>
-        <ha-select
-          .value=${this.config.density ?? "comfortable"}
-          label="Row density"
-          data-key="density"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="comfortable">Comfortable</ha-list-item>
-          <ha-list-item value="compact">Compact</ha-list-item>
-          <ha-list-item value="minimal">Minimal</ha-list-item>
-        </ha-select>
-        <ha-select
-          .value=${this.config.route_color_mode ?? "official"}
-          label="Route badge colors"
-          data-key="route_color_mode"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="official">Official route colors</ha-list-item>
-          <ha-list-item value="theme">Theme primary color</ha-list-item>
-          <ha-list-item value="monochrome">Monochrome</ha-list-item>
-        </ha-select>
-        <ha-select
-          .value=${this.config.empty_stop_behavior ??
-          (this.config.hide_empty_stops ? "hide" : "show")}
-          label="Stops without departures"
-          data-key="empty_stop_behavior"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="show">Show in configured order</ha-list-item>
-          <ha-list-item value="move">Move to bottom</ha-list-item>
-          <ha-list-item value="hide">Hide</ha-list-item>
-        </ha-select>
+        ${this.selectField(
+          "density",
+          "Row density",
+          this.config.density ?? "comfortable",
+          DENSITY_OPTIONS,
+        )}
+        ${this.selectField(
+          "route_color_mode",
+          "Route badge colors",
+          this.config.route_color_mode ?? "official",
+          ROUTE_COLOR_OPTIONS,
+        )}
+        ${this.selectField(
+          "empty_stop_behavior",
+          "Stops without departures",
+          this.config.empty_stop_behavior ??
+            (this.config.hide_empty_stops ? "hide" : "show"),
+          EMPTY_STOP_OPTIONS,
+        )}
         ${this.booleanField(
           "show_stop_codes",
           "Show stop numbers",
@@ -693,28 +709,18 @@ export class TransLinkScheduleCardEditor extends LitElement {
           "Show current time",
           this.config.show_clock !== false,
         )}
-        <ha-select
-          .value=${this.config.header_style ?? "primary"}
-          label="Header colors"
-          data-key="header_style"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="primary">Theme primary</ha-list-item>
-          <ha-list-item value="surface">Card surface</ha-list-item>
-          <ha-list-item value="transparent">Transparent</ha-list-item>
-        </ha-select>
-        <ha-select
-          .value=${this.config.stop_heading_style ?? "accent"}
-          label="Stop heading style"
-          data-key="stop_heading_style"
-          @value-changed=${this.valueChanged}
-          @closed=${(event: Event) => event.stopPropagation()}
-        >
-          <ha-list-item value="accent">Accent</ha-list-item>
-          <ha-list-item value="plain">Plain</ha-list-item>
-          <ha-list-item value="compact">Compact</ha-list-item>
-        </ha-select>
+        ${this.selectField(
+          "header_style",
+          "Header colors",
+          this.config.header_style ?? "primary",
+          HEADER_STYLE_OPTIONS,
+        )}
+        ${this.selectField(
+          "stop_heading_style",
+          "Stop heading style",
+          this.config.stop_heading_style ?? "accent",
+          STOP_HEADING_OPTIONS,
+        )}
         <ha-textfield
           .value=${this.config.header_icon ?? ""}
           label="Header icon (for example mdi:bus)"
@@ -729,6 +735,23 @@ export class TransLinkScheduleCardEditor extends LitElement {
           ></ha-switch>
         </ha-formfield>
       </div>
+    `;
+  }
+
+  private selectField(
+    key: keyof CardConfig,
+    label: string,
+    value: string,
+    options: SelectOption[],
+  ) {
+    return html`
+      <ha-select
+        .label=${label}
+        .value=${value}
+        .options=${options}
+        data-key=${key}
+        @selected=${this.valueChanged}
+      ></ha-select>
     `;
   }
 
