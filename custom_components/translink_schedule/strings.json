@@ -1,0 +1,45 @@
+{
+  "title": "TransLink Schedule",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Create a multi-stop departure board",
+        "description": "Enter TransLink stop IDs separated by commas. Stop IDs are validated against the current static GTFS feed.",
+        "data": {
+          "api_key": "TransLink API key",
+          "board_name": "Board name",
+          "stop_ids": "Stop IDs",
+          "static_url": "Static GTFS URL",
+          "realtime_url": "Trip updates URL",
+          "alerts_url": "Service alerts URL"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to TransLink. Check the API key and URLs.",
+      "invalid_feed": "TransLink returned an invalid GTFS feed.",
+      "no_stops": "Enter at least one stop ID.",
+      "unknown_stops": "One or more stop IDs were not found in the current GTFS feed."
+    },
+    "abort": {
+      "already_configured": "This departure board is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Edit departure board",
+        "description": "Change the board name or comma-separated GTFS stop IDs and public stop numbers.",
+        "data": {
+          "board_name": "Board name",
+          "stop_ids": "Stop IDs or stop numbers"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Static schedule data is not available. Try again after the integration refreshes.",
+      "no_stops": "Enter at least one stop ID.",
+      "unknown_stops": "One or more stop IDs were not found in the current GTFS feed."
+    }
+  }
+}

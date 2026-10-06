@@ -1,0 +1,20 @@
+{
+  "name": "translink-schedule-card",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/translink-schedule-card.ts --bundle --format=esm --minify --target=es2022 --outfile=../custom_components/translink_schedule/frontend/translink-schedule-card.js",
+    "check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.11"
+  }
+}
