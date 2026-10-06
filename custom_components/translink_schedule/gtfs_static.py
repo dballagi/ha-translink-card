@@ -134,7 +134,8 @@ class StaticFeed:
                 """
                 PRAGMA journal_mode = OFF;
                 PRAGMA synchronous = OFF;
-                PRAGMA temp_store = MEMORY;
+                PRAGMA temp_store = FILE;
+                PRAGMA cache_size = -4096;
                 CREATE TABLE metadata (
                     key TEXT PRIMARY KEY,
                     value TEXT NOT NULL
@@ -145,8 +146,11 @@ class StaticFeed:
                     departure_seconds INTEGER NOT NULL,
                     stop_sequence INTEGER NOT NULL
                 );
+                CREATE INDEX stop_times_stop_id
+                ON stop_times (stop_id, departure_seconds);
                 """
             )
+            # Maintain the index during inserts instead of sorting all rows at once.
             connection.execute(
                 "INSERT INTO metadata (key, value) VALUES ('digest', ?)",
                 (digest,),
@@ -164,15 +168,11 @@ class StaticFeed:
                         stop_time.stop_sequence,
                     )
                 )
-                if len(batch) >= 10_000:
+                if len(batch) >= 1_000:
                     _insert_stop_times(connection, batch)
                     batch.clear()
             if batch:
                 _insert_stop_times(connection, batch)
-            connection.execute(
-                "CREATE INDEX stop_times_stop_id "
-                "ON stop_times (stop_id, departure_seconds)"
-            )
             connection.commit()
         finally:
             connection.close()
