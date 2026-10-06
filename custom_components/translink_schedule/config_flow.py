@@ -48,10 +48,11 @@ from .const import (
     DEFAULT_STATIC_URL,
     DOMAIN,
 )
-from .gtfs_cache import async_get_static_feed
+from .gtfs_cache import async_get_static_feed, release_static_feed
 from .realtime_cache import (
     async_get_realtime_updates,
     realtime_cache_key,
+    release_realtime_updates,
 )
 
 
@@ -96,12 +97,19 @@ class TransLinkScheduleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         user_input[CONF_API_KEY],
                         user_input[CONF_REALTIME_URL],
                     )
+                    owner = f"config_flow:{self.flow_id}"
                     feed, _ = await asyncio.gather(
                         async_get_static_feed(
-                            self.hass, user_input[CONF_STATIC_URL], api
+                            self.hass,
+                            user_input[CONF_STATIC_URL],
+                            api,
+                            owner,
                         ),
                         async_get_realtime_updates(
-                            self.hass, realtime_key, api
+                            self.hass,
+                            realtime_key,
+                            api,
+                            owner,
                         ),
                     )
                     stop_ids, missing = feed.resolve_stop_ids(stop_ids)
@@ -111,6 +119,17 @@ class TransLinkScheduleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     errors["base"] = "cannot_connect"
                 except (BadZipFile, csv.Error, KeyError, UnicodeError, ValueError):
                     errors["base"] = "invalid_feed"
+                finally:
+                    release_static_feed(
+                        self.hass,
+                        user_input[CONF_STATIC_URL],
+                        owner,
+                    )
+                    release_realtime_updates(
+                        self.hass,
+                        realtime_key,
+                        owner,
+                    )
 
             if not errors:
                 await self.async_set_unique_id(

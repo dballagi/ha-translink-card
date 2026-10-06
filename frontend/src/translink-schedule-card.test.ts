@@ -1,7 +1,10 @@
+// @vitest-environment happy-dom
+
 import { describe, expect, it } from "vitest";
 
 import { isDataStale, prepareDepartures } from "./departure-list";
 import { getDepartureTiming } from "./departure-timing";
+import { TransLinkScheduleCardEditor } from "./translink-schedule-card";
 import type { Departure } from "./types";
 
 const departure: Departure = {
@@ -121,5 +124,45 @@ describe("departure list customization", () => {
     expect(
       isDataStale("2026-10-06T12:59:00-07:00", 3, now),
     ).toBe(false);
+  });
+});
+
+describe("card editor", () => {
+  it("binds labeled select options and emits selected values", async () => {
+    const editor = new TransLinkScheduleCardEditor();
+    editor.setConfig({
+      type: "custom:translink-schedule-card",
+      entity: "sensor.departures",
+      view: "grouped",
+    });
+    document.body.append(editor);
+    await editor.updateComplete;
+
+    const select = editor.shadowRoot?.querySelector(
+      'ha-select[data-key="view"]',
+    ) as HTMLElement & {
+      options: Array<{ value: string; label: string }>;
+      value: string;
+    };
+    expect(select.value).toBe("grouped");
+    expect(select.options).toEqual([
+      { value: "grouped", label: "Grouped by stop" },
+      { value: "combined", label: "Combined by time" },
+    ]);
+
+    let changedView: string | undefined;
+    editor.addEventListener("config-changed", (event) => {
+      changedView = (
+        event as CustomEvent<{ config: { view?: string } }>
+      ).detail.config.view;
+    });
+    select.dispatchEvent(
+      new CustomEvent("selected", {
+        detail: { value: "combined" },
+      }),
+    );
+
+    expect(changedView).toBe("combined");
+    editor.remove();
   });
 });

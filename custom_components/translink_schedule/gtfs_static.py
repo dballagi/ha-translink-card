@@ -6,17 +6,23 @@ import csv
 import hashlib
 import io
 import sqlite3
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 from collections.abc import Iterator, Mapping
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from zipfile import ZipFile
 from zoneinfo import ZoneInfo
 
-from .const import DEPARTURE_WINDOW, MAX_DEPARTURES_PER_STOP
+from .const import (
+    DEPARTURE_WINDOW,
+    MAX_DEPARTURES_PER_STOP,
+    TRIP_LEVEL_STOP_ID,
+)
 from .models import Calendar, Departure, RealtimeUpdate, Route, Stop, StopTime, Trip
 
 VANCOUVER_TZ = ZoneInfo("America/Vancouver")
+STOP_TIME_CACHE_SIZE = 32
+STOP_TIMES_SCHEMA_VERSION = "2"
 
 
 def _rows(archive: ZipFile, filename: str) -> Iterator[dict[str, str]]:
@@ -42,7 +48,7 @@ class StaticFeed:
     ) -> None:
         """Parse and index a GTFS ZIP payload."""
         self._stop_times_database = stop_times_database
-        self.stop_times: dict[str, list[StopTime]] = defaultdict(list)
+        self.stop_times: OrderedDict[str, list[StopTime]] = OrderedDict()
         with ZipFile(io.BytesIO(payload)) as archive:
             self.stops = {
                 row["stop_id"]: Stop(
@@ -115,7 +121,9 @@ class StaticFeed:
         for row in _rows(archive, "stop_times.txt"):
             stop_time = _stop_time_from_row(row)
             if stop_time is not None:
-                self.stop_times[stop_time.stop_id].append(stop_time)
+                self.stop_times.setdefault(stop_time.stop_id, []).append(
+                    stop_time
+                )
         for values in self.stop_times.values():
             values.sort(key=lambda item: item.departure_seconds)
 
@@ -155,6 +163,10 @@ class StaticFeed:
                 "INSERT INTO metadata (key, value) VALUES ('digest', ?)",
                 (digest,),
             )
+            connection.execute(
+                "INSERT INTO metadata (key, value) VALUES ('schema_version', ?)",
+                (STOP_TIMES_SCHEMA_VERSION,),
+            )
             batch: list[tuple[str, str, int, int]] = []
             for row in _rows(archive, "stop_times.txt"):
                 stop_time = _stop_time_from_row(row)
@@ -181,6 +193,8 @@ class StaticFeed:
     def _stop_times_for_stop(self, stop_id: str) -> list[StopTime]:
         cached = self.stop_times.get(stop_id)
         if cached is not None:
+            if self._stop_times_database is not None:
+                self.stop_times.move_to_end(stop_id)
             return cached
         if self._stop_times_database is None:
             return []
@@ -208,6 +222,8 @@ class StaticFeed:
         finally:
             connection.close()
         self.stop_times[stop_id] = values
+        while len(self.stop_times) > STOP_TIME_CACHE_SIZE:
+            self.stop_times.popitem(last=False)
         return values
 
     def validate_stops(self, stop_ids: list[str]) -> list[str]:
@@ -287,9 +303,13 @@ class StaticFeed:
             if stop is None:
                 continue
             stop_departures: list[Departure] = []
+            first_service_date = local_now.date() - timedelta(days=1)
+            last_service_date = (local_now + departure_window).date()
             service_dates = (
-                local_now.date() - timedelta(days=1),
-                local_now.date(),
+                first_service_date + timedelta(days=offset)
+                for offset in range(
+                    (last_service_date - first_service_date).days + 1
+                )
             )
             for service_date in service_dates:
                 midnight = datetime.combine(
@@ -311,8 +331,29 @@ class StaticFeed:
                         seconds=stop_time.departure_seconds
                     )
                     update = realtime.get((trip.trip_id, stop_id, service_date))
-                    if update is None and service_date == local_now.date():
+                    if update is None:
                         update = realtime.get((trip.trip_id, stop_id, None))
+                    trip_update = realtime.get(
+                        (trip.trip_id, TRIP_LEVEL_STOP_ID, service_date)
+                    )
+                    if trip_update is None:
+                        trip_update = realtime.get(
+                            (trip.trip_id, TRIP_LEVEL_STOP_ID, None)
+                        )
+                    if update is None:
+                        update = trip_update
+                    elif trip_update is not None and trip_update.cancelled:
+                        update = RealtimeUpdate(
+                            estimated_time=(
+                                update.estimated_time if update else None
+                            ),
+                            delay_seconds=(
+                                update.delay_seconds
+                                if update
+                                else trip_update.delay_seconds
+                            ),
+                            cancelled=True,
+                        )
                     estimated = (
                         update.estimated_time
                         if update and update.estimated_time
@@ -326,7 +367,16 @@ class StaticFeed:
                         if update and update.cancelled
                         else timedelta(minutes=1)
                     )
-                    if not earliest <= estimated <= local_now + departure_window:
+                    comparison_time = (
+                        scheduled
+                        if update and update.cancelled
+                        else estimated
+                    )
+                    if not (
+                        earliest
+                        <= comparison_time
+                        <= local_now + departure_window
+                    ):
                         continue
                     route = self.routes[trip.route_id]
                     stop_departures.append(
@@ -351,10 +401,15 @@ class StaticFeed:
                             realtime=update is not None,
                         )
                     )
+            stop_departures.sort(key=lambda item: item.estimated_time)
+            active = [
+                item for item in stop_departures if not item.cancelled
+            ][:MAX_DEPARTURES_PER_STOP]
+            cancelled = [
+                item for item in stop_departures if item.cancelled
+            ][:MAX_DEPARTURES_PER_STOP]
             output.extend(
-                sorted(stop_departures, key=lambda item: item.estimated_time)[
-                    :MAX_DEPARTURES_PER_STOP
-                ]
+                sorted(active + cancelled, key=lambda item: item.estimated_time)
             )
         return sorted(output, key=lambda item: item.estimated_time)
 
@@ -388,6 +443,8 @@ def _trip_matches_filter(
 
 
 def _stop_time_from_row(row: dict[str, str]) -> StopTime | None:
+    if row.get("pickup_type", "0") == "1":
+        return None
     departure = row.get("departure_time") or row.get("arrival_time")
     if not departure:
         return None
@@ -421,7 +478,15 @@ def _database_matches(database: Path, digest: str) -> bool:
             row = connection.execute(
                 "SELECT value FROM metadata WHERE key = 'digest'"
             ).fetchone()
-            return row is not None and row[0] == digest
+            schema = connection.execute(
+                "SELECT value FROM metadata WHERE key = 'schema_version'"
+            ).fetchone()
+            return (
+                row is not None
+                and row[0] == digest
+                and schema is not None
+                and schema[0] == STOP_TIMES_SCHEMA_VERSION
+            )
         finally:
             connection.close()
     except sqlite3.DatabaseError:

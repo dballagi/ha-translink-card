@@ -6,6 +6,7 @@ import asyncio
 import csv
 import hashlib
 import logging
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from zipfile import BadZipFile
@@ -33,6 +34,7 @@ class StaticFeedCache:
         )
         self._index_path = self._path.with_suffix(".sqlite")
         self._feed: StaticFeed | None = None
+        self._digest: str | None = None
         self._loaded_at: datetime | None = None
         self._lock = asyncio.Lock()
 
@@ -60,6 +62,7 @@ class StaticFeedCache:
                 if payload is not None:
                     try:
                         self._feed = await self._parse(payload)
+                        self._digest = hashlib.sha256(payload).hexdigest()
                     except _PARSE_ERRORS as err:
                         _LOGGER.warning(
                             "Ignoring invalid cached GTFS feed at %s: %s",
@@ -72,11 +75,21 @@ class StaticFeedCache:
 
             if self._feed is None or payload is None:
                 payload = await api.async_static_feed()
+                digest = hashlib.sha256(payload).hexdigest()
+                if self._feed is not None and digest == self._digest:
+                    await self._hass.async_add_executor_job(
+                        self._write_payload, payload
+                    )
+                    self._loaded_at = now
+                    return self._feed
+
+                self._feed = None
                 feed = await self._parse(payload)
                 await self._hass.async_add_executor_job(
                     self._write_payload, payload
                 )
                 self._feed = feed
+                self._digest = digest
 
             self._loaded_at = now
             return self._feed
@@ -103,18 +116,61 @@ class StaticFeedCache:
     def _remove_cached_payload(self) -> None:
         self._path.unlink(missing_ok=True)
 
+    def release(self) -> None:
+        """Release parsed in-memory data."""
+        self._feed = None
+        self._digest = None
 
-def _registry(hass: HomeAssistant) -> dict[str, StaticFeedCache]:
+
+@dataclass
+class StaticFeedCacheRecord:
+    """Track owners of one shared static feed."""
+
+    cache: StaticFeedCache
+    owners: set[str] = field(default_factory=set)
+
+
+def _registry(hass: HomeAssistant) -> dict[str, StaticFeedCacheRecord]:
     domain_data = hass.data.setdefault(DOMAIN, {})
     return domain_data.setdefault(_CACHE_REGISTRY, {})
 
 
 async def async_get_static_feed(
-    hass: HomeAssistant, url: str, api: TransLinkApi
+    hass: HomeAssistant,
+    url: str,
+    api: TransLinkApi,
+    owner: str | None = None,
 ) -> StaticFeed:
     """Return the shared feed for a static GTFS URL."""
     registry = _registry(hass)
-    cache = registry.get(url)
-    if cache is None:
-        cache = registry[url] = StaticFeedCache(hass, url)
-    return await cache.async_get(api)
+    record = registry.get(url)
+    if record is None:
+        record = registry[url] = StaticFeedCacheRecord(
+            StaticFeedCache(hass, url)
+        )
+    if owner is not None:
+        record.owners.add(owner)
+    return await record.cache.async_get(api)
+
+
+def release_static_feed(
+    hass: HomeAssistant, url: str, owner: str | None = None
+) -> None:
+    """Release one owner and evict an unused static feed."""
+    registry = _registry(hass)
+    record = registry.get(url)
+    if record is None:
+        return
+    if owner is not None:
+        record.owners.discard(owner)
+    if not record.owners:
+        record.cache.release()
+        registry.pop(url, None)
+
+
+def get_cached_static_feed(
+    hass: HomeAssistant, url: str
+) -> StaticFeed | None:
+    """Return a parsed feed without acquiring or loading it."""
+    record = _registry(hass).get(url)
+    return record.cache.feed if record is not None else None

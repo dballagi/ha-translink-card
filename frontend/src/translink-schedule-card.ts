@@ -125,6 +125,10 @@ export class TransLinkScheduleCard extends LitElement {
     if (!config.entity) {
       throw new Error("A TransLink Schedule entity is required");
     }
+    if (this.config?.entity !== config.entity) {
+      this.collapsedStops = new Set();
+      this.initializedStops.clear();
+    }
     this.config = {
       view: "grouped",
       departures_per_stop: DEFAULT_PER_STOP,

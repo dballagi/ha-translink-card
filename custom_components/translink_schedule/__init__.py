@@ -9,7 +9,11 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import CARD_FILENAME, CARD_URL, PLATFORMS
-from .coordinator import TransLinkCoordinator, async_get_shared_coordinator
+from .coordinator import (
+    TransLinkCoordinator,
+    async_get_shared_coordinator,
+    release_shared_coordinator,
+)
 
 type TransLinkConfigEntry = ConfigEntry[TransLinkCoordinator]
 
@@ -38,7 +42,11 @@ async def async_unload_entry(
     hass: HomeAssistant, entry: TransLinkConfigEntry
 ) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unloaded:
+        release_shared_coordinator(hass, entry)
+        entry.runtime_data = None
+    return unloaded
 
 
 async def _async_update_listener(

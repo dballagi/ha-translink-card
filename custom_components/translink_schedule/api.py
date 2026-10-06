@@ -9,6 +9,7 @@ from aiohttp import ClientResponseError, ClientSession
 from google.protobuf.message import DecodeError
 from google.transit import gtfs_realtime_pb2
 
+from .const import TRIP_LEVEL_STOP_ID
 from .models import RealtimeUpdate, ServiceAlert
 
 
@@ -74,6 +75,19 @@ class TransLinkApi:
                 trip_update.trip.schedule_relationship
                 == gtfs_realtime_pb2.TripDescriptor.CANCELED
             )
+            trip_delay = (
+                trip_update.delay
+                if trip_update.HasField("delay")
+                else None
+            )
+            if cancelled or trip_delay is not None:
+                updates[
+                    (trip_id, TRIP_LEVEL_STOP_ID, service_date)
+                ] = RealtimeUpdate(
+                    estimated_time=None,
+                    delay_seconds=trip_delay,
+                    cancelled=cancelled,
+                )
             for stop_update in trip_update.stop_time_update:
                 stop_id = stop_update.stop_id
                 if not trip_id or not stop_id:
@@ -130,7 +144,21 @@ class TransLinkApi:
                 for informed in alert.informed_entity
                 if informed.stop_id
             )
-            period = alert.active_period[0] if alert.active_period else None
+            active_periods = tuple(
+                (
+                    (
+                        datetime.fromtimestamp(period.start, UTC)
+                        if period.HasField("start")
+                        else None
+                    ),
+                    (
+                        datetime.fromtimestamp(period.end, UTC)
+                        if period.HasField("end")
+                        else None
+                    ),
+                )
+                for period in alert.active_period
+            )
             alerts.append(
                 ServiceAlert(
                     header=_translated_text(alert.header_text),
@@ -138,16 +166,7 @@ class TransLinkApi:
                     url=_translated_text(alert.url) or None,
                     route_ids=routes,
                     stop_ids=stops,
-                    active_start=(
-                        datetime.fromtimestamp(period.start, UTC)
-                        if period and period.HasField("start")
-                        else None
-                    ),
-                    active_end=(
-                        datetime.fromtimestamp(period.end, UTC)
-                        if period and period.HasField("end")
-                        else None
-                    ),
+                    active_periods=active_periods,
                 )
             )
         return alerts

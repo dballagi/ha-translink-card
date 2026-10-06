@@ -92,8 +92,19 @@ class TransLinkScheduleSensor(
     @property
     def native_value(self) -> datetime | None:
         """Return the next departure time."""
-        departures = self._departures()
-        return departures[0].estimated_time.astimezone(UTC) if departures else None
+        departure = next(
+            (
+                item
+                for item in self._departures()
+                if not item.cancelled
+            ),
+            None,
+        )
+        return (
+            departure.estimated_time.astimezone(UTC)
+            if departure
+            else None
+        )
 
     def _departures(self):
         feed = self.coordinator.static_feed
@@ -115,13 +126,27 @@ class TransLinkScheduleSensor(
         departures = self._departures()
         now = datetime.now(UTC)
         selected_stop_ids = set(self._stop_ids)
-        selected_route_ids = {departure.route_id for departure in departures}
+        selected_route_ids: set[str] = set()
+        for stop_id in self._stop_ids:
+            settings = self._stop_filters.get(stop_id, {})
+            included = (
+                settings.get("include_route_ids")
+                if isinstance(settings, dict)
+                else None
+            )
+            if isinstance(included, list) and included:
+                selected_route_ids.update(
+                    value for value in included if isinstance(value, str)
+                )
+            elif feed is not None:
+                selected_route_ids.update(
+                    route.route_id for route in feed.routes_for_stop(stop_id)
+                )
         alerts = [
             alert.as_dict()
             for alert in self.coordinator.data.get("alerts", [])
             if (
-                (alert.active_start is None or alert.active_start <= now)
-                and (alert.active_end is None or now <= alert.active_end)
+                alert.is_active(now)
                 and (
                     (not alert.stop_ids and not alert.route_ids)
                     or selected_stop_ids.intersection(alert.stop_ids)
@@ -168,6 +193,7 @@ class TransLinkScheduleSensor(
                 self._cancelled_retention.total_seconds() / 60
             ),
             "alerts": alerts,
+            "alerts_error": self.coordinator.data.get("alerts_error"),
             "last_updated": (
                 self.coordinator.data["updated_at"].isoformat()
                 if self.coordinator.data

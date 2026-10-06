@@ -84,6 +84,15 @@ All boards using the same API configuration share one static feed, one decoded
 realtime feed, and one polling coordinator. Adding more boards therefore does
 not duplicate downloads, parsing, or minute-by-minute API requests.
 
+Only recently used stops are retained in memory, and shared feeds are released
+when their last board is unloaded. Config-flow validation also releases its
+temporary feed immediately. A daily refresh compares the downloaded digest
+before parsing so unchanged feeds do not create a second in-memory copy.
+
+Trip updates and schedules remain available when the optional service-alert
+endpoint is temporarily unavailable. The sensor exposes `alerts_error` while
+the next polling cycle retries alerts.
+
 ## Card configuration
 
 The integration bundles and serves the card. Registering the dashboard

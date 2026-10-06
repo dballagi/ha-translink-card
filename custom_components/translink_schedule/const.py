@@ -30,7 +30,8 @@ STATIC_REFRESH_INTERVAL = timedelta(hours=24)
 DEPARTURE_WINDOW = timedelta(hours=3)
 DEFAULT_DEPARTURE_WINDOW_MINUTES = 180
 DEFAULT_CANCELLED_RETENTION_MINUTES = 1
-MAX_DEPARTURES_PER_STOP = 12
+MAX_DEPARTURES_PER_STOP = 50
+TRIP_LEVEL_STOP_ID = ""
 
 CARD_URL = "/translink_schedule/translink-schedule-card.js"
 CARD_FILENAME = "translink-schedule-card.js"

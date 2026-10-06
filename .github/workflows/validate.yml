@@ -32,11 +32,16 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+      - name: Verify committed bundle
+        working-directory: .
+        run: |
+          git diff --exit-code -- \
+            custom_components/translink_schedule/frontend/translink-schedule-card.js
 
   hacs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - uses: hacs/action@main
+      - uses: hacs/action@1ebf01c408f29afcb6406bd431bc98fd8cbb15aa
         with:
           category: integration

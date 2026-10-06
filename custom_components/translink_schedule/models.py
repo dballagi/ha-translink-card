@@ -76,8 +76,17 @@ class ServiceAlert:
     url: str | None
     route_ids: tuple[str, ...]
     stop_ids: tuple[str, ...]
-    active_start: datetime | None
-    active_end: datetime | None
+    active_periods: tuple[
+        tuple[datetime | None, datetime | None], ...
+    ]
+
+    def is_active(self, now: datetime) -> bool:
+        """Return whether any configured active period contains now."""
+        return not self.active_periods or any(
+            (start is None or start <= now)
+            and (end is None or now <= end)
+            for start, end in self.active_periods
+        )
 
     def as_dict(self) -> dict[str, object]:
         """Return a JSON-serializable representation."""
@@ -87,10 +96,13 @@ class ServiceAlert:
             "url": self.url,
             "route_ids": list(self.route_ids),
             "stop_ids": list(self.stop_ids),
-            "active_start": (
-                self.active_start.isoformat() if self.active_start else None
-            ),
-            "active_end": self.active_end.isoformat() if self.active_end else None,
+            "active_periods": [
+                {
+                    "start": start.isoformat() if start else None,
+                    "end": end.isoformat() if end else None,
+                }
+                for start, end in self.active_periods
+            ],
         }
 
 
