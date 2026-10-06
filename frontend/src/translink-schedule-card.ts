@@ -1,6 +1,7 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
+import { findScheduleEntity } from "./entity-selection";
 import type {
   CardConfig,
   Departure,
@@ -33,8 +34,15 @@ export class TransLinkScheduleCard extends LitElement {
     return document.createElement("translink-schedule-card-editor");
   }
 
-  public static getStubConfig(): Partial<CardConfig> {
-    return { view: "grouped", departures_per_stop: DEFAULT_PER_STOP };
+  public static getStubConfig(
+    hass: HomeAssistant,
+    entities: string[] = [],
+  ): Partial<CardConfig> {
+    return {
+      entity: findScheduleEntity(hass, entities) ?? "",
+      view: "grouped",
+      departures_per_stop: DEFAULT_PER_STOP,
+    };
   }
 
   public setConfig(config: CardConfig): void {

@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="custom_components/translink_schedule/brand/dark_logo.png">
+    <source media="(prefers-color-scheme: light)" srcset="custom_components/translink_schedule/brand/logo.png">
+    <img alt="TransLink Schedule" src="custom_components/translink_schedule/brand/logo.png" width="512">
+  </picture>
+</p>
+
 # TransLink Schedule for Home Assistant
 
 A Home Assistant custom integration and Lovelace card that displays upcoming
