@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 from collections import defaultdict
+from collections.abc import Mapping
 from datetime import date, datetime, time, timedelta
 from zipfile import ZipFile
 from zoneinfo import ZoneInfo
@@ -143,6 +144,22 @@ class StaticFeed:
         ]
         return sorted(matches, key=lambda stop: (stop.name, stop.stop_id))[:limit]
 
+    def routes_for_stop(self, stop_id: str) -> list[Route]:
+        """Return routes serving a stop."""
+        route_ids = {
+            trip.route_id
+            for stop_time in self.stop_times.get(stop_id, [])
+            if (trip := self.trips.get(stop_time.trip_id)) is not None
+        }
+        return sorted(
+            (self.routes[route_id] for route_id in route_ids),
+            key=lambda route: (
+                route.short_name.casefold(),
+                route.long_name.casefold(),
+                route.route_id,
+            ),
+        )
+
     def _service_active(self, service_id: str, service_date: date) -> bool:
         exception = self.calendar_dates.get(service_date, {}).get(service_id)
         if exception is not None:
@@ -159,6 +176,7 @@ class StaticFeed:
         stop_ids: list[str],
         now: datetime,
         realtime: dict[tuple[str, str, date | None], RealtimeUpdate],
+        stop_filters: Mapping[str, object] | None = None,
     ) -> list[Departure]:
         """Build upcoming departures for several stops."""
         local_now = now.astimezone(VANCOUVER_TZ)
@@ -180,6 +198,12 @@ class StaticFeed:
                     trip = self.trips.get(stop_time.trip_id)
                     if trip is None or not self._service_active(
                         trip.service_id, service_date
+                    ):
+                        continue
+                    if not _trip_matches_filter(
+                        trip.route_id,
+                        trip.headsign,
+                        stop_filters.get(stop_id) if stop_filters else None,
                     ):
                         continue
                     scheduled = midnight + timedelta(
@@ -231,3 +255,31 @@ class StaticFeed:
                 ]
             )
         return sorted(output, key=lambda item: item.estimated_time)
+
+
+def _trip_matches_filter(
+    route_id: str, headsign: str, stop_filter: object
+) -> bool:
+    """Return whether a trip matches a persisted per-stop filter."""
+    if not isinstance(stop_filter, Mapping):
+        return True
+
+    route_ids = stop_filter.get("include_route_ids")
+    if (
+        isinstance(route_ids, list)
+        and route_ids
+        and route_id not in route_ids
+    ):
+        return False
+
+    destinations = stop_filter.get("destination_contains")
+    if isinstance(destinations, list):
+        normalized = [
+            value.casefold().strip()
+            for value in destinations
+            if isinstance(value, str) and value.strip()
+        ]
+        if normalized and not any(value in headsign.casefold() for value in normalized):
+            return False
+
+    return True

@@ -34,6 +34,18 @@
           "board_name": "Board name",
           "stop_ids": "Stop IDs or stop numbers"
         }
+      },
+      "stop_filter": {
+        "title": "Filter {stop_name}",
+        "description": "Choose routes and optional destination text for stop #{stop_code}. Leave both fields empty to show every departure.",
+        "data": {
+          "include_route_ids": "Included routes",
+          "destination_contains": "Destination contains"
+        },
+        "data_description": {
+          "include_route_ids": "Only selected routes will be shown.",
+          "destination_contains": "A departure matches when its destination contains any entry, ignoring capitalization."
+        }
       }
     },
     "error": {

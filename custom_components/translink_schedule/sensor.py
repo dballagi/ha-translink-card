@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import CONF_BOARD_NAME, CONF_STOP_IDS
+from .const import CONF_BOARD_NAME, CONF_STOP_FILTERS, CONF_STOP_IDS
 from .coordinator import TransLinkCoordinator
 
 
@@ -53,6 +53,11 @@ class TransLinkScheduleSensor(
         return self._entry.options.get(CONF_STOP_IDS, self._entry.data[CONF_STOP_IDS])
 
     @property
+    def _stop_filters(self) -> dict[str, object]:
+        filters = self._entry.options.get(CONF_STOP_FILTERS, {})
+        return filters if isinstance(filters, dict) else {}
+
+    @property
     def native_value(self) -> datetime | None:
         """Return the next departure time."""
         departures = self._departures()
@@ -66,6 +71,7 @@ class TransLinkScheduleSensor(
             self._stop_ids,
             datetime.now(UTC),
             self.coordinator.data["realtime"],
+            self._stop_filters,
         )
 
     @property

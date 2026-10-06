@@ -39,6 +39,20 @@ This project is under active development and is not ready for general use yet.
 API keys are available from the
 [TransLink Developer Portal](https://developer.translink.ca/).
 
+## Per-stop filters
+
+Open the integration's **Configure** dialog to edit the board and configure
+each selected stop. Every stop supports:
+
+- **Included routes** — a multi-select containing only routes that serve that
+  stop. Leave it empty to include every route.
+- **Destination contains** — one or more case-insensitive phrases matched
+  against the trip destination. Leave it empty to include every destination.
+
+When both filters are set, a departure must match a selected route and one of
+the destination phrases. Filters are applied before the grouped and combined
+departure lists are exposed to the card.
+
 ## Card configuration
 
 The integration bundles and serves the card. Registering the dashboard
