@@ -14,10 +14,14 @@ departures from multiple Metro Vancouver TransLink stops in one board.
 The card supports:
 
 - grouped departures with one section per stop;
-- a combined chronological view across all selected stops;
+- chronological, balanced, route-grouped, and realtime-first combined views;
 - scheduled and GTFS-Realtime departure times;
 - delay and cancellation indicators;
-- Home Assistant themes and responsive layouts; and
+- compact, comfortable, and minimal responsive layouts;
+- Home Assistant theme colors and configurable route badges;
+- per-stop names, departure counts, stop numbers, and collapsed defaults;
+- configurable headers, timing formats, stale-data warnings, and realtime
+  labels; and
 - a visual card editor.
 
 ## Status
@@ -39,7 +43,7 @@ This project is under active development and is not ready for general use yet.
 API keys are available from the
 [TransLink Developer Portal](https://developer.translink.ca/).
 
-## Per-stop filters
+## Integration configuration
 
 Open the integration's **Configure** dialog to edit the board and configure
 each selected stop. Every stop supports:
@@ -48,10 +52,22 @@ each selected stop. Every stop supports:
   stop. Leave it empty to include every route.
 - **Destination contains** — one or more case-insensitive phrases matched
   against the trip destination. Leave it empty to include every destination.
+- **Custom stop name** — replaces the official stop name on the card.
+- **Departures for this stop** — overrides the card-wide departure count. Use
+  `0` to inherit the card setting.
+- **Show stop number** — controls the public stop number for this stop.
+- **Collapsed by default** — starts the stop section collapsed while still
+  allowing users to expand it.
 
 When both filters are set, a departure must match a selected route and one of
 the destination phrases. Filters are applied before the grouped and combined
 departure lists are exposed to the card.
+
+The first Configure screen also controls:
+
+- the order of stops, using the order of the entered stop IDs;
+- the future schedule window, from 15 to 360 minutes; and
+- how long cancelled departures remain available after their scheduled time.
 
 ## Data cache and performance
 
@@ -80,20 +96,49 @@ entity: sensor.nearby_departures
 title: Nearby Departures
 view: grouped
 departures_per_stop: 3
+max_departures: 12
+time_display: both
+show_scheduled_time: true
+delay_threshold_minutes: 1
+delay_format: compact
+density: comfortable
+empty_stop_behavior: show
+cancelled_behavior: show
+route_color_mode: official
+combined_order: chronological
+show_header: true
+show_brand: true
+header_style: primary
+header_icon: mdi:bus-clock
 show_clock: true
 show_alerts: true
-show_attribution: true
+show_stop_codes: true
+stop_heading_style: accent
+show_realtime_status: false
+show_stale_warning: false
+stale_after_minutes: 3
 ```
 
 Set `show_alerts: false` or disable **Show service notices** in the visual
-editor to hide the alert banner. Cancelled departures remain visible and
-marked as cancelled.
+editor to hide the alert banner.
 
 Use `departures_per_stop` or the **Departures per stop** visual-editor field
 to show between 1 and 12 departures in each grouped stop section.
 
-Use `view: combined` and `max_departures` to display a single chronological
-list:
+Timing can show `both`, `countdown`, or `clock`. The card follows Home
+Assistant's 12/24-hour preference. `delay_format` accepts `compact` (`+7 min`)
+or `text` (`7 min late`).
+
+`cancelled_behavior` and `empty_stop_behavior` accept `show`, `move`, or
+`hide`. The `move` value places those rows or sections after active content.
+
+`density` accepts `comfortable`, `compact`, or `minimal`.
+`route_color_mode` accepts `official`, `theme`, or `monochrome`.
+`header_style` accepts `primary`, `surface`, or `transparent`, while
+`stop_heading_style` accepts `accent`, `plain`, or `compact`.
+
+Use `view: combined` and `max_departures` to display a single list.
+`combined_order` accepts `chronological`, `balanced`, `route`, or `realtime`:
 
 ```yaml
 type: custom:translink-schedule-card
@@ -101,7 +146,12 @@ entity: sensor.nearby_departures
 title: Next Departures
 view: combined
 max_departures: 12
+combined_order: balanced
 ```
+
+Enable `show_realtime_status` to label departures as **Live** or
+**Scheduled**. Enable `show_stale_warning` to show a warning when the
+coordinator has not updated within `stale_after_minutes`.
 
 ## Development
 

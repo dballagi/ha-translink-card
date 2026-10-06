@@ -7,8 +7,13 @@ export interface DepartureTiming {
   delayMinutes?: number;
 }
 
-export function getDepartureTiming(departure: Departure): DepartureTiming {
-  const delayed = !departure.cancelled && departure.delay_seconds >= 60;
+export function getDepartureTiming(
+  departure: Departure,
+  delayThresholdMinutes = 1,
+): DepartureTiming {
+  const delayed =
+    !departure.cancelled &&
+    departure.delay_seconds >= delayThresholdMinutes * 60;
 
   return {
     delayed,

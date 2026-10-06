@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { isDataStale, prepareDepartures } from "./departure-list";
 import { getDepartureTiming } from "./departure-timing";
 import type { Departure } from "./types";
 
@@ -62,5 +63,63 @@ describe("departure time arithmetic", () => {
       scheduledTime: undefined,
       delayMinutes: undefined,
     });
+  });
+
+  it("supports a configurable delay threshold", () => {
+    expect(getDepartureTiming(departure, 10).delayed).toBe(false);
+  });
+});
+
+describe("departure list customization", () => {
+  const secondStop = {
+    ...departure,
+    stop_id: "second",
+    route_name: "3",
+    estimated_time: "2026-10-06T12:45:00-07:00",
+  };
+
+  it("can hide or move cancelled departures", () => {
+    const cancelled = { ...departure, cancelled: true };
+    expect(
+      prepareDepartures(
+        [cancelled, secondStop],
+        "hide",
+        "chronological",
+        ["stop", "second"],
+      ),
+    ).toEqual([secondStop]);
+    expect(
+      prepareDepartures(
+        [cancelled, secondStop],
+        "move",
+        "chronological",
+        ["stop", "second"],
+      ),
+    ).toEqual([secondStop, cancelled]);
+  });
+
+  it("can balance combined departures across stops", () => {
+    const laterFirstStop = {
+      ...departure,
+      estimated_time: "2026-10-06T12:50:00-07:00",
+    };
+    expect(
+      prepareDepartures(
+        [departure, laterFirstStop, secondStop],
+        "show",
+        "balanced",
+        ["stop", "second"],
+      ).map((item) => item.stop_id),
+    ).toEqual(["stop", "second", "stop"]);
+  });
+
+  it("detects stale coordinator data", () => {
+    const now = new Date("2026-10-06T13:00:00-07:00").getTime();
+    expect(
+      isDataStale("2026-10-06T12:55:00-07:00", 3, now),
+    ).toBe(true);
+    expect(
+      isDataStale("2026-10-06T12:59:00-07:00", 3, now),
+    ).toBe(false);
   });
 });

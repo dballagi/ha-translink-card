@@ -1,6 +1,9 @@
 export interface HomeAssistant {
   states: Record<string, HassEntity>;
-  locale?: { language: string };
+  locale?: {
+    language: string;
+    time_format?: "12" | "24" | "language" | "system";
+  };
 }
 
 export interface HassEntity {
@@ -27,7 +30,11 @@ export interface Departure {
 export interface StopDepartures {
   stop_id: string;
   stop_name: string;
+  display_name?: string;
   stop_code: string | null;
+  departures_per_stop?: number | null;
+  show_stop_code?: boolean;
+  collapsed?: boolean;
   departures: Departure[];
 }
 
@@ -44,7 +51,25 @@ export interface CardConfig {
   view?: "grouped" | "combined";
   departures_per_stop?: number;
   max_departures?: number;
+  time_display?: "both" | "countdown" | "clock";
+  show_scheduled_time?: boolean;
+  delay_threshold_minutes?: number;
+  delay_format?: "compact" | "text";
+  density?: "comfortable" | "compact" | "minimal";
+  hide_empty_stops?: boolean;
+  empty_stop_behavior?: "show" | "move" | "hide";
+  cancelled_behavior?: "show" | "move" | "hide";
+  route_color_mode?: "official" | "theme" | "monochrome";
+  combined_order?: "chronological" | "balanced" | "route" | "realtime";
+  show_header?: boolean;
+  show_brand?: boolean;
+  header_style?: "primary" | "surface" | "transparent";
+  header_icon?: string;
+  stop_heading_style?: "accent" | "plain" | "compact";
   show_clock?: boolean;
   show_alerts?: boolean;
-  show_attribution?: boolean;
+  show_stop_codes?: boolean;
+  show_realtime_status?: boolean;
+  show_stale_warning?: boolean;
+  stale_after_minutes?: number;
 }

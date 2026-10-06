@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import io
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from zipfile import ZIP_DEFLATED, ZipFile
 from zoneinfo import ZoneInfo
 
@@ -142,3 +142,39 @@ def test_route_and_destination_filters_both_must_match() -> None:
     )
 
     assert departures == []
+
+
+def test_departure_window_is_configurable() -> None:
+    feed = StaticFeed(_feed())
+    timezone = ZoneInfo("America/Vancouver")
+
+    departures = feed.departures(
+        ["STOP_A", "STOP_B"],
+        datetime(2026, 10, 6, 10, 0, tzinfo=timezone),
+        {},
+        departure_window=timedelta(minutes=6),
+    )
+
+    assert [item.trip_id for item in departures] == ["T1"]
+
+
+def test_cancelled_departure_uses_configured_retention() -> None:
+    feed = StaticFeed(_feed())
+    timezone = ZoneInfo("America/Vancouver")
+    realtime = {
+        ("T1", "STOP_A", date(2026, 10, 6)): RealtimeUpdate(
+            estimated_time=None,
+            delay_seconds=None,
+            cancelled=True,
+        )
+    }
+
+    departures = feed.departures(
+        ["STOP_A"],
+        datetime(2026, 10, 6, 10, 6, tzinfo=timezone),
+        realtime,
+        cancelled_retention=timedelta(minutes=2),
+    )
+
+    assert departures[0].trip_id == "T1"
+    assert departures[0].cancelled is True

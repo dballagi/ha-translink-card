@@ -12,6 +12,10 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
+    BooleanSelector,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -25,13 +29,21 @@ from .const import (
     CONF_ALERTS_URL,
     CONF_API_KEY,
     CONF_BOARD_NAME,
+    CONF_CANCELLED_RETENTION_MINUTES,
+    CONF_DEPARTURE_WINDOW_MINUTES,
     CONF_DESTINATION_CONTAINS,
     CONF_INCLUDE_ROUTE_IDS,
     CONF_REALTIME_URL,
     CONF_STATIC_URL,
+    CONF_STOP_COLLAPSED,
+    CONF_STOP_DEPARTURES,
+    CONF_STOP_DISPLAY_NAME,
     CONF_STOP_FILTERS,
     CONF_STOP_IDS,
+    CONF_STOP_SHOW_CODE,
     DEFAULT_ALERTS_URL,
+    DEFAULT_CANCELLED_RETENTION_MINUTES,
+    DEFAULT_DEPARTURE_WINDOW_MINUTES,
     DEFAULT_REALTIME_URL,
     DEFAULT_STATIC_URL,
     DOMAIN,
@@ -134,8 +146,10 @@ class TransLinkScheduleOptionsFlow(config_entries.OptionsFlow):
         """Initialize the options flow."""
         self._board_name = ""
         self._stop_ids: list[str] = []
-        self._stop_filters: dict[str, dict[str, list[str]]] = {}
+        self._stop_filters: dict[str, dict[str, Any]] = {}
         self._stop_index = 0
+        self._departure_window_minutes = DEFAULT_DEPARTURE_WINDOW_MINUTES
+        self._cancelled_retention_minutes = DEFAULT_CANCELLED_RETENTION_MINUTES
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -156,6 +170,12 @@ class TransLinkScheduleOptionsFlow(config_entries.OptionsFlow):
                 else:
                     self._board_name = user_input[CONF_BOARD_NAME]
                     self._stop_ids = stop_ids
+                    self._departure_window_minutes = int(
+                        user_input[CONF_DEPARTURE_WINDOW_MINUTES]
+                    )
+                    self._cancelled_retention_minutes = int(
+                        user_input[CONF_CANCELLED_RETENTION_MINUTES]
+                    )
                     existing_filters = self.config_entry.options.get(
                         CONF_STOP_FILTERS, {}
                     )
@@ -175,10 +195,40 @@ class TransLinkScheduleOptionsFlow(config_entries.OptionsFlow):
         stop_ids = self.config_entry.options.get(
             CONF_STOP_IDS, self.config_entry.data[CONF_STOP_IDS]
         )
+        departure_window = self.config_entry.options.get(
+            CONF_DEPARTURE_WINDOW_MINUTES,
+            DEFAULT_DEPARTURE_WINDOW_MINUTES,
+        )
+        cancelled_retention = self.config_entry.options.get(
+            CONF_CANCELLED_RETENTION_MINUTES,
+            DEFAULT_CANCELLED_RETENTION_MINUTES,
+        )
         schema = vol.Schema(
             {
                 vol.Required(CONF_BOARD_NAME, default=board_name): str,
                 vol.Required(CONF_STOP_IDS, default=", ".join(stop_ids)): str,
+                vol.Required(
+                    CONF_DEPARTURE_WINDOW_MINUTES,
+                    default=departure_window,
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=15,
+                        max=360,
+                        step=15,
+                        mode=NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Required(
+                    CONF_CANCELLED_RETENTION_MINUTES,
+                    default=cancelled_retention,
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=60,
+                        step=1,
+                        mode=NumberSelectorMode.BOX,
+                    )
+                ),
             }
         )
         return self.async_show_form(
@@ -211,13 +261,22 @@ class TransLinkScheduleOptionsFlow(config_entries.OptionsFlow):
                 if normalized not in seen_destinations:
                     destinations.append(value)
                     seen_destinations.add(normalized)
-            if route_ids or destinations:
-                self._stop_filters[stop_id] = {
-                    CONF_INCLUDE_ROUTE_IDS: route_ids,
-                    CONF_DESTINATION_CONTAINS: destinations,
-                }
-            else:
-                self._stop_filters.pop(stop_id, None)
+            display_name = user_input.get(CONF_STOP_DISPLAY_NAME, "").strip()
+            departures_per_stop = int(
+                user_input.get(CONF_STOP_DEPARTURES, 0)
+            )
+            self._stop_filters[stop_id] = {
+                CONF_INCLUDE_ROUTE_IDS: route_ids,
+                CONF_DESTINATION_CONTAINS: destinations,
+                CONF_STOP_DISPLAY_NAME: display_name,
+                CONF_STOP_DEPARTURES: departures_per_stop or None,
+                CONF_STOP_SHOW_CODE: user_input.get(
+                    CONF_STOP_SHOW_CODE, True
+                ),
+                CONF_STOP_COLLAPSED: user_input.get(
+                    CONF_STOP_COLLAPSED, False
+                ),
+            }
 
             self._stop_index += 1
             if self._stop_index < len(self._stop_ids):
@@ -227,6 +286,12 @@ class TransLinkScheduleOptionsFlow(config_entries.OptionsFlow):
                     CONF_BOARD_NAME: self._board_name,
                     CONF_STOP_IDS: self._stop_ids,
                     CONF_STOP_FILTERS: self._stop_filters,
+                    CONF_DEPARTURE_WINDOW_MINUTES: (
+                        self._departure_window_minutes
+                    ),
+                    CONF_CANCELLED_RETENTION_MINUTES: (
+                        self._cancelled_retention_minutes
+                    ),
                 }
             )
 
@@ -258,6 +323,29 @@ class TransLinkScheduleOptionsFlow(config_entries.OptionsFlow):
                     CONF_DESTINATION_CONTAINS,
                     default=existing.get(CONF_DESTINATION_CONTAINS, []),
                 ): TextSelector(TextSelectorConfig(multiple=True)),
+                vol.Optional(
+                    CONF_STOP_DISPLAY_NAME,
+                    default=existing.get(CONF_STOP_DISPLAY_NAME, ""),
+                ): TextSelector(),
+                vol.Required(
+                    CONF_STOP_DEPARTURES,
+                    default=existing.get(CONF_STOP_DEPARTURES) or 0,
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=12,
+                        step=1,
+                        mode=NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Required(
+                    CONF_STOP_SHOW_CODE,
+                    default=existing.get(CONF_STOP_SHOW_CODE, True),
+                ): BooleanSelector(),
+                vol.Required(
+                    CONF_STOP_COLLAPSED,
+                    default=existing.get(CONF_STOP_COLLAPSED, False),
+                ): BooleanSelector(),
             }
         )
         stop = feed.stops[stop_id]

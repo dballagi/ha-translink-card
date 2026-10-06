@@ -32,19 +32,33 @@
         "description": "Change the board name or comma-separated GTFS stop IDs and public stop numbers.",
         "data": {
           "board_name": "Board name",
-          "stop_ids": "Stop IDs or stop numbers"
+          "stop_ids": "Stop IDs or stop numbers",
+          "departure_window_minutes": "Schedule window (minutes)",
+          "cancelled_retention_minutes": "Keep cancelled departures (minutes)"
+        },
+        "data_description": {
+          "departure_window_minutes": "Only departures inside this future time window are exposed to the card.",
+          "cancelled_retention_minutes": "Keep cancelled departures available for this many minutes after their scheduled time."
         }
       },
       "stop_filter": {
-        "title": "Filter {stop_name}",
-        "description": "Choose routes and optional destination text for stop #{stop_code}. Leave both fields empty to show every departure.",
+        "title": "Configure {stop_name}",
+        "description": "Configure filtering and presentation for stop #{stop_code}. Stop order follows the order entered on the previous screen.",
         "data": {
           "include_route_ids": "Included routes",
-          "destination_contains": "Destination contains"
+          "destination_contains": "Destination contains",
+          "display_name": "Custom stop name",
+          "departures_per_stop": "Departures for this stop",
+          "show_stop_code": "Show stop number",
+          "collapsed": "Collapsed by default"
         },
         "data_description": {
           "include_route_ids": "Only selected routes will be shown.",
-          "destination_contains": "A departure matches when its destination contains any entry, ignoring capitalization."
+          "destination_contains": "A departure matches when its destination contains any entry, ignoring capitalization.",
+          "display_name": "Leave empty to use the official stop name.",
+          "departures_per_stop": "Use 0 to inherit the card's default departure count.",
+          "show_stop_code": "The card can also hide all stop numbers globally.",
+          "collapsed": "Users can still expand this stop from the card."
         }
       }
     },

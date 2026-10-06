@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
@@ -12,7 +12,19 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import CONF_BOARD_NAME, CONF_STOP_FILTERS, CONF_STOP_IDS
+from .const import (
+    CONF_BOARD_NAME,
+    CONF_CANCELLED_RETENTION_MINUTES,
+    CONF_DEPARTURE_WINDOW_MINUTES,
+    CONF_STOP_COLLAPSED,
+    CONF_STOP_DEPARTURES,
+    CONF_STOP_DISPLAY_NAME,
+    CONF_STOP_FILTERS,
+    CONF_STOP_IDS,
+    CONF_STOP_SHOW_CODE,
+    DEFAULT_CANCELLED_RETENTION_MINUTES,
+    DEFAULT_DEPARTURE_WINDOW_MINUTES,
+)
 from .coordinator import TransLinkCoordinator
 
 
@@ -62,6 +74,22 @@ class TransLinkScheduleSensor(
         return filters if isinstance(filters, dict) else {}
 
     @property
+    def _departure_window(self) -> timedelta:
+        minutes = self._entry.options.get(
+            CONF_DEPARTURE_WINDOW_MINUTES,
+            DEFAULT_DEPARTURE_WINDOW_MINUTES,
+        )
+        return timedelta(minutes=int(minutes))
+
+    @property
+    def _cancelled_retention(self) -> timedelta:
+        minutes = self._entry.options.get(
+            CONF_CANCELLED_RETENTION_MINUTES,
+            DEFAULT_CANCELLED_RETENTION_MINUTES,
+        )
+        return timedelta(minutes=int(minutes))
+
+    @property
     def native_value(self) -> datetime | None:
         """Return the next departure time."""
         departures = self._departures()
@@ -76,6 +104,8 @@ class TransLinkScheduleSensor(
             datetime.now(UTC),
             self.coordinator.data["realtime"],
             self._stop_filters,
+            self._departure_window,
+            self._cancelled_retention,
         )
 
     @property
@@ -106,11 +136,21 @@ class TransLinkScheduleSensor(
         stops = []
         for stop_id in self._stop_ids:
             stop = feed.stops.get(stop_id) if feed else None
+            settings = self._stop_filters.get(stop_id, {})
+            if not isinstance(settings, dict):
+                settings = {}
             stops.append(
                 {
                     "stop_id": stop_id,
                     "stop_name": stop.name if stop else stop_id,
+                    "display_name": (
+                        settings.get(CONF_STOP_DISPLAY_NAME)
+                        or (stop.name if stop else stop_id)
+                    ),
                     "stop_code": stop.code if stop else None,
+                    "departures_per_stop": settings.get(CONF_STOP_DEPARTURES),
+                    "show_stop_code": settings.get(CONF_STOP_SHOW_CODE, True),
+                    "collapsed": settings.get(CONF_STOP_COLLAPSED, False),
                     "departures": grouped[stop_id],
                 }
             )
@@ -121,6 +161,12 @@ class TransLinkScheduleSensor(
             "departures": [departure.as_dict() for departure in departures],
             "stop_count": len(stops),
             "departure_count": len(departures),
+            "departure_window_minutes": int(
+                self._departure_window.total_seconds() / 60
+            ),
+            "cancelled_retention_minutes": int(
+                self._cancelled_retention.total_seconds() / 60
+            ),
             "alerts": alerts,
             "last_updated": (
                 self.coordinator.data["updated_at"].isoformat()

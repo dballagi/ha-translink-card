@@ -276,6 +276,8 @@ class StaticFeed:
         now: datetime,
         realtime: dict[tuple[str, str, date | None], RealtimeUpdate],
         stop_filters: Mapping[str, object] | None = None,
+        departure_window: timedelta = DEPARTURE_WINDOW,
+        cancelled_retention: timedelta = timedelta(minutes=1),
     ) -> list[Departure]:
         """Build upcoming departures for several stops."""
         local_now = now.astimezone(VANCOUVER_TZ)
@@ -319,11 +321,12 @@ class StaticFeed:
                         if update
                         else scheduled
                     )
-                    if not (
-                        local_now - timedelta(minutes=1)
-                        <= estimated
-                        <= local_now + DEPARTURE_WINDOW
-                    ):
+                    earliest = local_now - (
+                        cancelled_retention
+                        if update and update.cancelled
+                        else timedelta(minutes=1)
+                    )
+                    if not earliest <= estimated <= local_now + departure_window:
                         continue
                     route = self.routes[trip.route_id]
                     stop_departures.append(

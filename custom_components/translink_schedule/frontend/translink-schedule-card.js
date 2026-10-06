@@ -1,63 +1,95 @@
-var Ct=Object.defineProperty;var kt=Object.getOwnPropertyDescriptor;var E=(r,t,e,s)=>{for(var i=s>1?void 0:s?kt(t,e):t,n=r.length-1,o;n>=0;n--)(o=r[n])&&(i=(s?o(t,e,i):o(i))||i);return s&&i&&Ct(t,e,i),i};var L=globalThis,j=L.ShadowRoot&&(L.ShadyCSS===void 0||L.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,F=Symbol(),ot=new WeakMap,S=class{constructor(t,e,s){if(this._$cssResult$=!0,s!==F)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o,e=this.t;if(j&&t===void 0){let s=e!==void 0&&e.length===1;s&&(t=ot.get(e)),t===void 0&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),s&&ot.set(e,t))}return t}toString(){return this.cssText}},at=r=>new S(typeof r=="string"?r:r+"",void 0,F),q=(r,...t)=>{let e=r.length===1?r[0]:t.reduce((s,i,n)=>s+(o=>{if(o._$cssResult$===!0)return o.cssText;if(typeof o=="number")return o;throw Error("Value passed to 'css' function must be a 'css' function result: "+o+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+r[n+1],r[0]);return new S(e,r,F)},lt=(r,t)=>{if(j)r.adoptedStyleSheets=t.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(let e of t){let s=document.createElement("style"),i=L.litNonce;i!==void 0&&s.setAttribute("nonce",i),s.textContent=e.cssText,r.appendChild(s)}},K=j?r=>r:r=>r instanceof CSSStyleSheet?(t=>{let e="";for(let s of t.cssRules)e+=s.cssText;return at(e)})(r):r;var{is:Pt,defineProperty:Tt,getOwnPropertyDescriptor:Mt,getOwnPropertyNames:Ut,getOwnPropertySymbols:Ot,getPrototypeOf:Dt}=Object,z=globalThis,ct=z.trustedTypes,Ht=ct?ct.emptyScript:"",Rt=z.reactiveElementPolyfillSupport,C=(r,t)=>r,k={toAttribute(r,t){switch(t){case Boolean:r=r?Ht:null;break;case Object:case Array:r=r==null?r:JSON.stringify(r)}return r},fromAttribute(r,t){let e=r;switch(t){case Boolean:e=r!==null;break;case Number:e=r===null?null:Number(r);break;case Object:case Array:try{e=JSON.parse(r)}catch{e=null}}return e}},I=(r,t)=>!Pt(r,t),dt={attribute:!0,type:String,converter:k,reflect:!1,useDefault:!1,hasChanged:I};Symbol.metadata??=Symbol("metadata"),z.litPropertyMetadata??=new WeakMap;var f=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=dt){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){let s=Symbol(),i=this.getPropertyDescriptor(t,s,e);i!==void 0&&Tt(this.prototype,t,i)}}static getPropertyDescriptor(t,e,s){let{get:i,set:n}=Mt(this.prototype,t)??{get(){return this[e]},set(o){this[e]=o}};return{get:i,set(o){let l=i?.call(this);n?.call(this,o),this.requestUpdate(t,l,s)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??dt}static _$Ei(){if(this.hasOwnProperty(C("elementProperties")))return;let t=Dt(this);t.finalize(),t.l!==void 0&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(C("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(C("properties"))){let e=this.properties,s=[...Ut(e),...Ot(e)];for(let i of s)this.createProperty(i,e[i])}let t=this[Symbol.metadata];if(t!==null){let e=litPropertyMetadata.get(t);if(e!==void 0)for(let[s,i]of e)this.elementProperties.set(s,i)}this._$Eh=new Map;for(let[e,s]of this.elementProperties){let i=this._$Eu(e,s);i!==void 0&&this._$Eh.set(i,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){let e=[];if(Array.isArray(t)){let s=new Set(t.flat(1/0).reverse());for(let i of s)e.unshift(K(i))}else t!==void 0&&e.push(K(t));return e}static _$Eu(t,e){let s=e.attribute;return s===!1?void 0:typeof s=="string"?s:typeof t=="string"?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),this.renderRoot!==void 0&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){let t=new Map,e=this.constructor.elementProperties;for(let s of e.keys())this.hasOwnProperty(s)&&(t.set(s,this[s]),delete this[s]);t.size>0&&(this._$Ep=t)}createRenderRoot(){let t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return lt(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,s){this._$AK(t,s)}_$ET(t,e){let s=this.constructor.elementProperties.get(t),i=this.constructor._$Eu(t,s);if(i!==void 0&&s.reflect===!0){let n=(s.converter?.toAttribute!==void 0?s.converter:k).toAttribute(e,s.type);this._$Em=t,n==null?this.removeAttribute(i):this.setAttribute(i,n),this._$Em=null}}_$AK(t,e){let s=this.constructor,i=s._$Eh.get(t);if(i!==void 0&&this._$Em!==i){let n=s.getPropertyOptions(i),o=typeof n.converter=="function"?{fromAttribute:n.converter}:n.converter?.fromAttribute!==void 0?n.converter:k;this._$Em=i;let l=o.fromAttribute(e,n.type);this[i]=l??this._$Ej?.get(i)??l,this._$Em=null}}requestUpdate(t,e,s,i=!1,n){if(t!==void 0){let o=this.constructor;if(i===!1&&(n=this[t]),s??=o.getPropertyOptions(t),!((s.hasChanged??I)(n,e)||s.useDefault&&s.reflect&&n===this._$Ej?.get(t)&&!this.hasAttribute(o._$Eu(t,s))))return;this.C(t,e,s)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(t,e,{useDefault:s,reflect:i,wrapped:n},o){s&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,o??e??this[t]),n!==!0||o!==void 0)||(this._$AL.has(t)||(this.hasUpdated||s||(e=void 0),this._$AL.set(t,e)),i===!0&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}let t=this.scheduleUpdate();return t!=null&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[i,n]of this._$Ep)this[i]=n;this._$Ep=void 0}let s=this.constructor.elementProperties;if(s.size>0)for(let[i,n]of s){let{wrapped:o}=n,l=this[i];o!==!0||this._$AL.has(i)||l===void 0||this.C(i,void 0,n,l)}}let t=!1,e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(s=>s.hostUpdate?.()),this.update(e)):this._$EM()}catch(s){throw t=!1,this._$EM(),s}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(t){}firstUpdated(t){}};f.elementStyles=[],f.shadowRootOptions={mode:"open"},f[C("elementProperties")]=new Map,f[C("finalized")]=new Map,Rt?.({ReactiveElement:f}),(z.reactiveElementVersions??=[]).push("2.1.2");var tt=globalThis,ht=r=>r,B=tt.trustedTypes,pt=B?B.createPolicy("lit-html",{createHTML:r=>r}):void 0,yt="$lit$",y=`lit$${Math.random().toFixed(9).slice(2)}$`,_t="?"+y,Nt=`<${_t}>`,b=document,T=()=>b.createComment(""),M=r=>r===null||typeof r!="object"&&typeof r!="function",et=Array.isArray,Lt=r=>et(r)||typeof r?.[Symbol.iterator]=="function",G=`[ 	
-\f\r]`,P=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ut=/-->/g,mt=/>/g,_=RegExp(`>|${G}(?:([^\\s"'>=/]+)(${G}*=${G}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),ft=/'/g,gt=/"/g,vt=/^(?:script|style|textarea|title)$/i,st=r=>(t,...e)=>({_$litType$:r,strings:t,values:e}),p=st(1),Xt=st(2),Zt=st(3),A=Symbol.for("lit-noChange"),c=Symbol.for("lit-nothing"),$t=new WeakMap,v=b.createTreeWalker(b,129);function bt(r,t){if(!et(r)||!r.hasOwnProperty("raw"))throw Error("invalid template strings array");return pt!==void 0?pt.createHTML(t):t}var jt=(r,t)=>{let e=r.length-1,s=[],i,n=t===2?"<svg>":t===3?"<math>":"",o=P;for(let l=0;l<e;l++){let a=r[l],h,u,d=-1,m=0;for(;m<a.length&&(o.lastIndex=m,u=o.exec(a),u!==null);)m=o.lastIndex,o===P?u[1]==="!--"?o=ut:u[1]!==void 0?o=mt:u[2]!==void 0?(vt.test(u[2])&&(i=RegExp("</"+u[2],"g")),o=_):u[3]!==void 0&&(o=_):o===_?u[0]===">"?(o=i??P,d=-1):u[1]===void 0?d=-2:(d=o.lastIndex-u[2].length,h=u[1],o=u[3]===void 0?_:u[3]==='"'?gt:ft):o===gt||o===ft?o=_:o===ut||o===mt?o=P:(o=_,i=void 0);let $=o===_&&r[l+1].startsWith("/>")?" ":"";n+=o===P?a+Nt:d>=0?(s.push(h),a.slice(0,d)+yt+a.slice(d)+y+$):a+y+(d===-2?l:$)}return[bt(r,n+(r[e]||"<?>")+(t===2?"</svg>":t===3?"</math>":"")),s]},U=class r{constructor({strings:t,_$litType$:e},s){let i;this.parts=[];let n=0,o=0,l=t.length-1,a=this.parts,[h,u]=jt(t,e);if(this.el=r.createElement(h,s),v.currentNode=this.el.content,e===2||e===3){let d=this.el.content.firstChild;d.replaceWith(...d.childNodes)}for(;(i=v.nextNode())!==null&&a.length<l;){if(i.nodeType===1){if(i.hasAttributes())for(let d of i.getAttributeNames())if(d.endsWith(yt)){let m=u[o++],$=i.getAttribute(d).split(y),N=/([.?@])?(.*)/.exec(m);a.push({type:1,index:n,name:N[2],strings:$,ctor:N[1]==="."?X:N[1]==="?"?Z:N[1]==="@"?Q:w}),i.removeAttribute(d)}else d.startsWith(y)&&(a.push({type:6,index:n}),i.removeAttribute(d));if(vt.test(i.tagName)){let d=i.textContent.split(y),m=d.length-1;if(m>0){i.textContent=B?B.emptyScript:"";for(let $=0;$<m;$++)i.append(d[$],T()),v.nextNode(),a.push({type:2,index:++n});i.append(d[m],T())}}}else if(i.nodeType===8)if(i.data===_t)a.push({type:2,index:n});else{let d=-1;for(;(d=i.data.indexOf(y,d+1))!==-1;)a.push({type:7,index:n}),d+=y.length-1}n++}}static createElement(t,e){let s=b.createElement("template");return s.innerHTML=t,s}};function x(r,t,e=r,s){if(t===A)return t;let i=s!==void 0?e._$Co?.[s]:e._$Cl,n=M(t)?void 0:t._$litDirective$;return i?.constructor!==n&&(i?._$AO?.(!1),n===void 0?i=void 0:(i=new n(r),i._$AT(r,e,s)),s!==void 0?(e._$Co??=[])[s]=i:e._$Cl=i),i!==void 0&&(t=x(r,i._$AS(r,t.values),i,s)),t}var J=class{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){let{el:{content:e},parts:s}=this._$AD,i=(t?.creationScope??b).importNode(e,!0);v.currentNode=i;let n=v.nextNode(),o=0,l=0,a=s[0];for(;a!==void 0;){if(o===a.index){let h;a.type===2?h=new O(n,n.nextSibling,this,t):a.type===1?h=new a.ctor(n,a.name,a.strings,this,t):a.type===6&&(h=new Y(n,this,t)),this._$AV.push(h),a=s[++l]}o!==a?.index&&(n=v.nextNode(),o++)}return v.currentNode=b,i}p(t){let e=0;for(let s of this._$AV)s!==void 0&&(s.strings!==void 0?(s._$AI(t,s,e),e+=s.strings.length-2):s._$AI(t[e])),e++}},O=class r{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,s,i){this.type=2,this._$AH=c,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=s,this.options=i,this._$Cv=i?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode,e=this._$AM;return e!==void 0&&t?.nodeType===11&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=x(this,t,e),M(t)?t===c||t==null||t===""?(this._$AH!==c&&this._$AR(),this._$AH=c):t!==this._$AH&&t!==A&&this._(t):t._$litType$!==void 0?this.$(t):t.nodeType!==void 0?this.T(t):Lt(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==c&&M(this._$AH)?this._$AA.nextSibling.data=t:this.T(b.createTextNode(t)),this._$AH=t}$(t){let{values:e,_$litType$:s}=t,i=typeof s=="number"?this._$AC(t):(s.el===void 0&&(s.el=U.createElement(bt(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===i)this._$AH.p(e);else{let n=new J(i,this),o=n.u(this.options);n.p(e),this.T(o),this._$AH=n}}_$AC(t){let e=$t.get(t.strings);return e===void 0&&$t.set(t.strings,e=new U(t)),e}k(t){et(this._$AH)||(this._$AH=[],this._$AR());let e=this._$AH,s,i=0;for(let n of t)i===e.length?e.push(s=new r(this.O(T()),this.O(T()),this,this.options)):s=e[i],s._$AI(n),i++;i<e.length&&(this._$AR(s&&s._$AB.nextSibling,i),e.length=i)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){let s=ht(t).nextSibling;ht(t).remove(),t=s}}setConnected(t){this._$AM===void 0&&(this._$Cv=t,this._$AP?.(t))}},w=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,s,i,n){this.type=1,this._$AH=c,this._$AN=void 0,this.element=t,this.name=e,this._$AM=i,this.options=n,s.length>2||s[0]!==""||s[1]!==""?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=c}_$AI(t,e=this,s,i){let n=this.strings,o=!1;if(n===void 0)t=x(this,t,e,0),o=!M(t)||t!==this._$AH&&t!==A,o&&(this._$AH=t);else{let l=t,a,h;for(t=n[0],a=0;a<n.length-1;a++)h=x(this,l[s+a],e,a),h===A&&(h=this._$AH[a]),o||=!M(h)||h!==this._$AH[a],h===c?t=c:t!==c&&(t+=(h??"")+n[a+1]),this._$AH[a]=h}o&&!i&&this.j(t)}j(t){t===c?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}},X=class extends w{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===c?void 0:t}},Z=class extends w{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==c)}},Q=class extends w{constructor(t,e,s,i,n){super(t,e,s,i,n),this.type=5}_$AI(t,e=this){if((t=x(this,t,e,0)??c)===A)return;let s=this._$AH,i=t===c&&s!==c||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,n=t!==c&&(s===c||i);i&&this.element.removeEventListener(this.name,this,s),n&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}},Y=class{constructor(t,e,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=s}get _$AU(){return this._$AM._$AU}_$AI(t){x(this,t)}};var qt=tt.litHtmlPolyfillSupport;qt?.(U,O),(tt.litHtmlVersions??=[]).push("3.3.3");var At=(r,t,e)=>{let s=e?.renderBefore??t,i=s._$litPart$;if(i===void 0){let n=e?.renderBefore??null;s._$litPart$=i=new O(t.insertBefore(T(),n),n,void 0,e??{})}return i._$AI(r),i};var it=globalThis,g=class extends f{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){let e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=At(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return A}};g._$litElement$=!0,g.finalized=!0,it.litElementHydrateSupport?.({LitElement:g});var zt=it.litElementPolyfillSupport;zt?.({LitElement:g});(it.litElementVersions??=[]).push("4.2.2");var It={attribute:!0,type:String,converter:k,reflect:!1,hasChanged:I},Bt=(r=It,t,e)=>{let{kind:s,metadata:i}=e,n=globalThis.litPropertyMetadata.get(i);if(n===void 0&&globalThis.litPropertyMetadata.set(i,n=new Map),s==="setter"&&((r=Object.create(r)).wrapped=!0),n.set(e.name,r),s==="accessor"){let{name:o}=e;return{set(l){let a=t.get.call(this);t.set.call(this,l),this.requestUpdate(o,a,r,!0,l)},init(l){return l!==void 0&&this.C(o,void 0,r,l),l}}}if(s==="setter"){let{name:o}=e;return function(l){let a=this[o];t.call(this,l),this.requestUpdate(o,a,r,!0,l)}}throw Error("Unsupported decorator location: "+s)};function D(r){return(t,e)=>typeof e=="object"?Bt(r,t,e):((s,i,n)=>{let o=i.hasOwnProperty(n);return i.constructor.createProperty(n,s),o?Object.getOwnPropertyDescriptor(i,n):void 0})(r,t,e)}function rt(r){return D({...r,state:!0,attribute:!1})}function xt(r){let t=!r.cancelled&&r.delay_seconds>=60;return{delayed:t,displayTime:r.cancelled?r.scheduled_time:r.estimated_time,scheduledTime:t?r.scheduled_time:void 0,delayMinutes:t?Math.round(r.delay_seconds/60):void 0}}function wt(r,t=[]){return[...new Set([...t,...Object.keys(r.states)])].find(s=>{let i=r.states[s]?.attributes;return Array.isArray(i?.stops)&&Array.isArray(i?.departures)})}var W=3,Et=12,St=12;function Vt(r,t=Date.now()){return Math.max(0,Math.round((new Date(r).getTime()-t)/6e4))}function nt(r,t){return new Intl.DateTimeFormat(t,{hour:"numeric",minute:"2-digit"}).format(new Date(r))}var H=class extends g{static async getConfigElement(){return document.createElement("translink-schedule-card-editor")}static getStubConfig(t,e=[]){return{entity:wt(t,e)??"",view:"grouped",departures_per_stop:W}}setConfig(t){if(!t.entity)throw new Error("A TransLink Schedule entity is required");this.config={view:"grouped",departures_per_stop:W,max_departures:St,show_clock:!0,show_alerts:!0,show_attribution:!0,...t}}connectedCallback(){super.connectedCallback(),this.ticker=window.setInterval(()=>this.requestUpdate(),3e4)}disconnectedCallback(){this.ticker!==void 0&&window.clearInterval(this.ticker),super.disconnectedCallback()}render(){if(!this.config||!this.hass)return c;let t=this.hass.states[this.config.entity];if(!t)return p`<ha-card><div class="message error">
+var Te=Object.defineProperty;var De=Object.getOwnPropertyDescriptor;var x=(o,e,t,i)=>{for(var s=i>1?void 0:i?De(e,t):e,r=o.length-1,n;r>=0;r--)(n=o[r])&&(s=(i?n(e,t,s):n(s))||s);return i&&s&&Te(e,t,s),s};var L=globalThis,z=L.ShadowRoot&&(L.ShadyCSS===void 0||L.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,G=Symbol(),ce=new WeakMap,E=class{constructor(e,t,i){if(this._$cssResult$=!0,i!==G)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o,t=this.t;if(z&&e===void 0){let i=t!==void 0&&t.length===1;i&&(e=ce.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),i&&ce.set(t,e))}return e}toString(){return this.cssText}},de=o=>new E(typeof o=="string"?o:o+"",void 0,G),j=(o,...e)=>{let t=o.length===1?o[0]:e.reduce((i,s,r)=>i+(n=>{if(n._$cssResult$===!0)return n.cssText;if(typeof n=="number")return n;throw Error("Value passed to 'css' function must be a 'css' function result: "+n+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+o[r+1],o[0]);return new E(t,o,G)},he=(o,e)=>{if(z)o.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of e){let i=document.createElement("style"),s=L.litNonce;s!==void 0&&i.setAttribute("nonce",s),i.textContent=t.cssText,o.appendChild(i)}},K=z?o=>o:o=>o instanceof CSSStyleSheet?(e=>{let t="";for(let i of e.cssRules)t+=i.cssText;return de(t)})(o):o;var{is:Me,defineProperty:Ne,getOwnPropertyDescriptor:Ue,getOwnPropertyNames:He,getOwnPropertySymbols:Oe,getPrototypeOf:Re}=Object,q=globalThis,pe=q.trustedTypes,Le=pe?pe.emptyScript:"",ze=q.reactiveElementPolyfillSupport,k=(o,e)=>o,P={toAttribute(o,e){switch(e){case Boolean:o=o?Le:null;break;case Object:case Array:o=o==null?o:JSON.stringify(o)}return o},fromAttribute(o,e){let t=o;switch(e){case Boolean:t=o!==null;break;case Number:t=o===null?null:Number(o);break;case Object:case Array:try{t=JSON.parse(o)}catch{t=null}}return t}},I=(o,e)=>!Me(o,e),ue={attribute:!0,type:String,converter:P,reflect:!1,useDefault:!1,hasChanged:I};Symbol.metadata??=Symbol("metadata"),q.litPropertyMetadata??=new WeakMap;var f=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=ue){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){let i=Symbol(),s=this.getPropertyDescriptor(e,i,t);s!==void 0&&Ne(this.prototype,e,s)}}static getPropertyDescriptor(e,t,i){let{get:s,set:r}=Ue(this.prototype,e)??{get(){return this[t]},set(n){this[t]=n}};return{get:s,set(n){let l=s?.call(this);r?.call(this,n),this.requestUpdate(e,l,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??ue}static _$Ei(){if(this.hasOwnProperty(k("elementProperties")))return;let e=Re(this);e.finalize(),e.l!==void 0&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(k("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(k("properties"))){let t=this.properties,i=[...He(t),...Oe(t)];for(let s of i)this.createProperty(s,t[s])}let e=this[Symbol.metadata];if(e!==null){let t=litPropertyMetadata.get(e);if(t!==void 0)for(let[i,s]of t)this.elementProperties.set(i,s)}this._$Eh=new Map;for(let[t,i]of this.elementProperties){let s=this._$Eu(t,i);s!==void 0&&this._$Eh.set(s,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){let t=[];if(Array.isArray(e)){let i=new Set(e.flat(1/0).reverse());for(let s of i)t.unshift(K(s))}else e!==void 0&&t.push(K(e));return t}static _$Eu(e,t){let i=t.attribute;return i===!1?void 0:typeof i=="string"?i:typeof e=="string"?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),this.renderRoot!==void 0&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){let e=new Map,t=this.constructor.elementProperties;for(let i of t.keys())this.hasOwnProperty(i)&&(e.set(i,this[i]),delete this[i]);e.size>0&&(this._$Ep=e)}createRenderRoot(){let e=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return he(e,this.constructor.elementStyles),e}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ET(e,t){let i=this.constructor.elementProperties.get(e),s=this.constructor._$Eu(e,i);if(s!==void 0&&i.reflect===!0){let r=(i.converter?.toAttribute!==void 0?i.converter:P).toAttribute(t,i.type);this._$Em=e,r==null?this.removeAttribute(s):this.setAttribute(s,r),this._$Em=null}}_$AK(e,t){let i=this.constructor,s=i._$Eh.get(e);if(s!==void 0&&this._$Em!==s){let r=i.getPropertyOptions(s),n=typeof r.converter=="function"?{fromAttribute:r.converter}:r.converter?.fromAttribute!==void 0?r.converter:P;this._$Em=s;let l=n.fromAttribute(t,r.type);this[s]=l??this._$Ej?.get(s)??l,this._$Em=null}}requestUpdate(e,t,i,s=!1,r){if(e!==void 0){let n=this.constructor;if(s===!1&&(r=this[e]),i??=n.getPropertyOptions(e),!((i.hasChanged??I)(r,t)||i.useDefault&&i.reflect&&r===this._$Ej?.get(e)&&!this.hasAttribute(n._$Eu(e,i))))return;this.C(e,t,i)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(e,t,{useDefault:i,reflect:s,wrapped:r},n){i&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,n??t??this[e]),r!==!0||n!==void 0)||(this._$AL.has(e)||(this.hasUpdated||i||(t=void 0),this._$AL.set(e,t)),s===!0&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[s,r]of this._$Ep)this[s]=r;this._$Ep=void 0}let i=this.constructor.elementProperties;if(i.size>0)for(let[s,r]of i){let{wrapped:n}=r,l=this[s];n!==!0||this._$AL.has(s)||l===void 0||this.C(s,void 0,r,l)}}let e=!1,t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(i=>i.hostUpdate?.()),this.update(t)):this._$EM()}catch(i){throw e=!1,this._$EM(),i}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(e){}firstUpdated(e){}};f.elementStyles=[],f.shadowRootOptions={mode:"open"},f[k("elementProperties")]=new Map,f[k("finalized")]=new Map,ze?.({ReactiveElement:f}),(q.reactiveElementVersions??=[]).push("2.1.2");var te=globalThis,me=o=>o,B=te.trustedTypes,fe=B?B.createPolicy("lit-html",{createHTML:o=>o}):void 0,be="$lit$",v=`lit$${Math.random().toFixed(9).slice(2)}$`,we="?"+v,je=`<${we}>`,b=document,D=()=>b.createComment(""),M=o=>o===null||typeof o!="object"&&typeof o!="function",ie=Array.isArray,qe=o=>ie(o)||typeof o?.[Symbol.iterator]=="function",J=`[ 	
+\f\r]`,T=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ge=/-->/g,_e=/>/g,y=RegExp(`>|${J}(?:([^\\s"'>=/]+)(${J}*=${J}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),ve=/'/g,ye=/"/g,xe=/^(?:script|style|textarea|title)$/i,se=o=>(e,...t)=>({_$litType$:o,strings:e,values:t}),d=se(1),et=se(2),tt=se(3),w=Symbol.for("lit-noChange"),c=Symbol.for("lit-nothing"),$e=new WeakMap,$=b.createTreeWalker(b,129);function Ae(o,e){if(!ie(o)||!o.hasOwnProperty("raw"))throw Error("invalid template strings array");return fe!==void 0?fe.createHTML(e):e}var Ie=(o,e)=>{let t=o.length-1,i=[],s,r=e===2?"<svg>":e===3?"<math>":"",n=T;for(let l=0;l<t;l++){let a=o[l],h,p,u=-1,m=0;for(;m<a.length&&(n.lastIndex=m,p=n.exec(a),p!==null);)m=n.lastIndex,n===T?p[1]==="!--"?n=ge:p[1]!==void 0?n=_e:p[2]!==void 0?(xe.test(p[2])&&(s=RegExp("</"+p[2],"g")),n=y):p[3]!==void 0&&(n=y):n===y?p[0]===">"?(n=s??T,u=-1):p[1]===void 0?u=-2:(u=n.lastIndex-p[2].length,h=p[1],n=p[3]===void 0?y:p[3]==='"'?ye:ve):n===ye||n===ve?n=y:n===ge||n===_e?n=T:(n=y,s=void 0);let _=n===y&&o[l+1].startsWith("/>")?" ":"";r+=n===T?a+je:u>=0?(i.push(h),a.slice(0,u)+be+a.slice(u)+v+_):a+v+(u===-2?l:_)}return[Ae(o,r+(o[t]||"<?>")+(e===2?"</svg>":e===3?"</math>":"")),i]},N=class o{constructor({strings:e,_$litType$:t},i){let s;this.parts=[];let r=0,n=0,l=e.length-1,a=this.parts,[h,p]=Ie(e,t);if(this.el=o.createElement(h,i),$.currentNode=this.el.content,t===2||t===3){let u=this.el.content.firstChild;u.replaceWith(...u.childNodes)}for(;(s=$.nextNode())!==null&&a.length<l;){if(s.nodeType===1){if(s.hasAttributes())for(let u of s.getAttributeNames())if(u.endsWith(be)){let m=p[n++],_=s.getAttribute(u).split(v),R=/([.?@])?(.*)/.exec(m);a.push({type:1,index:r,name:R[2],strings:_,ctor:R[1]==="."?Z:R[1]==="?"?Q:R[1]==="@"?Y:C}),s.removeAttribute(u)}else u.startsWith(v)&&(a.push({type:6,index:r}),s.removeAttribute(u));if(xe.test(s.tagName)){let u=s.textContent.split(v),m=u.length-1;if(m>0){s.textContent=B?B.emptyScript:"";for(let _=0;_<m;_++)s.append(u[_],D()),$.nextNode(),a.push({type:2,index:++r});s.append(u[m],D())}}}else if(s.nodeType===8)if(s.data===we)a.push({type:2,index:r});else{let u=-1;for(;(u=s.data.indexOf(v,u+1))!==-1;)a.push({type:7,index:r}),u+=v.length-1}r++}}static createElement(e,t){let i=b.createElement("template");return i.innerHTML=e,i}};function A(o,e,t=o,i){if(e===w)return e;let s=i!==void 0?t._$Co?.[i]:t._$Cl,r=M(e)?void 0:e._$litDirective$;return s?.constructor!==r&&(s?._$AO?.(!1),r===void 0?s=void 0:(s=new r(o),s._$AT(o,t,i)),i!==void 0?(t._$Co??=[])[i]=s:t._$Cl=s),s!==void 0&&(e=A(o,s._$AS(o,e.values),s,i)),e}var X=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){let{el:{content:t},parts:i}=this._$AD,s=(e?.creationScope??b).importNode(t,!0);$.currentNode=s;let r=$.nextNode(),n=0,l=0,a=i[0];for(;a!==void 0;){if(n===a.index){let h;a.type===2?h=new U(r,r.nextSibling,this,e):a.type===1?h=new a.ctor(r,a.name,a.strings,this,e):a.type===6&&(h=new ee(r,this,e)),this._$AV.push(h),a=i[++l]}n!==a?.index&&(r=$.nextNode(),n++)}return $.currentNode=b,s}p(e){let t=0;for(let i of this._$AV)i!==void 0&&(i.strings!==void 0?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}},U=class o{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,s){this.type=2,this._$AH=c,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode,t=this._$AM;return t!==void 0&&e?.nodeType===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=A(this,e,t),M(e)?e===c||e==null||e===""?(this._$AH!==c&&this._$AR(),this._$AH=c):e!==this._$AH&&e!==w&&this._(e):e._$litType$!==void 0?this.$(e):e.nodeType!==void 0?this.T(e):qe(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==c&&M(this._$AH)?this._$AA.nextSibling.data=e:this.T(b.createTextNode(e)),this._$AH=e}$(e){let{values:t,_$litType$:i}=e,s=typeof i=="number"?this._$AC(e):(i.el===void 0&&(i.el=N.createElement(Ae(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(t);else{let r=new X(s,this),n=r.u(this.options);r.p(t),this.T(n),this._$AH=r}}_$AC(e){let t=$e.get(e.strings);return t===void 0&&$e.set(e.strings,t=new N(e)),t}k(e){ie(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,i,s=0;for(let r of e)s===t.length?t.push(i=new o(this.O(D()),this.O(D()),this,this.options)):i=t[s],i._$AI(r),s++;s<t.length&&(this._$AR(i&&i._$AB.nextSibling,s),t.length=s)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){let i=me(e).nextSibling;me(e).remove(),e=i}}setConnected(e){this._$AM===void 0&&(this._$Cv=e,this._$AP?.(e))}},C=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,s,r){this.type=1,this._$AH=c,this._$AN=void 0,this.element=e,this.name=t,this._$AM=s,this.options=r,i.length>2||i[0]!==""||i[1]!==""?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=c}_$AI(e,t=this,i,s){let r=this.strings,n=!1;if(r===void 0)e=A(this,e,t,0),n=!M(e)||e!==this._$AH&&e!==w,n&&(this._$AH=e);else{let l=e,a,h;for(e=r[0],a=0;a<r.length-1;a++)h=A(this,l[i+a],t,a),h===w&&(h=this._$AH[a]),n||=!M(h)||h!==this._$AH[a],h===c?e=c:e!==c&&(e+=(h??"")+r[a+1]),this._$AH[a]=h}n&&!s&&this.j(e)}j(e){e===c?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},Z=class extends C{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===c?void 0:e}},Q=class extends C{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==c)}},Y=class extends C{constructor(e,t,i,s,r){super(e,t,i,s,r),this.type=5}_$AI(e,t=this){if((e=A(this,e,t,0)??c)===w)return;let i=this._$AH,s=e===c&&i!==c||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,r=e!==c&&(i===c||s);s&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}},ee=class{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){A(this,e)}};var Be=te.litHtmlPolyfillSupport;Be?.(N,U),(te.litHtmlVersions??=[]).push("3.3.3");var Ce=(o,e,t)=>{let i=t?.renderBefore??e,s=i._$litPart$;if(s===void 0){let r=t?.renderBefore??null;i._$litPart$=s=new U(e.insertBefore(D(),r),r,void 0,t??{})}return s._$AI(o),s};var oe=globalThis,g=class extends f{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=Ce(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return w}};g._$litElement$=!0,g.finalized=!0,oe.litElementHydrateSupport?.({LitElement:g});var Fe=oe.litElementPolyfillSupport;Fe?.({LitElement:g});(oe.litElementVersions??=[]).push("4.2.2");var We={attribute:!0,type:String,converter:P,reflect:!1,hasChanged:I},Ve=(o=We,e,t)=>{let{kind:i,metadata:s}=t,r=globalThis.litPropertyMetadata.get(s);if(r===void 0&&globalThis.litPropertyMetadata.set(s,r=new Map),i==="setter"&&((o=Object.create(o)).wrapped=!0),r.set(t.name,o),i==="accessor"){let{name:n}=t;return{set(l){let a=e.get.call(this);e.set.call(this,l),this.requestUpdate(n,a,o,!0,l)},init(l){return l!==void 0&&this.C(n,void 0,o,l),l}}}if(i==="setter"){let{name:n}=t;return function(l){let a=this[n];e.call(this,l),this.requestUpdate(n,a,o,!0,l)}}throw Error("Unsupported decorator location: "+i)};function H(o){return(e,t)=>typeof t=="object"?Ve(o,e,t):((i,s,r)=>{let n=s.hasOwnProperty(r);return s.constructor.createProperty(r,i),n?Object.getOwnPropertyDescriptor(s,r):void 0})(o,e,t)}function F(o){return H({...o,state:!0,attribute:!1})}function re(o,e){return new Date(o.estimated_time).getTime()-new Date(e.estimated_time).getTime()}function Ge(o,e){let t=new Map;for(let s of e)t.set(s,[]);for(let s of o){let r=t.get(s.stop_id)??[];r.push(s),t.set(s.stop_id,r)}let i=[];for(;[...t.values()].some(s=>s.length>0);)for(let s of t.values()){let r=s.shift();r&&i.push(r)}return i}function ne(o,e,t,i){let s=e==="hide"?o.filter(r=>!r.cancelled):[...o];return t==="balanced"?s=Ge(s,i):t==="route"?s.sort((r,n)=>r.route_name.localeCompare(n.route_name,void 0,{numeric:!0})||re(r,n)):t==="realtime"?s.sort((r,n)=>Number(n.realtime)-Number(r.realtime)||re(r,n)):s.sort(re),e==="move"&&s.sort((r,n)=>Number(r.cancelled)-Number(n.cancelled)),s}function Se(o,e,t=Date.now()){return o?t-new Date(o).getTime()>e*6e4:!0}function Ee(o,e=1){let t=!o.cancelled&&o.delay_seconds>=e*60;return{delayed:t,displayTime:o.cancelled?o.scheduled_time:o.estimated_time,scheduledTime:t?o.scheduled_time:void 0,delayMinutes:t?Math.round(o.delay_seconds/60):void 0}}function ke(o,e=[]){return[...new Set([...e,...Object.keys(o.states)])].find(i=>{let s=o.states[i]?.attributes;return Array.isArray(s?.stops)&&Array.isArray(s?.departures)})}var V=3,Pe=12,le=12;function Ke(o,e=Date.now()){return Math.max(0,Math.round((new Date(o).getTime()-e)/6e4))}function ae(o,e){let t=e?.time_format==="12"?!0:e?.time_format==="24"?!1:void 0;return new Intl.DateTimeFormat(e?.language,{hour:"numeric",hour12:t,minute:"2-digit"}).format(new Date(o))}var S=class extends g{constructor(){super(...arguments);this.collapsedStops=new Set;this.initializedStops=new Set}static async getConfigElement(){return document.createElement("translink-schedule-card-editor")}static getStubConfig(t,i=[]){return{entity:ke(t,i)??"",view:"grouped",departures_per_stop:V}}setConfig(t){if(!t.entity)throw new Error("A TransLink Schedule entity is required");this.config={view:"grouped",departures_per_stop:V,max_departures:le,time_display:"both",show_scheduled_time:!0,delay_threshold_minutes:1,delay_format:"compact",density:"comfortable",empty_stop_behavior:"show",cancelled_behavior:"show",route_color_mode:"official",combined_order:"chronological",show_header:!0,show_brand:!0,header_style:"primary",stop_heading_style:"accent",show_clock:!0,show_alerts:!0,show_stop_codes:!0,show_realtime_status:!1,show_stale_warning:!1,stale_after_minutes:3,...t}}connectedCallback(){super.connectedCallback(),this.ticker=window.setInterval(()=>this.requestUpdate(),3e4)}disconnectedCallback(){this.ticker!==void 0&&window.clearInterval(this.ticker),super.disconnectedCallback()}render(){if(!this.config||!this.hass)return c;let t=this.hass.states[this.config.entity];if(!t)return d`<ha-card><div class="message error">
         Entity ${this.config.entity} was not found.
-      </div></ha-card>`;let e=t.attributes.stops??[],s=t.attributes.departures??[],i=t.attributes.alerts??[],n=this.config.title??t.attributes.board_name??"TransLink departures";return p`
-      <ha-card>
-        <header>
-          <div>
-            <div class="eyebrow">TransLink</div>
-            <h1>${n}</h1>
-          </div>
-          ${this.config.show_clock?p`<div class="clock">${nt(new Date().toISOString(),this.hass.locale?.language)}</div>`:c}
-        </header>
-        ${this.config.show_alerts&&i.length?p`<div class="alerts">
-              ${i.map(o=>p`<div>
-                  <ha-icon icon="mdi:alert"></ha-icon>
+      </div></ha-card>`;let i=t.attributes.stops??[],s=t.attributes.departures??[],r=t.attributes.alerts??[],n=this.config.title??t.attributes.board_name??"TransLink departures",l=t.attributes.last_updated,a=this.config.show_stale_warning&&Se(l,this.config.stale_after_minutes??3),h=[`density-${this.config.density}`,`header-${this.config.header_style}`,`routes-${this.config.route_color_mode}`,`stops-${this.config.stop_heading_style}`].join(" ");return d`
+      <ha-card class=${h}>
+        ${this.config.show_header?d`<header>
+              <div class="header-title">
+                ${this.config.header_icon?d`<ha-icon
+                      .icon=${this.config.header_icon}
+                      aria-hidden="true"
+                    ></ha-icon>`:c}
+                <div>
+                  ${this.config.show_brand?d`<div class="eyebrow">TransLink</div>`:c}
+                  <h1>${n}</h1>
+                </div>
+              </div>
+              ${this.config.show_clock?d`<div class="clock">${ae(new Date().toISOString(),this.hass.locale)}</div>`:c}
+            </header>`:c}
+        ${this.config.show_alerts&&r.length?d`<div class="alerts">
+              ${r.map(p=>d`<div>
+                  <ha-icon icon="mdi:alert" aria-hidden="true"></ha-icon>
                   <span>
-                    <strong>${o.header}</strong>
-                    ${o.description?p`<small>${o.description}</small>`:c}
+                    <strong>${p.header}</strong>
+                    ${p.description?d`<small>${p.description}</small>`:c}
                   </span>
                 </div>`)}
             </div>`:c}
+        ${a?d`<div class="stale" role="status">
+              <ha-icon icon="mdi:cloud-alert" aria-hidden="true"></ha-icon>
+              Realtime data has not updated recently.
+            </div>`:c}
         <main>
-          ${s.length===0?p`<div class="message">No upcoming departures.</div>`:this.config.view==="combined"?this.renderCombined(s):this.renderGrouped(e)}
+          ${this.config.view==="combined"?this.renderCombined(s,i):this.renderGrouped(i)}
         </main>
-        ${this.config.show_attribution?p`<footer>Route and arrival data provided by permission of TransLink.</footer>`:c}
       </ha-card>
-    `}renderGrouped(t){return t.map(e=>p`
+    `}renderGrouped(t){let i=this.config?.empty_stop_behavior??(this.config?.hide_empty_stops?"hide":"show"),s=t.map(n=>({stop:n,departures:ne(n.departures,this.config?.cancelled_behavior??"show","chronological",[n.stop_id])}));i==="hide"?s=s.filter(({departures:n})=>n.length>0):i==="move"&&s.sort((n,l)=>+(n.departures.length===0)-+(l.departures.length===0));let r=s.map(({stop:n,departures:l})=>{let a=this.isStopCollapsed(n),h=n.departures_per_stop??this.config?.departures_per_stop??V;return d`
+        <section class=${a?"collapsed":""}>
+          <button
+            class="stop-heading"
+            type="button"
+            aria-expanded=${String(!a)}
+            @click=${()=>this.toggleStop(n.stop_id)}
+          >
+            <span class="stop-title">
+              <ha-icon
+                icon=${a?"mdi:chevron-right":"mdi:chevron-down"}
+                aria-hidden="true"
+              ></ha-icon>
+              ${n.display_name||n.stop_name}
+            </span>
+            ${this.config?.show_stop_codes!==!1&&n.show_stop_code!==!1&&n.stop_code?d`<span class="stop-code">#${n.stop_code}</span>`:c}
+          </button>
+          ${a?c:l.length?l.slice(0,h).map(p=>this.renderDeparture(p,!1)):d`<div class="empty-stop">No upcoming departures</div>`}
+        </section>
+      `});return r.length?r:d`<div class="message">No upcoming departures.</div>`}renderCombined(t,i){let s=ne(t,this.config?.cancelled_behavior??"show",this.config?.combined_order??"chronological",i.map(r=>r.stop_id));return s.length===0?d`<div class="message">No upcoming departures.</div>`:d`
       <section>
-        <div class="stop-heading">
-          <span>${e.stop_name}</span>
-          ${e.stop_code?p`<span class="stop-code">#${e.stop_code}</span>`:c}
-        </div>
-        ${e.departures.length?e.departures.slice(0,this.config?.departures_per_stop??W).map(s=>this.renderDeparture(s,!1)):p`<div class="empty-stop">No upcoming departures</div>`}
+        ${s.slice(0,this.config?.max_departures??le).map(r=>this.renderDeparture(r,!0))}
       </section>
-    `)}renderCombined(t){return p`
-      <section>
-        ${t.slice(0,this.config?.max_departures??St).map(e=>this.renderDeparture(e,!0))}
-      </section>
-    `}renderDeparture(t,e){let s=[t.route_color?`background:#${t.route_color}`:"",t.route_text_color?`color:#${t.route_text_color}`:""].filter(Boolean).join(";"),i=xt(t);return p`
-      <div class="departure ${t.cancelled?"cancelled":""}">
+    `}renderDeparture(t,i){let s=this.config?.route_color_mode==="official"?[t.route_color?`background:#${t.route_color}`:"",t.route_text_color?`color:#${t.route_text_color}`:""].filter(Boolean).join(";"):"",r=Ee(t,this.config?.delay_threshold_minutes),n=this.config?.time_display!=="clock",l=this.config?.time_display!=="countdown",a=t.destination||t.route_long_name,h=t.cancelled?"cancelled":r.delayed?`${r.delayMinutes} minutes late`:t.realtime?"live prediction":"scheduled",p=this.config?.delay_format==="text"?`${r.delayMinutes} min late`:`+${r.delayMinutes} min`;return d`
+      <div
+        class="departure ${t.cancelled?"cancelled":""}"
+        role="group"
+        aria-label="Route ${t.route_name} to ${a}, ${h}"
+      >
         <span class="route" style=${s}>${t.route_name}</span>
         <div class="destination">
-          <strong>${t.destination||t.route_long_name}</strong>
-          ${e?p`<small>${t.stop_name}</small>`:c}
+          <strong>${a}</strong>
+          ${i?d`<small>${t.stop_name}</small>`:c}
         </div>
         <div class="timing">
-          <strong>${t.cancelled?"Cancelled":`${Vt(t.estimated_time)} min`}</strong>
-          <small class="time-details">
-            ${i.scheduledTime?p`<s>${nt(i.scheduledTime,this.hass?.locale?.language)}</s>`:c}
-            <span class=${i.delayed?"predicted-time":""}>
-              ${nt(i.displayTime,this.hass?.locale?.language)}
-            </span>
-            ${i.delayMinutes!==void 0?p`<span class="delay">+${i.delayMinutes} min</span>`:c}
+          ${t.cancelled?d`<strong>Cancelled</strong>`:n?d`<strong>${Ke(t.estimated_time)} min</strong>`:c}
+          ${l?d`<small class="time-details ${n?"":"clock-only"}">
+                ${r.scheduledTime&&this.config?.show_scheduled_time!==!1?d`<s>${ae(r.scheduledTime,this.hass?.locale)}</s>`:c}
+                <span class=${r.delayed?"predicted-time":""}>
+                  ${ae(r.displayTime,this.hass?.locale)}
+                </span>
+              </small>`:c}
+          <small class="status-details">
+            ${r.delayMinutes!==void 0?d`<span class="delay">${p}</span>`:c}
+            ${this.config?.show_realtime_status?d`<span class="realtime ${t.realtime?"live":""}">
+                  ${t.realtime?"Live":"Scheduled"}
+                </span>`:c}
           </small>
         </div>
       </div>
-    `}static{this.styles=q`
+    `}isStopCollapsed(t){return this.initializedStops.has(t.stop_id)||(this.initializedStops.add(t.stop_id),t.collapsed&&this.collapsedStops.add(t.stop_id)),this.collapsedStops.has(t.stop_id)}toggleStop(t){let i=new Set(this.collapsedStops);i.has(t)?i.delete(t):i.add(t),this.collapsedStops=i}static{this.styles=j`
     :host { display: block; }
-    ha-card { overflow: hidden; }
+    ha-card {
+      background: var(--ha-card-background, var(--card-background-color));
+      overflow: hidden;
+    }
     header {
       align-items: center;
       background: var(--primary-color);
@@ -65,6 +97,19 @@ var Ct=Object.defineProperty;var kt=Object.getOwnPropertyDescriptor;var E=(r,t,e
       display: flex;
       justify-content: space-between;
       padding: 16px 20px;
+    }
+    .header-title, .stop-title {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+    }
+    .header-surface header {
+      background: var(--ha-card-background, var(--card-background-color));
+      color: var(--primary-text-color);
+    }
+    .header-transparent header {
+      background: transparent;
+      color: var(--primary-text-color);
     }
     .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; opacity: .8; text-transform: uppercase; }
     h1 { font-size: 20px; line-height: 1.2; margin: 2px 0 0; }
@@ -74,16 +119,39 @@ var Ct=Object.defineProperty;var kt=Object.getOwnPropertyDescriptor;var E=(r,t,e
     .alerts > div + div { margin-top: 8px; }
     .alerts span { display: flex; flex-direction: column; }
     .alerts small { color: inherit; }
+    .stale {
+      align-items: center;
+      background: var(--warning-color, #ff9800);
+      color: #111;
+      display: flex;
+      font-size: 12px;
+      gap: 8px;
+      padding: 7px 16px;
+    }
     main { padding: 4px 0; }
     section + section { border-top: 1px solid var(--divider-color); }
     .stop-heading {
       align-items: baseline;
       background: color-mix(in srgb, var(--card-background-color), var(--primary-color) 7%);
+      border: 0;
+      color: var(--primary-text-color);
+      cursor: pointer;
       display: flex;
+      font-family: inherit;
       font-size: 14px;
       font-weight: 700;
       justify-content: space-between;
       padding: 9px 16px;
+      text-align: left;
+      width: 100%;
+    }
+    .stop-heading:focus-visible { outline: 2px solid var(--primary-color); outline-offset: -2px; }
+    .stop-title ha-icon { --mdc-icon-size: 17px; }
+    .stops-plain .stop-heading { background: transparent; }
+    .stops-compact .stop-heading {
+      background: transparent;
+      font-size: 12px;
+      padding-block: 5px;
     }
     .stop-code { color: var(--secondary-text-color); font-size: 12px; font-weight: 500; }
     .departure {
@@ -105,21 +173,45 @@ var Ct=Object.defineProperty;var kt=Object.getOwnPropertyDescriptor;var E=(r,t,e
       padding: 5px 7px;
       text-align: center;
     }
+    .routes-theme .route {
+      background: var(--primary-color) !important;
+      color: var(--text-primary-color) !important;
+    }
+    .routes-monochrome .route {
+      background: var(--secondary-background-color) !important;
+      color: var(--primary-text-color) !important;
+    }
     .destination, .timing { display: flex; flex-direction: column; min-width: 0; }
     .destination strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     small { color: var(--secondary-text-color); font-size: 11px; }
     .timing { align-items: flex-end; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .time-details { align-items: baseline; display: flex; gap: 5px; }
+    .clock-only { font-size: 14px; font-weight: 700; }
+    .status-details { align-items: baseline; display: flex; gap: 5px; }
     .predicted-time, .delay { color: var(--error-color); }
+    .realtime {
+      border: 1px solid var(--divider-color);
+      border-radius: 8px;
+      padding: 0 4px;
+    }
+    .realtime.live { color: var(--success-color, var(--primary-color)); }
     .cancelled .destination strong { text-decoration: line-through; }
     .empty-stop, .message { color: var(--secondary-text-color); padding: 16px; }
     .error { color: var(--error-color); }
-    footer { color: var(--secondary-text-color); font-size: 10px; padding: 8px 16px 12px; }
+    .density-compact .departure { min-height: 40px; padding-block: 3px; }
+    .density-compact .stop-heading { padding-block: 6px; }
+    .density-minimal .departure {
+      gap: 8px;
+      min-height: 34px;
+      padding-block: 2px;
+    }
+    .density-minimal .route { padding-block: 3px; }
+    .density-minimal .destination small { display: none; }
     @media (max-width: 450px) {
       .departure { gap: 8px; padding-inline: 12px; }
       header { padding-inline: 16px; }
     }
-  `}};E([D({attribute:!1})],H.prototype,"hass",2),E([rt()],H.prototype,"config",2);var R=class extends g{setConfig(t){this.config=t}render(){return this.config?p`
+  `}};x([H({attribute:!1})],S.prototype,"hass",2),x([F()],S.prototype,"config",2),x([F()],S.prototype,"collapsedStops",2);var O=class extends g{setConfig(e){this.config=e}render(){return this.config?d`
       <div class="form">
         <ha-entity-picker
           .hass=${this.hass}
@@ -140,19 +232,172 @@ var Ct=Object.defineProperty;var kt=Object.getOwnPropertyDescriptor;var E=(r,t,e
           label="Layout"
           data-key="view"
           @selected=${this.valueChanged}
-          @closed=${t=>t.stopPropagation()}
+          @closed=${e=>e.stopPropagation()}
         >
           <mwc-list-item value="grouped">Grouped by stop</mwc-list-item>
           <mwc-list-item value="combined">Combined by time</mwc-list-item>
         </ha-select>
+        <ha-select
+          .value=${this.config.combined_order??"chronological"}
+          label="Combined ordering"
+          data-key="combined_order"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="chronological">Chronological</mwc-list-item>
+          <mwc-list-item value="balanced">Balance stops</mwc-list-item>
+          <mwc-list-item value="route">Group routes</mwc-list-item>
+          <mwc-list-item value="realtime">Realtime first</mwc-list-item>
+        </ha-select>
         <ha-textfield
           type="number"
           min="1"
-          max=${Et}
-          .value=${String(this.config.departures_per_stop??W)}
+          max=${Pe}
+          .value=${String(this.config.departures_per_stop??V)}
           label="Departures per stop"
           data-key="departures_per_stop"
+          data-min="1"
+          data-max=${Pe}
           @input=${this.numberChanged}
+        ></ha-textfield>
+        <ha-textfield
+          type="number"
+          min="1"
+          max="50"
+          .value=${String(this.config.max_departures??le)}
+          label="Maximum combined departures"
+          data-key="max_departures"
+          data-min="1"
+          data-max="50"
+          @input=${this.numberChanged}
+        ></ha-textfield>
+
+        <h3>Timing and status</h3>
+        <ha-select
+          .value=${this.config.time_display??"both"}
+          label="Time display"
+          data-key="time_display"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="both">Countdown and clock</mwc-list-item>
+          <mwc-list-item value="countdown">Countdown only</mwc-list-item>
+          <mwc-list-item value="clock">Clock only</mwc-list-item>
+        </ha-select>
+        <ha-textfield
+          type="number"
+          min="1"
+          max="30"
+          .value=${String(this.config.delay_threshold_minutes??1)}
+          label="Delay threshold (minutes)"
+          data-key="delay_threshold_minutes"
+          data-min="1"
+          data-max="30"
+          @input=${this.numberChanged}
+        ></ha-textfield>
+        <ha-select
+          .value=${this.config.delay_format??"compact"}
+          label="Delay label"
+          data-key="delay_format"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="compact">+7 min</mwc-list-item>
+          <mwc-list-item value="text">7 min late</mwc-list-item>
+        </ha-select>
+        <ha-select
+          .value=${this.config.cancelled_behavior??"show"}
+          label="Cancelled departures"
+          data-key="cancelled_behavior"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="show">Show in schedule order</mwc-list-item>
+          <mwc-list-item value="move">Move below active departures</mwc-list-item>
+          <mwc-list-item value="hide">Hide</mwc-list-item>
+        </ha-select>
+        ${this.booleanField("show_scheduled_time","Show struck-through scheduled time",this.config.show_scheduled_time!==!1)}
+        ${this.booleanField("show_realtime_status","Show Live/Scheduled labels",this.config.show_realtime_status===!0)}
+        ${this.booleanField("show_stale_warning","Warn when realtime data is stale",this.config.show_stale_warning===!0)}
+        <ha-textfield
+          type="number"
+          min="2"
+          max="30"
+          .value=${String(this.config.stale_after_minutes??3)}
+          label="Stale warning after (minutes)"
+          data-key="stale_after_minutes"
+          data-min="2"
+          data-max="30"
+          @input=${this.numberChanged}
+        ></ha-textfield>
+
+        <h3>Appearance</h3>
+        <ha-select
+          .value=${this.config.density??"comfortable"}
+          label="Row density"
+          data-key="density"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="comfortable">Comfortable</mwc-list-item>
+          <mwc-list-item value="compact">Compact</mwc-list-item>
+          <mwc-list-item value="minimal">Minimal</mwc-list-item>
+        </ha-select>
+        <ha-select
+          .value=${this.config.route_color_mode??"official"}
+          label="Route badge colors"
+          data-key="route_color_mode"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="official">Official route colors</mwc-list-item>
+          <mwc-list-item value="theme">Theme primary color</mwc-list-item>
+          <mwc-list-item value="monochrome">Monochrome</mwc-list-item>
+        </ha-select>
+        <ha-select
+          .value=${this.config.empty_stop_behavior??(this.config.hide_empty_stops?"hide":"show")}
+          label="Stops without departures"
+          data-key="empty_stop_behavior"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="show">Show in configured order</mwc-list-item>
+          <mwc-list-item value="move">Move to bottom</mwc-list-item>
+          <mwc-list-item value="hide">Hide</mwc-list-item>
+        </ha-select>
+        ${this.booleanField("show_stop_codes","Show stop numbers",this.config.show_stop_codes!==!1)}
+
+        <h3>Header</h3>
+        ${this.booleanField("show_header","Show header",this.config.show_header!==!1)}
+        ${this.booleanField("show_brand","Show TransLink label",this.config.show_brand!==!1)}
+        ${this.booleanField("show_clock","Show current time",this.config.show_clock!==!1)}
+        <ha-select
+          .value=${this.config.header_style??"primary"}
+          label="Header colors"
+          data-key="header_style"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="primary">Theme primary</mwc-list-item>
+          <mwc-list-item value="surface">Card surface</mwc-list-item>
+          <mwc-list-item value="transparent">Transparent</mwc-list-item>
+        </ha-select>
+        <ha-select
+          .value=${this.config.stop_heading_style??"accent"}
+          label="Stop heading style"
+          data-key="stop_heading_style"
+          @selected=${this.valueChanged}
+          @closed=${e=>e.stopPropagation()}
+        >
+          <mwc-list-item value="accent">Accent</mwc-list-item>
+          <mwc-list-item value="plain">Plain</mwc-list-item>
+          <mwc-list-item value="compact">Compact</mwc-list-item>
+        </ha-select>
+        <ha-textfield
+          .value=${this.config.header_icon??""}
+          label="Header icon (for example mdi:bus)"
+          data-key="header_icon"
+          @input=${this.valueChanged}
         ></ha-textfield>
         <ha-formfield label="Show service notices">
           <ha-switch
@@ -162,9 +407,23 @@ var Ct=Object.defineProperty;var kt=Object.getOwnPropertyDescriptor;var E=(r,t,e
           ></ha-switch>
         </ha-formfield>
       </div>
-    `:c}valueChanged(t){if(!this.config)return;let e=t.currentTarget,s=e.dataset.key,n=t.detail?.value??e.value;this.config={...this.config,[s]:n},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}booleanChanged(t){if(!this.config)return;let e=t.currentTarget,s=e.dataset.key;this.config={...this.config,[s]:e.checked},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}numberChanged(t){if(!this.config)return;let e=t.currentTarget,s=Number.parseInt(e.value,10);if(!Number.isFinite(s))return;let i=e.dataset.key;this.config={...this.config,[i]:Math.min(Et,Math.max(1,s))},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=q`
+    `:c}booleanField(e,t,i){return d`
+      <ha-formfield label=${t}>
+        <ha-switch
+          .checked=${i}
+          data-key=${e}
+          @change=${this.booleanChanged}
+        ></ha-switch>
+      </ha-formfield>
+    `}valueChanged(e){if(!this.config)return;let t=e.currentTarget,i=t.dataset.key,r=e.detail?.value??t.value;this.config={...this.config,[i]:r},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}booleanChanged(e){if(!this.config)return;let t=e.currentTarget,i=t.dataset.key;this.config={...this.config,[i]:t.checked},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}numberChanged(e){if(!this.config)return;let t=e.currentTarget,i=Number.parseInt(t.value,10);if(!Number.isFinite(i))return;let s=t.dataset.key,r=Number.parseInt(t.dataset.min??"1",10),n=Number.parseInt(t.dataset.max??"12",10);this.config={...this.config,[s]:Math.min(n,Math.max(r,i))},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=j`
     .form { display: grid; gap: 16px; padding: 8px 0; }
-  `}};E([D({attribute:!1})],R.prototype,"hass",2),E([rt()],R.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",H);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",R);window.customCards=window.customCards??[];window.customCards.some(r=>r.type==="translink-schedule-card")||window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{H as TransLinkScheduleCard,R as TransLinkScheduleCardEditor};
+    h3 {
+      border-bottom: 1px solid var(--divider-color);
+      font-size: 14px;
+      margin: 8px 0 0;
+      padding-bottom: 6px;
+    }
+  `}};x([H({attribute:!1})],O.prototype,"hass",2),x([F()],O.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",S);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",O);window.customCards=window.customCards??[];window.customCards.some(o=>o.type==="translink-schedule-card")||window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{S as TransLinkScheduleCard,O as TransLinkScheduleCardEditor};
 /*! Bundled license information:
 
 @lit/reactive-element/css-tag.js:

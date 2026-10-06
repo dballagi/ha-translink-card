@@ -11,6 +11,12 @@ CONF_STOP_IDS = "stop_ids"
 CONF_STOP_FILTERS = "stop_filters"
 CONF_INCLUDE_ROUTE_IDS = "include_route_ids"
 CONF_DESTINATION_CONTAINS = "destination_contains"
+CONF_DEPARTURE_WINDOW_MINUTES = "departure_window_minutes"
+CONF_CANCELLED_RETENTION_MINUTES = "cancelled_retention_minutes"
+CONF_STOP_DISPLAY_NAME = "display_name"
+CONF_STOP_DEPARTURES = "departures_per_stop"
+CONF_STOP_SHOW_CODE = "show_stop_code"
+CONF_STOP_COLLAPSED = "collapsed"
 CONF_STATIC_URL = "static_url"
 CONF_REALTIME_URL = "realtime_url"
 CONF_ALERTS_URL = "alerts_url"
@@ -22,6 +28,8 @@ DEFAULT_ALERTS_URL = "https://gtfsapi.translink.ca/v3/gtfsalerts"
 UPDATE_INTERVAL = timedelta(seconds=60)
 STATIC_REFRESH_INTERVAL = timedelta(hours=24)
 DEPARTURE_WINDOW = timedelta(hours=3)
+DEFAULT_DEPARTURE_WINDOW_MINUTES = 180
+DEFAULT_CANCELLED_RETENTION_MINUTES = 1
 MAX_DEPARTURES_PER_STOP = 12
 
 CARD_URL = "/translink_schedule/translink-schedule-card.js"
