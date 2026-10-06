@@ -1,34 +1,51 @@
+# TransLink Schedule
+
+![TransLink Schedule for Home Assistant](docs/readme-header.png)
+
+[![Validate](https://github.com/dballagi/ha-translink-card/actions/workflows/validate.yml/badge.svg)](https://github.com/dballagi/ha-translink-card/actions/workflows/validate.yml)
+[![GitHub release](https://img.shields.io/github/v/release/dballagi/ha-translink-card?display_name=tag)](https://github.com/dballagi/ha-translink-card/releases)
+[![License](https://img.shields.io/github/license/dballagi/ha-translink-card)](LICENSE)
+[![HACS custom repository](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories/)
+
+A Home Assistant custom integration and Lovelace card for upcoming departures
+from every Metro Vancouver TransLink stop around you, together in one board.
+Static GTFS schedules are merged with GTFS-Realtime predictions, delays,
+cancellations, and service alerts while the API key remains in the backend.
+
+## What it provides
+
+- **Multi-stop departure boards** — group departures by stop or combine every
+  configured stop into one list.
+- **Realtime timing** — show countdowns, clock times, struck-through scheduled
+  times, delays, cancellations, and Live/Scheduled labels.
+- **Flexible ordering** — sort combined departures chronologically, balance
+  stops, group routes, or place realtime predictions first.
+- **Per-stop control** — filter routes and destinations, set custom names and
+  row counts, show stop numbers, and choose collapsed defaults.
+- **Dashboard-native presentation** — use Home Assistant theme colors,
+  official route colors, three row densities, and responsive Sections sizing.
+- **Visual configuration** — customize the card without writing YAML.
+- **Shared local cache** — reuse one static feed, realtime feed, and polling
+  coordinator across multiple boards.
+
+## Screenshots
+
+The examples below are rendered from the shipped card bundle with
+representative sensor data.
+
+| Grouped multi-stop board | Combined departures |
+| --- | --- |
+| ![Grouped multi-stop TransLink departures](docs/screenshots/grouped-dark.png) | ![Combined TransLink departures](docs/screenshots/combined-light.png) |
+
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="custom_components/translink_schedule/brand/dark_logo.png">
-    <source media="(prefers-color-scheme: light)" srcset="custom_components/translink_schedule/brand/logo.png">
-    <img alt="TransLink Schedule" src="custom_components/translink_schedule/brand/logo.png" width="512">
-  </picture>
+  <img src="docs/screenshots/mobile-dark.png" alt="Compact TransLink departures on mobile" width="430">
 </p>
-
-# TransLink Schedule for Home Assistant
-
-A Home Assistant custom integration and Lovelace card that displays upcoming
-departures from multiple Metro Vancouver TransLink stops in one board.
-
-The card supports:
-
-- grouped departures with one section per stop;
-- chronological, balanced, route-grouped, and realtime-first combined views;
-- scheduled and GTFS-Realtime departure times;
-- delay and cancellation indicators;
-- compact, comfortable, and minimal responsive layouts;
-- Home Assistant theme colors and configurable route badges;
-- per-stop names, departure counts, stop numbers, and collapsed defaults;
-- configurable headers, timing formats, stale-data warnings, and realtime
-  labels; and
-- a visual card editor.
 
 ## Status
 
 This project is under active development and is not ready for general use yet.
 
-## Installation
+## Installation and quick start
 
 1. In HACS, add `https://github.com/dballagi/ha-translink-card` as a custom
    **Integration** repository.
@@ -37,11 +54,15 @@ This project is under active development and is not ready for general use yet.
 4. Enter a TransLink developer API key and one or more comma-separated GTFS
    stop IDs or public five-digit stop numbers.
 5. Open **Settings → Dashboards → ⋮ → Resources**, add
-   `/translink_schedule/translink-schedule-card.js` as a **JavaScript module**,
-   then refresh the browser.
+   `/translink_schedule/translink-schedule-card.js?v=<installed-version>` as a
+   **JavaScript module**, then refresh the browser. Replace
+   `<installed-version>` with the installed release, such as `0.1.0`.
 
 API keys are available from the
 [TransLink Developer Portal](https://developer.translink.ca/).
+
+After upgrades, update the version in the resource URL and perform a hard
+refresh so the browser does not keep an older card bundle.
 
 ## Integration configuration
 
@@ -98,6 +119,9 @@ the next polling cycle retries alerts.
 The integration bundles and serves the card. Registering the dashboard
 resource is a one-time step because dashboard resources belong to the user's
 Lovelace configuration.
+
+Add the card from the dashboard card picker and use its visual editor, or
+configure it directly in YAML:
 
 In Sections dashboards, the card defaults to the full 12-column width and can
 be resized down to 6 columns. Its height remains automatic so expanded stops,
