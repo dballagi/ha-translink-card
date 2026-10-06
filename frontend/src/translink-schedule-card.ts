@@ -1,6 +1,7 @@
 import { LitElement, css, html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
 
+import { getDepartureTiming } from "./departure-timing";
 import { findScheduleEntity } from "./entity-selection";
 import type {
   CardConfig,
@@ -157,7 +158,7 @@ export class TransLinkScheduleCard extends LitElement {
       departure.route_color ? `background:#${departure.route_color}` : "",
       departure.route_text_color ? `color:#${departure.route_text_color}` : "",
     ].filter(Boolean).join(";");
-    const delayed = departure.delay_seconds >= 60;
+    const timing = getDepartureTiming(departure);
     return html`
       <div class="departure ${departure.cancelled ? "cancelled" : ""}">
         <span class="route" style=${routeStyle}>${departure.route_name}</span>
@@ -167,9 +168,16 @@ export class TransLinkScheduleCard extends LitElement {
         </div>
         <div class="timing">
           <strong>${departure.cancelled ? "Cancelled" : `${minutesUntil(departure.estimated_time)} min`}</strong>
-          <small class=${delayed ? "delay" : ""}>
-            ${timeLabel(departure.estimated_time, this.hass?.locale?.language)}
-            ${delayed ? html` · +${Math.round(departure.delay_seconds / 60)}` : nothing}
+          <small class="time-details">
+            ${timing.scheduledTime
+              ? html`<s>${timeLabel(timing.scheduledTime, this.hass?.locale?.language)}</s>`
+              : nothing}
+            <span class=${timing.delayed ? "predicted-time" : ""}>
+              ${timeLabel(timing.displayTime, this.hass?.locale?.language)}
+            </span>
+            ${timing.delayMinutes !== undefined
+              ? html`<span class="delay">+${timing.delayMinutes} min</span>`
+              : nothing}
           </small>
         </div>
       </div>
@@ -230,7 +238,8 @@ export class TransLinkScheduleCard extends LitElement {
     .destination strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     small { color: var(--secondary-text-color); font-size: 11px; }
     .timing { align-items: flex-end; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .delay { color: var(--error-color); }
+    .time-details { align-items: baseline; display: flex; gap: 5px; }
+    .predicted-time, .delay { color: var(--error-color); }
     .cancelled .destination strong { text-decoration: line-through; }
     .empty-stop, .message { color: var(--secondary-text-color); padding: 16px; }
     .error { color: var(--error-color); }
