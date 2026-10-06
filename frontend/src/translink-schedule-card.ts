@@ -277,6 +277,13 @@ export class TransLinkScheduleCardEditor extends LitElement {
           <mwc-list-item value="grouped">Grouped by stop</mwc-list-item>
           <mwc-list-item value="combined">Combined by time</mwc-list-item>
         </ha-select>
+        <ha-formfield label="Show service notices">
+          <ha-switch
+            .checked=${this.config.show_alerts !== false}
+            data-key="show_alerts"
+            @change=${this.booleanChanged}
+          ></ha-switch>
+        </ha-formfield>
       </div>
     `;
   }
@@ -288,6 +295,20 @@ export class TransLinkScheduleCardEditor extends LitElement {
     const detail = (event as CustomEvent<{ value?: string }>).detail;
     const value = detail?.value ?? target.value;
     this.config = { ...this.config, [key]: value };
+    this.dispatchEvent(
+      new CustomEvent("config-changed", {
+        detail: { config: this.config },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private booleanChanged(event: Event): void {
+    if (!this.config) return;
+    const target = event.currentTarget as HTMLElement & { checked: boolean };
+    const key = target.dataset.key as keyof CardConfig;
+    this.config = { ...this.config, [key]: target.checked };
     this.dispatchEvent(
       new CustomEvent("config-changed", {
         detail: { config: this.config },

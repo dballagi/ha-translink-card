@@ -66,8 +66,13 @@ title: Nearby Departures
 view: grouped
 departures_per_stop: 3
 show_clock: true
+show_alerts: true
 show_attribution: true
 ```
+
+Set `show_alerts: false` or disable **Show service notices** in the visual
+editor to hide the alert banner. Cancelled departures remain visible and
+marked as cancelled.
 
 Use `view: combined` and `max_departures` to display a single chronological
 list:
