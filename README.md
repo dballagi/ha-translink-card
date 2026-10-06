@@ -33,9 +33,23 @@ cancellations, and service alerts while the API key remains in the backend.
 The examples below are rendered from the shipped card bundle with
 representative sensor data.
 
-| Grouped multi-stop board | Combined departures |
-| --- | --- |
-| ![Grouped multi-stop TransLink departures](docs/screenshots/grouped-dark.png) | ![Combined TransLink departures](docs/screenshots/combined-light.png) |
+### Grouped multi-stop board
+
+Each stop keeps its own heading, departure limit, public stop number, and
+collapsed state.
+
+![Grouped multi-stop TransLink departures](docs/screenshots/grouped-dark.png)
+
+### Combined departures
+
+Merge every configured stop into one chronological, balanced, route-grouped,
+or realtime-first list.
+
+![Combined TransLink departures](docs/screenshots/combined-light.png)
+
+### Responsive mobile layout
+
+The same card adapts to narrow dashboards with compact headings and rows.
 
 <p align="center">
   <img src="docs/screenshots/mobile-dark.png" alt="Compact TransLink departures on mobile" width="430">
