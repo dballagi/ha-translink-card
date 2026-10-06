@@ -319,9 +319,15 @@ if (!customElements.get("translink-schedule-card-editor")) {
 }
 
 window.customCards = window.customCards ?? [];
-window.customCards.push({
-  type: "translink-schedule-card",
-  name: "TransLink Schedule Card",
-  description: "Upcoming departures from multiple TransLink stops.",
-  preview: true,
-});
+if (
+  !window.customCards.some(
+    (card) => card.type === "translink-schedule-card",
+  )
+) {
+  window.customCards.push({
+    type: "translink-schedule-card",
+    name: "TransLink Schedule Card",
+    description: "Upcoming departures from multiple TransLink stops.",
+    preview: true,
+  });
+}

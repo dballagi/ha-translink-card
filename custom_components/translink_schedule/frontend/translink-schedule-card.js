@@ -144,7 +144,7 @@ var Et=Object.defineProperty;var St=Object.getOwnPropertyDescriptor;var E=(r,t,e
       </div>
     `:c}valueChanged(t){if(!this.config)return;let e=t.currentTarget,s=e.dataset.key,o=t.detail?.value??e.value;this.config={...this.config,[s]:o},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=q`
     .form { display: grid; gap: 16px; padding: 8px 0; }
-  `}};E([H({attribute:!1})],D.prototype,"hass",2),E([it()],D.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",R);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",D);window.customCards=window.customCards??[];window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{R as TransLinkScheduleCard,D as TransLinkScheduleCardEditor};
+  `}};E([H({attribute:!1})],D.prototype,"hass",2),E([it()],D.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",R);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",D);window.customCards=window.customCards??[];window.customCards.some(r=>r.type==="translink-schedule-card")||window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{R as TransLinkScheduleCard,D as TransLinkScheduleCardEditor};
 /*! Bundled license information:
 
 @lit/reactive-element/css-tag.js:

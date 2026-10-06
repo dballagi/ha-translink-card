@@ -32,13 +32,18 @@ This project is under active development and is not ready for general use yet.
 3. Add the integration from **Settings → Devices & services**.
 4. Enter a TransLink developer API key and one or more comma-separated GTFS
    stop IDs or public five-digit stop numbers.
+5. Open **Settings → Dashboards → ⋮ → Resources**, add
+   `/translink_schedule/translink-schedule-card.js` as a **JavaScript module**,
+   then refresh the browser.
 
 API keys are available from the
 [TransLink Developer Portal](https://developer.translink.ca/).
 
 ## Card configuration
 
-The integration bundles and registers the card automatically.
+The integration bundles and serves the card. Registering the dashboard
+resource is a one-time step because dashboard resources belong to the user's
+Lovelace configuration.
 
 ```yaml
 type: custom:translink-schedule-card
