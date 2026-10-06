@@ -53,6 +53,21 @@ When both filters are set, a departure must match a selected route and one of
 the destination phrases. Filters are applied before the grouped and combined
 departure lists are exposed to the card.
 
+## Data cache and performance
+
+The first setup downloads the TransLink static GTFS feed and builds a local
+SQLite stop-time index. This one-time operation can take several seconds,
+especially on lower-powered Home Assistant hardware.
+
+The integration keeps the source ZIP and index under Home Assistant's
+`.storage` directory. Together they currently use approximately 100 MB. On
+later restarts, the index avoids reparsing roughly 1.8 million stop-time rows.
+The static feed is refreshed daily.
+
+All boards using the same API configuration share one static feed, one decoded
+realtime feed, and one polling coordinator. Adding more boards therefore does
+not duplicate downloads, parsing, or minute-by-minute API requests.
+
 ## Card configuration
 
 The integration bundles and serves the card. Registering the dashboard

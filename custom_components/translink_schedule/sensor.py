@@ -39,8 +39,12 @@ class TransLinkScheduleSensor(
     ) -> None:
         super().__init__(coordinator)
         self._entry = entry
-        self._attr_name = self._board_name
         self._attr_unique_id = entry.entry_id
+
+    @property
+    def name(self) -> str:
+        """Return the configured board name."""
+        return self._board_name
 
     @property
     def _board_name(self) -> str:

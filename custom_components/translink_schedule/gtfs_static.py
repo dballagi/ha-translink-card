@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
+import sqlite3
 from collections import defaultdict
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from datetime import date, datetime, time, timedelta
+from pathlib import Path
 from zipfile import ZipFile
 from zoneinfo import ZoneInfo
 
@@ -16,10 +19,10 @@ from .models import Calendar, Departure, RealtimeUpdate, Route, Stop, StopTime, 
 VANCOUVER_TZ = ZoneInfo("America/Vancouver")
 
 
-def _rows(archive: ZipFile, filename: str) -> list[dict[str, str]]:
+def _rows(archive: ZipFile, filename: str) -> Iterator[dict[str, str]]:
     with archive.open(filename) as source:
         text = io.TextIOWrapper(source, encoding="utf-8-sig", newline="")
-        return list(csv.DictReader(text))
+        yield from csv.DictReader(text)
 
 
 def _gtfs_date(value: str) -> date:
@@ -34,8 +37,12 @@ def _seconds(value: str) -> int:
 class StaticFeed:
     """An indexed subset of a static GTFS feed."""
 
-    def __init__(self, payload: bytes) -> None:
+    def __init__(
+        self, payload: bytes, stop_times_database: Path | None = None
+    ) -> None:
         """Parse and index a GTFS ZIP payload."""
+        self._stop_times_database = stop_times_database
+        self.stop_times: dict[str, list[StopTime]] = defaultdict(list)
         with ZipFile(io.BytesIO(payload)) as archive:
             self.stops = {
                 row["stop_id"]: Stop(
@@ -95,21 +102,113 @@ class StaticFeed:
                         int(row["exception_type"])
                     )
 
-            self.stop_times: dict[str, list[StopTime]] = defaultdict(list)
+            if stop_times_database is None:
+                self._load_stop_times(archive)
+            else:
+                self._ensure_stop_times_database(
+                    archive,
+                    hashlib.sha256(payload).hexdigest(),
+                    stop_times_database,
+                )
+
+    def _load_stop_times(self, archive: ZipFile) -> None:
+        for row in _rows(archive, "stop_times.txt"):
+            stop_time = _stop_time_from_row(row)
+            if stop_time is not None:
+                self.stop_times[stop_time.stop_id].append(stop_time)
+        for values in self.stop_times.values():
+            values.sort(key=lambda item: item.departure_seconds)
+
+    def _ensure_stop_times_database(
+        self, archive: ZipFile, digest: str, database: Path
+    ) -> None:
+        if _database_matches(database, digest):
+            return
+
+        database.parent.mkdir(parents=True, exist_ok=True)
+        temporary = database.with_suffix(".tmp")
+        temporary.unlink(missing_ok=True)
+        connection = sqlite3.connect(temporary)
+        try:
+            connection.executescript(
+                """
+                PRAGMA journal_mode = OFF;
+                PRAGMA synchronous = OFF;
+                PRAGMA temp_store = MEMORY;
+                CREATE TABLE metadata (
+                    key TEXT PRIMARY KEY,
+                    value TEXT NOT NULL
+                );
+                CREATE TABLE stop_times (
+                    stop_id TEXT NOT NULL,
+                    trip_id TEXT NOT NULL,
+                    departure_seconds INTEGER NOT NULL,
+                    stop_sequence INTEGER NOT NULL
+                );
+                """
+            )
+            connection.execute(
+                "INSERT INTO metadata (key, value) VALUES ('digest', ?)",
+                (digest,),
+            )
+            batch: list[tuple[str, str, int, int]] = []
             for row in _rows(archive, "stop_times.txt"):
-                departure = row.get("departure_time") or row.get("arrival_time")
-                if not departure:
+                stop_time = _stop_time_from_row(row)
+                if stop_time is None:
                     continue
-                self.stop_times[row["stop_id"]].append(
-                    StopTime(
-                        trip_id=row["trip_id"],
-                        stop_id=row["stop_id"],
-                        departure_seconds=_seconds(departure),
-                        stop_sequence=int(row["stop_sequence"]),
+                batch.append(
+                    (
+                        stop_time.stop_id,
+                        stop_time.trip_id,
+                        stop_time.departure_seconds,
+                        stop_time.stop_sequence,
                     )
                 )
-            for values in self.stop_times.values():
-                values.sort(key=lambda item: item.departure_seconds)
+                if len(batch) >= 10_000:
+                    _insert_stop_times(connection, batch)
+                    batch.clear()
+            if batch:
+                _insert_stop_times(connection, batch)
+            connection.execute(
+                "CREATE INDEX stop_times_stop_id "
+                "ON stop_times (stop_id, departure_seconds)"
+            )
+            connection.commit()
+        finally:
+            connection.close()
+        temporary.replace(database)
+
+    def _stop_times_for_stop(self, stop_id: str) -> list[StopTime]:
+        cached = self.stop_times.get(stop_id)
+        if cached is not None:
+            return cached
+        if self._stop_times_database is None:
+            return []
+
+        connection = sqlite3.connect(self._stop_times_database)
+        try:
+            rows = connection.execute(
+                """
+                SELECT trip_id, departure_seconds, stop_sequence
+                FROM stop_times
+                WHERE stop_id = ?
+                ORDER BY departure_seconds
+                """,
+                (stop_id,),
+            )
+            values = [
+                StopTime(
+                    trip_id=trip_id,
+                    stop_id=stop_id,
+                    departure_seconds=departure_seconds,
+                    stop_sequence=stop_sequence,
+                )
+                for trip_id, departure_seconds, stop_sequence in rows
+            ]
+        finally:
+            connection.close()
+        self.stop_times[stop_id] = values
+        return values
 
     def validate_stops(self, stop_ids: list[str]) -> list[str]:
         """Return stop IDs absent from the static feed."""
@@ -148,7 +247,7 @@ class StaticFeed:
         """Return routes serving a stop."""
         route_ids = {
             trip.route_id
-            for stop_time in self.stop_times.get(stop_id, [])
+            for stop_time in self._stop_times_for_stop(stop_id)
             if (trip := self.trips.get(stop_time.trip_id)) is not None
         }
         return sorted(
@@ -194,7 +293,7 @@ class StaticFeed:
                 midnight = datetime.combine(
                     service_date, time.min, tzinfo=VANCOUVER_TZ
                 )
-                for stop_time in self.stop_times.get(stop_id, []):
+                for stop_time in self._stop_times_for_stop(stop_id):
                     trip = self.trips.get(stop_time.trip_id)
                     if trip is None or not self._service_active(
                         trip.service_id, service_date
@@ -283,3 +382,44 @@ def _trip_matches_filter(
             return False
 
     return True
+
+
+def _stop_time_from_row(row: dict[str, str]) -> StopTime | None:
+    departure = row.get("departure_time") or row.get("arrival_time")
+    if not departure:
+        return None
+    return StopTime(
+        trip_id=row["trip_id"],
+        stop_id=row["stop_id"],
+        departure_seconds=_seconds(departure),
+        stop_sequence=int(row["stop_sequence"]),
+    )
+
+
+def _insert_stop_times(
+    connection: sqlite3.Connection, batch: list[tuple[str, str, int, int]]
+) -> None:
+    connection.executemany(
+        """
+        INSERT INTO stop_times (
+            stop_id, trip_id, departure_seconds, stop_sequence
+        ) VALUES (?, ?, ?, ?)
+        """,
+        batch,
+    )
+
+
+def _database_matches(database: Path, digest: str) -> bool:
+    if not database.is_file():
+        return False
+    try:
+        connection = sqlite3.connect(database)
+        try:
+            row = connection.execute(
+                "SELECT value FROM metadata WHERE key = 'digest'"
+            ).fetchone()
+            return row is not None and row[0] == digest
+        finally:
+            connection.close()
+    except sqlite3.DatabaseError:
+        return False

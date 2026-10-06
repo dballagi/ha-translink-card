@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import CARD_FILENAME, CARD_URL, PLATFORMS
-from .coordinator import TransLinkCoordinator
+from .coordinator import TransLinkCoordinator, async_get_shared_coordinator
 
 type TransLinkConfigEntry = ConfigEntry[TransLinkCoordinator]
 
@@ -27,8 +27,7 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: TransLinkConfigEntry
 ) -> bool:
     """Set up TransLink Schedule from a config entry."""
-    coordinator = TransLinkCoordinator(hass, entry)
-    await coordinator.async_config_entry_first_refresh()
+    coordinator = await async_get_shared_coordinator(hass, entry)
     entry.runtime_data = coordinator
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -43,7 +42,7 @@ async def async_unload_entry(
 
 
 async def _async_update_listener(
-    hass: HomeAssistant, entry: TransLinkConfigEntry
+    _: HomeAssistant, entry: TransLinkConfigEntry
 ) -> None:
-    """Reload an entry after board options change."""
-    await hass.config_entries.async_reload(entry.entry_id)
+    """Refresh entities after board options change."""
+    entry.runtime_data.async_update_listeners()

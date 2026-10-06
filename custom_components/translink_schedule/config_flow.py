@@ -36,7 +36,11 @@ from .const import (
     DEFAULT_STATIC_URL,
     DOMAIN,
 )
-from .gtfs_static import StaticFeed
+from .gtfs_cache import async_get_static_feed
+from .realtime_cache import (
+    async_get_realtime_updates,
+    realtime_cache_key,
+)
 
 
 def _parse_stop_ids(value: str) -> list[str]:
@@ -76,11 +80,17 @@ class TransLinkScheduleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     user_input[CONF_ALERTS_URL],
                 )
                 try:
-                    static_payload, _ = await asyncio.gather(
-                        api.async_static_feed(), api.async_realtime_updates()
+                    realtime_key = realtime_cache_key(
+                        user_input[CONF_API_KEY],
+                        user_input[CONF_REALTIME_URL],
                     )
-                    feed = await self.hass.async_add_executor_job(
-                        StaticFeed, static_payload
+                    feed, _ = await asyncio.gather(
+                        async_get_static_feed(
+                            self.hass, user_input[CONF_STATIC_URL], api
+                        ),
+                        async_get_realtime_updates(
+                            self.hass, realtime_key, api
+                        ),
                     )
                     stop_ids, missing = feed.resolve_stop_ids(stop_ids)
                     if missing:
