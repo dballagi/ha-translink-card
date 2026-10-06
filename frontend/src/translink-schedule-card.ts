@@ -11,6 +11,7 @@ import type {
 } from "./types";
 
 const DEFAULT_PER_STOP = 3;
+const MAX_PER_STOP = 12;
 const DEFAULT_MAX = 12;
 
 function minutesUntil(value: string, now = Date.now()): number {
@@ -277,6 +278,17 @@ export class TransLinkScheduleCardEditor extends LitElement {
           <mwc-list-item value="grouped">Grouped by stop</mwc-list-item>
           <mwc-list-item value="combined">Combined by time</mwc-list-item>
         </ha-select>
+        <ha-textfield
+          type="number"
+          min="1"
+          max=${MAX_PER_STOP}
+          .value=${String(
+            this.config.departures_per_stop ?? DEFAULT_PER_STOP,
+          )}
+          label="Departures per stop"
+          data-key="departures_per_stop"
+          @input=${this.numberChanged}
+        ></ha-textfield>
         <ha-formfield label="Show service notices">
           <ha-switch
             .checked=${this.config.show_alerts !== false}
@@ -309,6 +321,25 @@ export class TransLinkScheduleCardEditor extends LitElement {
     const target = event.currentTarget as HTMLElement & { checked: boolean };
     const key = target.dataset.key as keyof CardConfig;
     this.config = { ...this.config, [key]: target.checked };
+    this.dispatchEvent(
+      new CustomEvent("config-changed", {
+        detail: { config: this.config },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private numberChanged(event: Event): void {
+    if (!this.config) return;
+    const target = event.currentTarget as HTMLElement & { value: string };
+    const value = Number.parseInt(target.value, 10);
+    if (!Number.isFinite(value)) return;
+    const key = target.dataset.key as keyof CardConfig;
+    this.config = {
+      ...this.config,
+      [key]: Math.min(MAX_PER_STOP, Math.max(1, value)),
+    };
     this.dispatchEvent(
       new CustomEvent("config-changed", {
         detail: { config: this.config },

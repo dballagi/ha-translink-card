@@ -74,6 +74,9 @@ Set `show_alerts: false` or disable **Show service notices** in the visual
 editor to hide the alert banner. Cancelled departures remain visible and
 marked as cancelled.
 
+Use `departures_per_stop` or the **Departures per stop** visual-editor field
+to show between 1 and 12 departures in each grouped stop section.
+
 Use `view: combined` and `max_departures` to display a single chronological
 list:
 
