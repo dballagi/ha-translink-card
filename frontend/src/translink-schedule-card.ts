@@ -522,23 +522,23 @@ export class TransLinkScheduleCardEditor extends LitElement {
           .value=${this.config.view ?? "grouped"}
           label="Layout"
           data-key="view"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="grouped">Grouped by stop</mwc-list-item>
-          <mwc-list-item value="combined">Combined by time</mwc-list-item>
+          <ha-list-item value="grouped">Grouped by stop</ha-list-item>
+          <ha-list-item value="combined">Combined by time</ha-list-item>
         </ha-select>
         <ha-select
           .value=${this.config.combined_order ?? "chronological"}
           label="Combined ordering"
           data-key="combined_order"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="chronological">Chronological</mwc-list-item>
-          <mwc-list-item value="balanced">Balance stops</mwc-list-item>
-          <mwc-list-item value="route">Group routes</mwc-list-item>
-          <mwc-list-item value="realtime">Realtime first</mwc-list-item>
+          <ha-list-item value="chronological">Chronological</ha-list-item>
+          <ha-list-item value="balanced">Balance stops</ha-list-item>
+          <ha-list-item value="route">Group routes</ha-list-item>
+          <ha-list-item value="realtime">Realtime first</ha-list-item>
         </ha-select>
         <ha-textfield
           type="number"
@@ -570,12 +570,12 @@ export class TransLinkScheduleCardEditor extends LitElement {
           .value=${this.config.time_display ?? "both"}
           label="Time display"
           data-key="time_display"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="both">Countdown and clock</mwc-list-item>
-          <mwc-list-item value="countdown">Countdown only</mwc-list-item>
-          <mwc-list-item value="clock">Clock only</mwc-list-item>
+          <ha-list-item value="both">Countdown and clock</ha-list-item>
+          <ha-list-item value="countdown">Countdown only</ha-list-item>
+          <ha-list-item value="clock">Clock only</ha-list-item>
         </ha-select>
         <ha-textfield
           type="number"
@@ -592,22 +592,22 @@ export class TransLinkScheduleCardEditor extends LitElement {
           .value=${this.config.delay_format ?? "compact"}
           label="Delay label"
           data-key="delay_format"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="compact">+7 min</mwc-list-item>
-          <mwc-list-item value="text">7 min late</mwc-list-item>
+          <ha-list-item value="compact">+7 min</ha-list-item>
+          <ha-list-item value="text">7 min late</ha-list-item>
         </ha-select>
         <ha-select
           .value=${this.config.cancelled_behavior ?? "show"}
           label="Cancelled departures"
           data-key="cancelled_behavior"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="show">Show in schedule order</mwc-list-item>
-          <mwc-list-item value="move">Move below active departures</mwc-list-item>
-          <mwc-list-item value="hide">Hide</mwc-list-item>
+          <ha-list-item value="show">Show in schedule order</ha-list-item>
+          <ha-list-item value="move">Move below active departures</ha-list-item>
+          <ha-list-item value="hide">Hide</ha-list-item>
         </ha-select>
         ${this.booleanField(
           "show_scheduled_time",
@@ -641,35 +641,35 @@ export class TransLinkScheduleCardEditor extends LitElement {
           .value=${this.config.density ?? "comfortable"}
           label="Row density"
           data-key="density"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="comfortable">Comfortable</mwc-list-item>
-          <mwc-list-item value="compact">Compact</mwc-list-item>
-          <mwc-list-item value="minimal">Minimal</mwc-list-item>
+          <ha-list-item value="comfortable">Comfortable</ha-list-item>
+          <ha-list-item value="compact">Compact</ha-list-item>
+          <ha-list-item value="minimal">Minimal</ha-list-item>
         </ha-select>
         <ha-select
           .value=${this.config.route_color_mode ?? "official"}
           label="Route badge colors"
           data-key="route_color_mode"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="official">Official route colors</mwc-list-item>
-          <mwc-list-item value="theme">Theme primary color</mwc-list-item>
-          <mwc-list-item value="monochrome">Monochrome</mwc-list-item>
+          <ha-list-item value="official">Official route colors</ha-list-item>
+          <ha-list-item value="theme">Theme primary color</ha-list-item>
+          <ha-list-item value="monochrome">Monochrome</ha-list-item>
         </ha-select>
         <ha-select
           .value=${this.config.empty_stop_behavior ??
           (this.config.hide_empty_stops ? "hide" : "show")}
           label="Stops without departures"
           data-key="empty_stop_behavior"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="show">Show in configured order</mwc-list-item>
-          <mwc-list-item value="move">Move to bottom</mwc-list-item>
-          <mwc-list-item value="hide">Hide</mwc-list-item>
+          <ha-list-item value="show">Show in configured order</ha-list-item>
+          <ha-list-item value="move">Move to bottom</ha-list-item>
+          <ha-list-item value="hide">Hide</ha-list-item>
         </ha-select>
         ${this.booleanField(
           "show_stop_codes",
@@ -697,23 +697,23 @@ export class TransLinkScheduleCardEditor extends LitElement {
           .value=${this.config.header_style ?? "primary"}
           label="Header colors"
           data-key="header_style"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="primary">Theme primary</mwc-list-item>
-          <mwc-list-item value="surface">Card surface</mwc-list-item>
-          <mwc-list-item value="transparent">Transparent</mwc-list-item>
+          <ha-list-item value="primary">Theme primary</ha-list-item>
+          <ha-list-item value="surface">Card surface</ha-list-item>
+          <ha-list-item value="transparent">Transparent</ha-list-item>
         </ha-select>
         <ha-select
           .value=${this.config.stop_heading_style ?? "accent"}
           label="Stop heading style"
           data-key="stop_heading_style"
-          @selected=${this.valueChanged}
+          @value-changed=${this.valueChanged}
           @closed=${(event: Event) => event.stopPropagation()}
         >
-          <mwc-list-item value="accent">Accent</mwc-list-item>
-          <mwc-list-item value="plain">Plain</mwc-list-item>
-          <mwc-list-item value="compact">Compact</mwc-list-item>
+          <ha-list-item value="accent">Accent</ha-list-item>
+          <ha-list-item value="plain">Plain</ha-list-item>
+          <ha-list-item value="compact">Compact</ha-list-item>
         </ha-select>
         <ha-textfield
           .value=${this.config.header_icon ?? ""}
