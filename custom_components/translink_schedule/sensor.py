@@ -181,6 +181,7 @@ class TransLinkScheduleSensor(
             )
 
         return {
+            "config_entry_id": self._entry.entry_id,
             "board_name": self._board_name,
             "stops": stops,
             "departures": [departure.as_dict() for departure in departures],

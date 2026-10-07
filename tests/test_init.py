@@ -5,22 +5,37 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
 import custom_components.translink_schedule as integration
-from custom_components.translink_schedule.const import CARD_FILENAME, CARD_URL
+from custom_components.translink_schedule.const import (
+    CARD_CHUNKS_FOLDER,
+    CARD_CHUNKS_URL,
+    CARD_FILENAME,
+    CARD_URL,
+)
 from custom_components.translink_schedule.models import Departure
 from custom_components.translink_schedule.sensor import TransLinkScheduleSensor
 
 
 async def test_card_static_path_is_registered() -> None:
     register = AsyncMock()
-    hass = SimpleNamespace(http=SimpleNamespace(async_register_static_paths=register))
+    register_view = Mock()
+    hass = SimpleNamespace(
+        http=SimpleNamespace(
+            async_register_static_paths=register,
+            register_view=register_view,
+        )
+    )
 
     assert await integration.async_setup(hass, {}) is True
 
     register.assert_awaited_once()
-    config = register.await_args.args[0][0]
+    configs = register.await_args.args[0]
+    config = configs[0]
     assert config.url_path == CARD_URL
     assert config.path.endswith(CARD_FILENAME)
     assert config.cache_headers is False
+    assert configs[1].url_path == CARD_CHUNKS_URL
+    assert configs[1].path.endswith(CARD_CHUNKS_FOLDER)
+    register_view.assert_called_once()
 
 
 async def test_options_update_refreshes_entities_without_reload() -> None:

@@ -18,6 +18,8 @@ cancellations, and service alerts while the API key remains in the backend.
   configured stop into one list.
 - **Realtime timing** — show countdowns, clock times, struck-through scheduled
   times, delays, cancellations, and Live/Scheduled labels.
+- **Route-aware vehicle maps** — select a departure to see its planned GTFS
+  route, boarding stop, destination, and last reported bus position.
 - **Flexible ordering** — sort combined departures chronologically, balance
   stops, group routes, or place realtime predictions first.
 - **Per-stop control** — filter routes and destinations, set custom names and
@@ -178,6 +180,13 @@ chip. `route_filter_reset_minutes` resets the selection to **All** after the
 latest filter interaction; set it to `0` to keep the selection until it is
 changed manually. These settings are also available in the visual editor.
 
+Every departure row is clickable and keyboard accessible. Selecting one opens
+an on-demand map of that trip's planned GTFS shape. When TransLink reports a
+matching vehicle, the map also shows its last reported position and mutes the
+completed part of the planned route. If no vehicle is currently matched, the
+planned route, boarding stop, and destination remain available. Vehicle
+positions are snapshots and should not be interpreted as exact live locations.
+
 Use `view: combined` and `max_departures` to display a single list.
 `combined_order` accepts `chronological`, `balanced`, `route`, or `realtime`:
 
@@ -241,3 +250,8 @@ permission of TransLink. TransLink assumes no responsibility for the accuracy
 or currency of the Data used in this product or service.
 
 This project is not affiliated with or endorsed by TransLink.
+
+Basemap tiles use Home Assistant's built-in
+[Map tiles](https://www.home-assistant.io/integrations/map_tiles/) proxy and
+cache, backed by [OpenStreetMap](https://www.openstreetmap.org/copyright).
+Tiles are requested only when a departure map is opened.

@@ -20,10 +20,12 @@ CONF_STOP_COLLAPSED = "collapsed"
 CONF_STATIC_URL = "static_url"
 CONF_REALTIME_URL = "realtime_url"
 CONF_ALERTS_URL = "alerts_url"
+CONF_VEHICLE_POSITIONS_URL = "vehicle_positions_url"
 
 DEFAULT_STATIC_URL = "https://gtfs-static.translink.ca/gtfs/google_transit.zip"
 DEFAULT_REALTIME_URL = "https://gtfsapi.translink.ca/v3/gtfsrealtime"
 DEFAULT_ALERTS_URL = "https://gtfsapi.translink.ca/v3/gtfsalerts"
+DEFAULT_VEHICLE_POSITIONS_URL = "https://gtfsapi.translink.ca/v3/gtfsposition"
 
 UPDATE_INTERVAL = timedelta(seconds=60)
 STATIC_REFRESH_INTERVAL = timedelta(hours=24)
@@ -35,3 +37,5 @@ TRIP_LEVEL_STOP_ID = ""
 
 CARD_URL = "/translink_schedule/translink-schedule-card.js"
 CARD_FILENAME = "translink-schedule-card.js"
+CARD_CHUNKS_URL = "/translink_schedule/chunks"
+CARD_CHUNKS_FOLDER = "chunks"

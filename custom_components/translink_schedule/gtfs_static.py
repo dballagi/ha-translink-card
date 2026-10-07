@@ -22,7 +22,8 @@ from .models import Calendar, Departure, RealtimeUpdate, Route, Stop, StopTime, 
 
 VANCOUVER_TZ = ZoneInfo("America/Vancouver")
 STOP_TIME_CACHE_SIZE = 32
-STOP_TIMES_SCHEMA_VERSION = "2"
+SHAPE_CACHE_SIZE = 16
+STOP_TIMES_SCHEMA_VERSION = "3"
 
 
 def _rows(archive: ZipFile, filename: str) -> Iterator[dict[str, str]]:
@@ -49,12 +50,19 @@ class StaticFeed:
         """Parse and index a GTFS ZIP payload."""
         self._stop_times_database = stop_times_database
         self.stop_times: OrderedDict[str, list[StopTime]] = OrderedDict()
+        self.shapes: OrderedDict[str, list[tuple[float, float]]] = OrderedDict()
         with ZipFile(io.BytesIO(payload)) as archive:
             self.stops = {
                 row["stop_id"]: Stop(
                     stop_id=row["stop_id"],
                     name=row["stop_name"],
                     code=row.get("stop_code") or None,
+                    latitude=(
+                        float(row["stop_lat"]) if row.get("stop_lat") else None
+                    ),
+                    longitude=(
+                        float(row["stop_lon"]) if row.get("stop_lon") else None
+                    ),
                 )
                 for row in _rows(archive, "stops.txt")
             }
@@ -78,6 +86,7 @@ class StaticFeed:
                     direction_id=(
                         int(row["direction_id"]) if row.get("direction_id") else None
                     ),
+                    shape_id=row.get("shape_id") or None,
                 )
                 for row in _rows(archive, "trips.txt")
             }
@@ -110,6 +119,7 @@ class StaticFeed:
 
             if stop_times_database is None:
                 self._load_stop_times(archive)
+                self._load_shapes(archive)
             else:
                 self._ensure_stop_times_database(
                     archive,
@@ -126,6 +136,24 @@ class StaticFeed:
                 )
         for values in self.stop_times.values():
             values.sort(key=lambda item: item.departure_seconds)
+
+    def _load_shapes(self, archive: ZipFile) -> None:
+        if "shapes.txt" not in archive.namelist():
+            return
+        sequenced: dict[str, list[tuple[int, float, float]]] = defaultdict(list)
+        for row in _rows(archive, "shapes.txt"):
+            sequenced[row["shape_id"]].append(
+                (
+                    int(row["shape_pt_sequence"]),
+                    float(row["shape_pt_lat"]),
+                    float(row["shape_pt_lon"]),
+                )
+            )
+        for shape_id, points in sequenced.items():
+            self.shapes[shape_id] = [
+                (latitude, longitude)
+                for _, latitude, longitude in sorted(points)
+            ]
 
     def _ensure_stop_times_database(
         self, archive: ZipFile, digest: str, database: Path
@@ -156,6 +184,14 @@ class StaticFeed:
                 );
                 CREATE INDEX stop_times_stop_id
                 ON stop_times (stop_id, departure_seconds);
+                CREATE TABLE shapes (
+                    shape_id TEXT NOT NULL,
+                    latitude REAL NOT NULL,
+                    longitude REAL NOT NULL,
+                    sequence INTEGER NOT NULL
+                );
+                CREATE INDEX shapes_shape_id
+                ON shapes (shape_id, sequence);
                 """
             )
             # Maintain the index during inserts instead of sorting all rows at once.
@@ -185,6 +221,22 @@ class StaticFeed:
                     batch.clear()
             if batch:
                 _insert_stop_times(connection, batch)
+            if "shapes.txt" in archive.namelist():
+                shape_batch: list[tuple[str, float, float, int]] = []
+                for row in _rows(archive, "shapes.txt"):
+                    shape_batch.append(
+                        (
+                            row["shape_id"],
+                            float(row["shape_pt_lat"]),
+                            float(row["shape_pt_lon"]),
+                            int(row["shape_pt_sequence"]),
+                        )
+                    )
+                    if len(shape_batch) >= 1_000:
+                        _insert_shapes(connection, shape_batch)
+                        shape_batch.clear()
+                if shape_batch:
+                    _insert_shapes(connection, shape_batch)
             connection.commit()
         finally:
             connection.close()
@@ -225,6 +277,38 @@ class StaticFeed:
         while len(self.stop_times) > STOP_TIME_CACHE_SIZE:
             self.stop_times.popitem(last=False)
         return values
+
+    def shape_for_trip(self, trip_id: str) -> list[tuple[float, float]]:
+        """Return the ordered planned shape for a trip."""
+        trip = self.trips.get(trip_id)
+        if trip is None or trip.shape_id is None:
+            return []
+        cached = self.shapes.get(trip.shape_id)
+        if cached is not None:
+            if self._stop_times_database is not None:
+                self.shapes.move_to_end(trip.shape_id)
+            return cached
+        if self._stop_times_database is None:
+            return []
+
+        connection = sqlite3.connect(self._stop_times_database)
+        try:
+            rows = connection.execute(
+                """
+                SELECT latitude, longitude
+                FROM shapes
+                WHERE shape_id = ?
+                ORDER BY sequence
+                """,
+                (trip.shape_id,),
+            )
+            points = [(latitude, longitude) for latitude, longitude in rows]
+        finally:
+            connection.close()
+        self.shapes[trip.shape_id] = points
+        while len(self.shapes) > SHAPE_CACHE_SIZE:
+            self.shapes.popitem(last=False)
+        return points
 
     def validate_stops(self, stop_ids: list[str]) -> list[str]:
         """Return stop IDs absent from the static feed."""
@@ -463,6 +547,20 @@ def _insert_stop_times(
         """
         INSERT INTO stop_times (
             stop_id, trip_id, departure_seconds, stop_sequence
+        ) VALUES (?, ?, ?, ?)
+        """,
+        batch,
+    )
+
+
+def _insert_shapes(
+    connection: sqlite3.Connection,
+    batch: list[tuple[str, float, float, int]],
+) -> None:
+    connection.executemany(
+        """
+        INSERT INTO shapes (
+            shape_id, latitude, longitude, sequence
         ) VALUES (?, ?, ?, ?)
         """,
         batch,

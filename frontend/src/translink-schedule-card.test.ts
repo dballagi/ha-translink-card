@@ -14,6 +14,10 @@ import {
   TransLinkScheduleCard,
   TransLinkScheduleCardEditor,
 } from "./translink-schedule-card";
+import {
+  homeAssistantRasterTileUrl,
+  TransLinkTripMapDialog,
+} from "./trip-map-dialog";
 import type {
   Departure,
   HomeAssistant,
@@ -23,6 +27,8 @@ import type {
 const departure: Departure = {
   stop_id: "stop",
   stop_name: "Test Stop",
+  trip_id: "trip",
+  route_id: "route",
   route_name: "99",
   route_long_name: "Test Route",
   route_type: 3,
@@ -209,6 +215,7 @@ function cardData() {
       "sensor.departures": {
         state: route3.estimated_time,
         attributes: {
+          config_entry_id: "entry-1",
           stops: [stop],
           departures: stop.departures,
           alerts: [],
@@ -243,6 +250,7 @@ describe("card route filter", () => {
       route_filter_show_counts: true,
       route_filter_reset_minutes: 0,
     });
+
     const buttons = Array.from(
       card.shadowRoot!.querySelectorAll<HTMLButtonElement>(
         ".route-filter-chip",
@@ -346,6 +354,96 @@ describe("card route filter", () => {
     expect(
       card.shadowRoot!.querySelectorAll(".departure"),
     ).toHaveLength(2);
+  });
+});
+
+describe("departure route map", () => {
+  it("uses Home Assistant's authenticated raster tile proxy", () => {
+    expect(homeAssistantRasterTileUrl("token value")).toBe(
+      "/api/map_tiles/raster/{z}/{x}/{y}.png?token=token%20value",
+    );
+  });
+
+  it("opens from pointer and keyboard activation", async () => {
+    const card = await createCard({ show_route_filter: false });
+    const row = card.shadowRoot!.querySelector<HTMLElement>(".departure")!;
+
+    expect(row.getAttribute("role")).toBe("button");
+    expect(row.tabIndex).toBe(0);
+    row.click();
+    expect(
+      document.body.querySelectorAll("translink-trip-map-dialog"),
+    ).toHaveLength(1);
+
+    document.body.querySelector("translink-trip-map-dialog")!.remove();
+    row.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Enter",
+        bubbles: true,
+      }),
+    );
+    expect(
+      document.body.querySelectorAll("translink-trip-map-dialog"),
+    ).toHaveLength(1);
+  });
+
+  it("keeps the planned route available without a vehicle match", async () => {
+    const callApi = vi.fn().mockResolvedValue({
+      trip_id: "trip",
+      route_id: "route",
+      route_name: "99",
+      route_color: "005DAA",
+      destination: "Downtown",
+      shape: [
+        { latitude: 49.27, longitude: -123.11 },
+        { latitude: 49.28, longitude: -123.12 },
+      ],
+      boarding_stop: {
+        stop_id: "stop",
+        name: "Test Stop",
+        latitude: 49.27,
+        longitude: -123.11,
+      },
+      destination_point: {
+        latitude: 49.28,
+        longitude: -123.12,
+      },
+      vehicle: null,
+      vehicle_error: null,
+    });
+    const sendMessagePromise = vi.fn().mockResolvedValue({
+      token: "map-token",
+    });
+    const dialog = new TransLinkTripMapDialog();
+    dialog.hass = {
+      states: {},
+      callApi,
+      connection: { sendMessagePromise },
+    };
+    dialog.entryId = "entry-1";
+    dialog.departure = departure;
+    document.body.append(dialog);
+
+    await vi.waitFor(() => {
+      expect(dialog.shadowRoot?.textContent).toContain(
+        "Live vehicle position unavailable",
+      );
+    });
+    expect(callApi).toHaveBeenCalledWith(
+      "GET",
+      expect.stringContaining("trip_id=trip"),
+    );
+    expect(sendMessagePromise).toHaveBeenCalledWith({
+      type: "map_tiles/access_token",
+    });
+
+    const header = dialog.shadowRoot!.querySelector<HTMLElement>("header")!;
+    header.click();
+    await dialog.updateComplete;
+    expect(header.getAttribute("aria-expanded")).toBe("true");
+    expect(
+      dialog.shadowRoot!.querySelector(".dialog")!.classList,
+    ).toContain("expanded");
   });
 });
 

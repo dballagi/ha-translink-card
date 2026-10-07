@@ -10,6 +10,8 @@ import {
 } from "./departure-list";
 import { getDepartureTiming } from "./departure-timing";
 import { findScheduleEntity } from "./entity-selection";
+import "./trip-map-dialog";
+import type { TransLinkTripMapDialog } from "./trip-map-dialog";
 import type {
   CardConfig,
   Departure,
@@ -469,8 +471,12 @@ export class TransLinkScheduleCard extends LitElement {
     return html`
       <div
         class="departure ${departure.cancelled ? "cancelled" : ""}"
-        role="group"
-        aria-label="Route ${departure.route_name} to ${destination}, ${status}"
+        role="button"
+        tabindex="0"
+        aria-label="Route ${departure.route_name} to ${destination}, ${status}. Open route map."
+        @click=${() => this.openTripMap(departure)}
+        @keydown=${(event: KeyboardEvent) =>
+          this.departureKeydown(event, departure)}
       >
         <span class="route" style=${routeStyle}>${departure.route_name}</span>
         <div class="destination">
@@ -507,6 +513,29 @@ export class TransLinkScheduleCard extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  private openTripMap(departure: Departure): void {
+    if (!this.hass || !this.config) return;
+    document.querySelector("translink-trip-map-dialog")?.remove();
+    const entity = this.hass.states[this.config.entity];
+    const entryId = entity?.attributes.config_entry_id;
+    const dialog = document.createElement(
+      "translink-trip-map-dialog",
+    ) as TransLinkTripMapDialog;
+    dialog.hass = this.hass;
+    dialog.entryId = typeof entryId === "string" ? entryId : "";
+    dialog.departure = departure;
+    document.body.append(dialog);
+  }
+
+  private departureKeydown(
+    event: KeyboardEvent,
+    departure: Departure,
+  ): void {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    this.openTripMap(departure);
   }
 
   private isStopCollapsed(stop: StopDepartures): boolean {
@@ -717,11 +746,23 @@ export class TransLinkScheduleCard extends LitElement {
     .stop-code { color: var(--secondary-text-color); font-size: 12px; font-weight: 500; }
     .departure {
       align-items: center;
+      cursor: pointer;
       display: grid;
       gap: 12px;
       grid-template-columns: minmax(42px, auto) 1fr auto;
       min-height: 48px;
       padding: 6px 16px;
+    }
+    .departure:hover {
+      background: color-mix(
+        in srgb,
+        var(--card-background-color),
+        var(--primary-color) 6%
+      );
+    }
+    .departure:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: -2px;
     }
     .departure + .departure { border-top: 1px solid var(--divider-color); }
     .route {

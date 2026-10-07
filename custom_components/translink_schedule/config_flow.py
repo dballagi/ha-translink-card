@@ -41,11 +41,13 @@ from .const import (
     CONF_STOP_FILTERS,
     CONF_STOP_IDS,
     CONF_STOP_SHOW_CODE,
+    CONF_VEHICLE_POSITIONS_URL,
     DEFAULT_ALERTS_URL,
     DEFAULT_CANCELLED_RETENTION_MINUTES,
     DEFAULT_DEPARTURE_WINDOW_MINUTES,
     DEFAULT_REALTIME_URL,
     DEFAULT_STATIC_URL,
+    DEFAULT_VEHICLE_POSITIONS_URL,
     DOMAIN,
 )
 from .gtfs_cache import async_get_static_feed, release_static_feed
@@ -91,6 +93,7 @@ class TransLinkScheduleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     user_input[CONF_STATIC_URL],
                     user_input[CONF_REALTIME_URL],
                     user_input[CONF_ALERTS_URL],
+                    user_input[CONF_VEHICLE_POSITIONS_URL],
                 )
                 try:
                     realtime_key = realtime_cache_key(
@@ -151,6 +154,10 @@ class TransLinkScheduleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_STATIC_URL, default=DEFAULT_STATIC_URL): str,
                 vol.Required(CONF_REALTIME_URL, default=DEFAULT_REALTIME_URL): str,
                 vol.Required(CONF_ALERTS_URL, default=DEFAULT_ALERTS_URL): str,
+                vol.Required(
+                    CONF_VEHICLE_POSITIONS_URL,
+                    default=DEFAULT_VEHICLE_POSITIONS_URL,
+                ): str,
             }
         )
         return self.async_show_form(

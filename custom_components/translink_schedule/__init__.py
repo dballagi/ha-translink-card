@@ -8,12 +8,19 @@ from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import CARD_FILENAME, CARD_URL, PLATFORMS
+from .const import (
+    CARD_CHUNKS_FOLDER,
+    CARD_CHUNKS_URL,
+    CARD_FILENAME,
+    CARD_URL,
+    PLATFORMS,
+)
 from .coordinator import (
     TransLinkCoordinator,
     async_get_shared_coordinator,
     release_shared_coordinator,
 )
+from .map_api import TransLinkTripMapView
 
 type TransLinkConfigEntry = ConfigEntry[TransLinkCoordinator]
 
@@ -22,8 +29,18 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Register the bundled Lovelace card."""
     frontend_path = Path(__file__).parent / "frontend"
     await hass.http.async_register_static_paths(
-        [StaticPathConfig(CARD_URL, str(frontend_path / CARD_FILENAME), False)]
+        [
+            StaticPathConfig(
+                CARD_URL, str(frontend_path / CARD_FILENAME), False
+            ),
+            StaticPathConfig(
+                CARD_CHUNKS_URL,
+                str(frontend_path / CARD_CHUNKS_FOLDER),
+                False,
+            ),
+        ]
     )
+    hass.http.register_view(TransLinkTripMapView())
     return True
 
 

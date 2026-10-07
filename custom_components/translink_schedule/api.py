@@ -10,7 +10,7 @@ from google.protobuf.message import DecodeError
 from google.transit import gtfs_realtime_pb2
 
 from .const import TRIP_LEVEL_STOP_ID
-from .models import RealtimeUpdate, ServiceAlert
+from .models import RealtimeUpdate, ServiceAlert, VehiclePosition
 
 
 class TransLinkApiError(Exception):
@@ -27,12 +27,14 @@ class TransLinkApi:
         static_url: str,
         realtime_url: str,
         alerts_url: str,
+        vehicle_positions_url: str,
     ) -> None:
         self._session = session
         self._api_key = api_key
         self._static_url = static_url
         self._realtime_url = realtime_url
         self._alerts_url = alerts_url
+        self._vehicle_positions_url = vehicle_positions_url
 
     async def _get(self, url: str, *, authenticated: bool = False) -> bytes:
         params = {"apikey": self._api_key} if authenticated else None
@@ -170,6 +172,53 @@ class TransLinkApi:
                 )
             )
         return alerts
+
+    async def async_vehicle_positions(self) -> dict[str, VehiclePosition]:
+        """Download and index last-reported vehicle positions by trip."""
+        payload = await self._get(
+            self._vehicle_positions_url, authenticated=True
+        )
+        feed = gtfs_realtime_pb2.FeedMessage()
+        try:
+            feed.ParseFromString(payload)
+        except DecodeError as err:
+            raise TransLinkApiError(
+                "Invalid GTFS-Realtime vehicle position feed"
+            ) from err
+
+        positions: dict[str, VehiclePosition] = {}
+        for entity in feed.entity:
+            if not entity.HasField("vehicle"):
+                continue
+            vehicle = entity.vehicle
+            trip_id = vehicle.trip.trip_id
+            if not trip_id or not vehicle.HasField("position"):
+                continue
+            position = vehicle.position
+            positions[trip_id] = VehiclePosition(
+                trip_id=trip_id,
+                route_id=vehicle.trip.route_id or None,
+                vehicle_id=vehicle.vehicle.id or None,
+                vehicle_label=vehicle.vehicle.label or None,
+                latitude=position.latitude,
+                longitude=position.longitude,
+                bearing=(
+                    position.bearing
+                    if position.HasField("bearing")
+                    else None
+                ),
+                speed=(
+                    position.speed
+                    if position.HasField("speed")
+                    else None
+                ),
+                timestamp=(
+                    datetime.fromtimestamp(vehicle.timestamp, UTC)
+                    if vehicle.HasField("timestamp")
+                    else None
+                ),
+            )
+        return positions
 
     async def async_validate_key(self) -> None:
         """Validate the API key by retrieving realtime data."""

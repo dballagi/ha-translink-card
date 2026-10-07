@@ -1,5 +1,12 @@
 export interface HomeAssistant {
   states: Record<string, HassEntity>;
+  connection?: {
+    sendMessagePromise<T>(message: Record<string, unknown>): Promise<T>;
+  };
+  callApi?<T>(
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    path: string,
+  ): Promise<T>;
   locale?: {
     language: string;
     time_format?: "12" | "24" | "language" | "system";
@@ -14,6 +21,8 @@ export interface HassEntity {
 export interface Departure {
   stop_id: string;
   stop_name: string;
+  trip_id: string;
+  route_id: string;
   route_name: string;
   route_long_name: string;
   route_type: number;
@@ -25,6 +34,33 @@ export interface Departure {
   delay_seconds: number;
   cancelled: boolean;
   realtime: boolean;
+}
+
+export interface MapPoint {
+  latitude: number;
+  longitude: number;
+}
+
+export interface TripMapData {
+  trip_id: string;
+  route_id: string;
+  route_name: string;
+  route_color: string | null;
+  destination: string;
+  shape: MapPoint[];
+  boarding_stop: MapPoint & {
+    stop_id: string;
+    name: string;
+  };
+  destination_point: MapPoint;
+  vehicle: (MapPoint & {
+    vehicle_id: string | null;
+    vehicle_label: string | null;
+    bearing: number | null;
+    speed: number | null;
+    timestamp: string | null;
+  }) | null;
+  vehicle_error: string | null;
 }
 
 export interface StopDepartures {

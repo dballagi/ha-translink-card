@@ -14,9 +14,9 @@ from custom_components.translink_schedule.models import RealtimeUpdate
 def _feed() -> bytes:
     files = {
         "stops.txt": (
-            "stop_id,stop_code,stop_name\n"
-            "STOP_A,50001,Main Street Northbound\n"
-            "STOP_B,50002,Main Street Southbound\n"
+            "stop_id,stop_code,stop_name,stop_lat,stop_lon\n"
+            "STOP_A,50001,Main Street Northbound,49.2800,-123.1200\n"
+            "STOP_B,50002,Main Street Southbound,49.2700,-123.1100\n"
         ),
         "routes.txt": (
             "route_id,route_short_name,route_long_name,route_type,"
@@ -25,13 +25,13 @@ def _feed() -> bytes:
             "R10,10,Granville/UBC,3,00843D,FFFFFF\n"
         ),
         "trips.txt": (
-            "route_id,service_id,trip_id,trip_headsign,direction_id\n"
-            "R3,WEEKDAY,T1,Downtown,0\n"
-            "R3,WEEKDAY,T2,Marine Drive,1\n"
-            "R10,WEEKDAY,T3,UBC Exchange,0\n"
-            "R3,WEEKDAY,T4,Night Bus,0\n"
-            "R3,WEEKDAY,T5,Drop Off Only,0\n"
-            "R3,WEEKDAY,T6,Late Night,0\n"
+            "route_id,service_id,trip_id,trip_headsign,direction_id,shape_id\n"
+            "R3,WEEKDAY,T1,Downtown,0,S3_NORTH\n"
+            "R3,WEEKDAY,T2,Marine Drive,1,S3_SOUTH\n"
+            "R10,WEEKDAY,T3,UBC Exchange,0,S10\n"
+            "R3,WEEKDAY,T4,Night Bus,0,S3_NORTH\n"
+            "R3,WEEKDAY,T5,Drop Off Only,0,S3_NORTH\n"
+            "R3,WEEKDAY,T6,Late Night,0,S3_NORTH\n"
         ),
         "stop_times.txt": (
             "trip_id,arrival_time,departure_time,stop_id,stop_sequence,"
@@ -49,6 +49,15 @@ def _feed() -> bytes:
             "WEEKDAY,1,1,1,1,1,0,0,20260101,20261231\n"
         ),
         "calendar_dates.txt": "service_id,date,exception_type\n",
+        "shapes.txt": (
+            "shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence\n"
+            "S3_NORTH,49.2700,-123.1100,1\n"
+            "S3_NORTH,49.2800,-123.1200,2\n"
+            "S3_SOUTH,49.2800,-123.1200,1\n"
+            "S3_SOUTH,49.2700,-123.1100,2\n"
+            "S10,49.2800,-123.1200,1\n"
+            "S10,49.2600,-123.1300,2\n"
+        ),
     }
     output = io.BytesIO()
     with ZipFile(output, "w", ZIP_DEFLATED) as archive:
@@ -107,6 +116,27 @@ def test_unknown_stop_validation() -> None:
         ["STOP_A", "STOP_B"],
         [],
     )
+
+
+def test_trip_shape_and_stop_coordinates_are_available() -> None:
+    feed = StaticFeed(_feed())
+
+    assert feed.shape_for_trip("T1") == [
+        (49.27, -123.11),
+        (49.28, -123.12),
+    ]
+    assert feed.shape_for_trip("missing") == []
+    assert feed.stops["STOP_A"].latitude == 49.28
+
+
+def test_trip_shape_is_loaded_from_disk_index(tmp_path) -> None:
+    feed = StaticFeed(_feed(), tmp_path / "gtfs.sqlite")
+
+    assert feed.shapes == {}
+    assert feed.shape_for_trip("T3") == [
+        (49.28, -123.12),
+        (49.26, -123.13),
+    ]
 
 
 def test_routes_for_stop_are_sorted() -> None:

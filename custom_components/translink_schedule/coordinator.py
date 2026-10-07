@@ -25,9 +25,11 @@ from .const import (
     CONF_API_KEY,
     CONF_REALTIME_URL,
     CONF_STATIC_URL,
+    CONF_VEHICLE_POSITIONS_URL,
     DEFAULT_ALERTS_URL,
     DEFAULT_REALTIME_URL,
     DEFAULT_STATIC_URL,
+    DEFAULT_VEHICLE_POSITIONS_URL,
     DOMAIN,
     UPDATE_INTERVAL,
 )
@@ -37,6 +39,7 @@ from .gtfs_cache import (
     release_static_feed,
 )
 from .gtfs_static import StaticFeed
+from .models import VehiclePosition
 from .realtime_cache import (
     async_get_realtime_updates,
     realtime_cache_key,
@@ -65,6 +68,10 @@ class TransLinkCoordinator(DataUpdateCoordinator[dict[str, object]]):
             entry.data.get(CONF_STATIC_URL, DEFAULT_STATIC_URL),
             entry.data.get(CONF_REALTIME_URL, DEFAULT_REALTIME_URL),
             entry.data.get(CONF_ALERTS_URL, DEFAULT_ALERTS_URL),
+            entry.data.get(
+                CONF_VEHICLE_POSITIONS_URL,
+                DEFAULT_VEHICLE_POSITIONS_URL,
+            ),
         )
         self.static_url = entry.data.get(CONF_STATIC_URL, DEFAULT_STATIC_URL)
         self.realtime_key = realtime_cache_key(
@@ -72,10 +79,37 @@ class TransLinkCoordinator(DataUpdateCoordinator[dict[str, object]]):
             entry.data.get(CONF_REALTIME_URL, DEFAULT_REALTIME_URL),
         )
         self.owner = owner
+        self._vehicle_positions: dict[str, VehiclePosition] = {}
+        self._vehicle_positions_updated_at: datetime | None = None
+        self._vehicle_positions_lock = asyncio.Lock()
+
     @property
     def static_feed(self) -> StaticFeed | None:
         """Return the single cached static feed instance."""
         return get_cached_static_feed(self.hass, self.static_url)
+
+    async def async_vehicle_positions(
+        self,
+    ) -> dict[str, VehiclePosition]:
+        """Return briefly cached positions for on-demand map requests."""
+        now = datetime.now(UTC)
+        if (
+            self._vehicle_positions_updated_at is not None
+            and (now - self._vehicle_positions_updated_at).total_seconds() < 30
+        ):
+            return self._vehicle_positions
+        async with self._vehicle_positions_lock:
+            now = datetime.now(UTC)
+            if (
+                self._vehicle_positions_updated_at is not None
+                and (now - self._vehicle_positions_updated_at).total_seconds()
+                < 30
+            ):
+                return self._vehicle_positions
+            positions = await self.api.async_vehicle_positions()
+            self._vehicle_positions = positions
+            self._vehicle_positions_updated_at = now
+            return positions
 
     async def _async_update_data(self) -> dict[str, object]:
         try:
@@ -129,6 +163,10 @@ def _coordinator_key(entry: ConfigEntry) -> str:
         entry.data.get(CONF_STATIC_URL, DEFAULT_STATIC_URL),
         entry.data.get(CONF_REALTIME_URL, DEFAULT_REALTIME_URL),
         entry.data.get(CONF_ALERTS_URL, DEFAULT_ALERTS_URL),
+        entry.data.get(
+            CONF_VEHICLE_POSITIONS_URL,
+            DEFAULT_VEHICLE_POSITIONS_URL,
+        ),
     )
     return hashlib.sha256("\0".join(values).encode()).hexdigest()
 

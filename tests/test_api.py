@@ -47,6 +47,7 @@ def _api(feed: gtfs_realtime_pb2.FeedMessage) -> TransLinkApi:
         "static",
         "realtime",
         "alerts",
+        "vehicles",
     )
 
 
@@ -93,4 +94,31 @@ async def test_all_alert_active_periods_are_retained() -> None:
     assert len(alerts[0].active_periods) == 2
     assert alerts[0].is_active(
         datetime(2026, 10, 6, 12, 30, tzinfo=UTC)
+    )
+
+
+async def test_vehicle_positions_are_indexed_by_trip() -> None:
+    feed = _feed()
+    entity = feed.entity.add()
+    entity.id = "vehicle"
+    vehicle = entity.vehicle
+    vehicle.trip.trip_id = "trip-1"
+    vehicle.trip.route_id = "route-1"
+    vehicle.vehicle.id = "vehicle-1"
+    vehicle.vehicle.label = "2101"
+    vehicle.position.latitude = 49.2827
+    vehicle.position.longitude = -123.1207
+    vehicle.position.bearing = 90
+    vehicle.timestamp = int(
+        datetime(2026, 10, 6, 19, 30, tzinfo=UTC).timestamp()
+    )
+
+    positions = await _api(feed).async_vehicle_positions()
+
+    position = positions["trip-1"]
+    assert position.vehicle_label == "2101"
+    assert round(position.latitude, 4) == 49.2827
+    assert position.bearing == 90
+    assert position.timestamp == datetime(
+        2026, 10, 6, 19, 30, tzinfo=UTC
     )

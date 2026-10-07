@@ -13,6 +13,8 @@ class Stop:
     stop_id: str
     name: str
     code: str | None
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,6 +38,22 @@ class Trip:
     service_id: str
     headsign: str
     direction_id: int | None
+    shape_id: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class VehiclePosition:
+    """A last-reported GTFS-Realtime vehicle position."""
+
+    trip_id: str
+    route_id: str | None
+    vehicle_id: str | None
+    vehicle_label: str | None
+    latitude: float
+    longitude: float
+    bearing: float | None
+    speed: float | None
+    timestamp: datetime | None
 
 
 @dataclass(frozen=True, slots=True)

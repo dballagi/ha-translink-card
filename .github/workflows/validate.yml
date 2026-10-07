@@ -36,7 +36,7 @@ jobs:
         working-directory: .
         run: |
           git diff --exit-code -- \
-            custom_components/translink_schedule/frontend/translink-schedule-card.js
+            custom_components/translink_schedule/frontend/
 
   hacs:
     runs-on: ubuntu-24.04
