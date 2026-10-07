@@ -3,6 +3,13 @@ import type { CardConfig, Departure } from "./types";
 type CancelledBehavior = NonNullable<CardConfig["cancelled_behavior"]>;
 type CombinedOrder = NonNullable<CardConfig["combined_order"]>;
 
+export interface RouteOption {
+  name: string;
+  count: number;
+  color: string | null;
+  textColor: string | null;
+}
+
 function chronological(left: Departure, right: Departure): number {
   return (
     new Date(left.estimated_time).getTime() -
@@ -68,6 +75,43 @@ export function prepareDepartures(
     );
   }
   return output;
+}
+
+export function getRouteOptions(
+  departures: Departure[],
+): RouteOption[] {
+  const routes = new Map<string, RouteOption>();
+  for (const departure of departures) {
+    const name = departure.route_name.trim();
+    if (!name) continue;
+    const existing = routes.get(name);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      routes.set(name, {
+        name,
+        count: 1,
+        color: departure.route_color,
+        textColor: departure.route_text_color,
+      });
+    }
+  }
+  return [...routes.values()].sort((left, right) =>
+    left.name.localeCompare(right.name, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
+}
+
+export function filterDeparturesByRoute(
+  departures: Departure[],
+  selectedRoutes: ReadonlySet<string>,
+): Departure[] {
+  if (selectedRoutes.size === 0) return departures;
+  return departures.filter((departure) =>
+    selectedRoutes.has(departure.route_name.trim()),
+  );
 }
 
 export function isDataStale(

@@ -1,9 +1,9 @@
-var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t,s)=>{for(var i=s>1?void 0:s?Pe(e,t):e,r=o.length-1,n;r>=0;r--)(n=o[r])&&(i=(s?n(e,t,i):n(i))||i);return s&&i&&Te(e,t,i),i};var L=globalThis,I=L.ShadowRoot&&(L.ShadyCSS===void 0||L.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,G=Symbol(),ce=new WeakMap,E=class{constructor(e,t,s){if(this._$cssResult$=!0,s!==G)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o,t=this.t;if(I&&e===void 0){let s=t!==void 0&&t.length===1;s&&(e=ce.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),s&&ce.set(t,e))}return e}toString(){return this.cssText}},de=o=>new E(typeof o=="string"?o:o+"",void 0,G),z=(o,...e)=>{let t=o.length===1?o[0]:e.reduce((s,i,r)=>s+(n=>{if(n._$cssResult$===!0)return n.cssText;if(typeof n=="number")return n;throw Error("Value passed to 'css' function must be a 'css' function result: "+n+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+o[r+1],o[0]);return new E(t,o,G)},he=(o,e)=>{if(I)o.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of e){let s=document.createElement("style"),i=L.litNonce;i!==void 0&&s.setAttribute("nonce",i),s.textContent=t.cssText,o.appendChild(s)}},K=I?o=>o:o=>o instanceof CSSStyleSheet?(e=>{let t="";for(let s of e.cssRules)t+=s.cssText;return de(t)})(o):o;var{is:De,defineProperty:Ne,getOwnPropertyDescriptor:Me,getOwnPropertyNames:He,getOwnPropertySymbols:Ue,getPrototypeOf:Re}=Object,j=globalThis,pe=j.trustedTypes,Le=pe?pe.emptyScript:"",Ie=j.reactiveElementPolyfillSupport,k=(o,e)=>o,O={toAttribute(o,e){switch(e){case Boolean:o=o?Le:null;break;case Object:case Array:o=o==null?o:JSON.stringify(o)}return o},fromAttribute(o,e){let t=o;switch(e){case Boolean:t=o!==null;break;case Number:t=o===null?null:Number(o);break;case Object:case Array:try{t=JSON.parse(o)}catch{t=null}}return t}},F=(o,e)=>!De(o,e),ue={attribute:!0,type:String,converter:O,reflect:!1,useDefault:!1,hasChanged:F};Symbol.metadata??=Symbol("metadata"),j.litPropertyMetadata??=new WeakMap;var f=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=ue){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){let s=Symbol(),i=this.getPropertyDescriptor(e,s,t);i!==void 0&&Ne(this.prototype,e,i)}}static getPropertyDescriptor(e,t,s){let{get:i,set:r}=Me(this.prototype,e)??{get(){return this[t]},set(n){this[t]=n}};return{get:i,set(n){let l=i?.call(this);r?.call(this,n),this.requestUpdate(e,l,s)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??ue}static _$Ei(){if(this.hasOwnProperty(k("elementProperties")))return;let e=Re(this);e.finalize(),e.l!==void 0&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(k("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(k("properties"))){let t=this.properties,s=[...He(t),...Ue(t)];for(let i of s)this.createProperty(i,t[i])}let e=this[Symbol.metadata];if(e!==null){let t=litPropertyMetadata.get(e);if(t!==void 0)for(let[s,i]of t)this.elementProperties.set(s,i)}this._$Eh=new Map;for(let[t,s]of this.elementProperties){let i=this._$Eu(t,s);i!==void 0&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){let t=[];if(Array.isArray(e)){let s=new Set(e.flat(1/0).reverse());for(let i of s)t.unshift(K(i))}else e!==void 0&&t.push(K(e));return t}static _$Eu(e,t){let s=t.attribute;return s===!1?void 0:typeof s=="string"?s:typeof e=="string"?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),this.renderRoot!==void 0&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){let e=new Map,t=this.constructor.elementProperties;for(let s of t.keys())this.hasOwnProperty(s)&&(e.set(s,this[s]),delete this[s]);e.size>0&&(this._$Ep=e)}createRenderRoot(){let e=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return he(e,this.constructor.elementStyles),e}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,s){this._$AK(e,s)}_$ET(e,t){let s=this.constructor.elementProperties.get(e),i=this.constructor._$Eu(e,s);if(i!==void 0&&s.reflect===!0){let r=(s.converter?.toAttribute!==void 0?s.converter:O).toAttribute(t,s.type);this._$Em=e,r==null?this.removeAttribute(i):this.setAttribute(i,r),this._$Em=null}}_$AK(e,t){let s=this.constructor,i=s._$Eh.get(e);if(i!==void 0&&this._$Em!==i){let r=s.getPropertyOptions(i),n=typeof r.converter=="function"?{fromAttribute:r.converter}:r.converter?.fromAttribute!==void 0?r.converter:O;this._$Em=i;let l=n.fromAttribute(t,r.type);this[i]=l??this._$Ej?.get(i)??l,this._$Em=null}}requestUpdate(e,t,s,i=!1,r){if(e!==void 0){let n=this.constructor;if(i===!1&&(r=this[e]),s??=n.getPropertyOptions(e),!((s.hasChanged??F)(r,t)||s.useDefault&&s.reflect&&r===this._$Ej?.get(e)&&!this.hasAttribute(n._$Eu(e,s))))return;this.C(e,t,s)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(e,t,{useDefault:s,reflect:i,wrapped:r},n){s&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,n??t??this[e]),r!==!0||n!==void 0)||(this._$AL.has(e)||(this.hasUpdated||s||(t=void 0),this._$AL.set(e,t)),i===!0&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[i,r]of this._$Ep)this[i]=r;this._$Ep=void 0}let s=this.constructor.elementProperties;if(s.size>0)for(let[i,r]of s){let{wrapped:n}=r,l=this[i];n!==!0||this._$AL.has(i)||l===void 0||this.C(i,void 0,r,l)}}let e=!1,t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(s=>s.hostUpdate?.()),this.update(t)):this._$EM()}catch(s){throw e=!1,this._$EM(),s}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(e){}firstUpdated(e){}};f.elementStyles=[],f.shadowRootOptions={mode:"open"},f[k("elementProperties")]=new Map,f[k("finalized")]=new Map,Ie?.({ReactiveElement:f}),(j.reactiveElementVersions??=[]).push("2.1.2");var te=globalThis,me=o=>o,q=te.trustedTypes,fe=q?q.createPolicy("lit-html",{createHTML:o=>o}):void 0,be="$lit$",y=`lit$${Math.random().toFixed(9).slice(2)}$`,xe="?"+y,ze=`<${xe}>`,b=document,P=()=>b.createComment(""),D=o=>o===null||typeof o!="object"&&typeof o!="function",se=Array.isArray,je=o=>se(o)||typeof o?.[Symbol.iterator]=="function",Y=`[ 	
-\f\r]`,T=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ge=/-->/g,_e=/>/g,v=RegExp(`>|${Y}(?:([^\\s"'>=/]+)(${Y}*=${Y}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),ye=/'/g,ve=/"/g,we=/^(?:script|style|textarea|title)$/i,ie=o=>(e,...t)=>({_$litType$:o,strings:e,values:t}),d=ie(1),dt=ie(2),ht=ie(3),x=Symbol.for("lit-noChange"),c=Symbol.for("lit-nothing"),$e=new WeakMap,$=b.createTreeWalker(b,129);function Se(o,e){if(!se(o)||!o.hasOwnProperty("raw"))throw Error("invalid template strings array");return fe!==void 0?fe.createHTML(e):e}var Fe=(o,e)=>{let t=o.length-1,s=[],i,r=e===2?"<svg>":e===3?"<math>":"",n=T;for(let l=0;l<t;l++){let a=o[l],h,p,u=-1,m=0;for(;m<a.length&&(n.lastIndex=m,p=n.exec(a),p!==null);)m=n.lastIndex,n===T?p[1]==="!--"?n=ge:p[1]!==void 0?n=_e:p[2]!==void 0?(we.test(p[2])&&(i=RegExp("</"+p[2],"g")),n=v):p[3]!==void 0&&(n=v):n===v?p[0]===">"?(n=i??T,u=-1):p[1]===void 0?u=-2:(u=n.lastIndex-p[2].length,h=p[1],n=p[3]===void 0?v:p[3]==='"'?ve:ye):n===ve||n===ye?n=v:n===ge||n===_e?n=T:(n=v,i=void 0);let _=n===v&&o[l+1].startsWith("/>")?" ":"";r+=n===T?a+ze:u>=0?(s.push(h),a.slice(0,u)+be+a.slice(u)+y+_):a+y+(u===-2?l:_)}return[Se(o,r+(o[t]||"<?>")+(e===2?"</svg>":e===3?"</math>":"")),s]},N=class o{constructor({strings:e,_$litType$:t},s){let i;this.parts=[];let r=0,n=0,l=e.length-1,a=this.parts,[h,p]=Fe(e,t);if(this.el=o.createElement(h,s),$.currentNode=this.el.content,t===2||t===3){let u=this.el.content.firstChild;u.replaceWith(...u.childNodes)}for(;(i=$.nextNode())!==null&&a.length<l;){if(i.nodeType===1){if(i.hasAttributes())for(let u of i.getAttributeNames())if(u.endsWith(be)){let m=p[n++],_=i.getAttribute(u).split(y),R=/([.?@])?(.*)/.exec(m);a.push({type:1,index:r,name:R[2],strings:_,ctor:R[1]==="."?X:R[1]==="?"?Z:R[1]==="@"?Q:A}),i.removeAttribute(u)}else u.startsWith(y)&&(a.push({type:6,index:r}),i.removeAttribute(u));if(we.test(i.tagName)){let u=i.textContent.split(y),m=u.length-1;if(m>0){i.textContent=q?q.emptyScript:"";for(let _=0;_<m;_++)i.append(u[_],P()),$.nextNode(),a.push({type:2,index:++r});i.append(u[m],P())}}}else if(i.nodeType===8)if(i.data===xe)a.push({type:2,index:r});else{let u=-1;for(;(u=i.data.indexOf(y,u+1))!==-1;)a.push({type:7,index:r}),u+=y.length-1}r++}}static createElement(e,t){let s=b.createElement("template");return s.innerHTML=e,s}};function S(o,e,t=o,s){if(e===x)return e;let i=s!==void 0?t._$Co?.[s]:t._$Cl,r=D(e)?void 0:e._$litDirective$;return i?.constructor!==r&&(i?._$AO?.(!1),r===void 0?i=void 0:(i=new r(o),i._$AT(o,t,s)),s!==void 0?(t._$Co??=[])[s]=i:t._$Cl=i),i!==void 0&&(e=S(o,i._$AS(o,e.values),i,s)),e}var J=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){let{el:{content:t},parts:s}=this._$AD,i=(e?.creationScope??b).importNode(t,!0);$.currentNode=i;let r=$.nextNode(),n=0,l=0,a=s[0];for(;a!==void 0;){if(n===a.index){let h;a.type===2?h=new M(r,r.nextSibling,this,e):a.type===1?h=new a.ctor(r,a.name,a.strings,this,e):a.type===6&&(h=new ee(r,this,e)),this._$AV.push(h),a=s[++l]}n!==a?.index&&(r=$.nextNode(),n++)}return $.currentNode=b,i}p(e){let t=0;for(let s of this._$AV)s!==void 0&&(s.strings!==void 0?(s._$AI(e,s,t),t+=s.strings.length-2):s._$AI(e[t])),t++}},M=class o{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,s,i){this.type=2,this._$AH=c,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=s,this.options=i,this._$Cv=i?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode,t=this._$AM;return t!==void 0&&e?.nodeType===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=S(this,e,t),D(e)?e===c||e==null||e===""?(this._$AH!==c&&this._$AR(),this._$AH=c):e!==this._$AH&&e!==x&&this._(e):e._$litType$!==void 0?this.$(e):e.nodeType!==void 0?this.T(e):je(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==c&&D(this._$AH)?this._$AA.nextSibling.data=e:this.T(b.createTextNode(e)),this._$AH=e}$(e){let{values:t,_$litType$:s}=e,i=typeof s=="number"?this._$AC(e):(s.el===void 0&&(s.el=N.createElement(Se(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===i)this._$AH.p(t);else{let r=new J(i,this),n=r.u(this.options);r.p(t),this.T(n),this._$AH=r}}_$AC(e){let t=$e.get(e.strings);return t===void 0&&$e.set(e.strings,t=new N(e)),t}k(e){se(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,s,i=0;for(let r of e)i===t.length?t.push(s=new o(this.O(P()),this.O(P()),this,this.options)):s=t[i],s._$AI(r),i++;i<t.length&&(this._$AR(s&&s._$AB.nextSibling,i),t.length=i)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){let s=me(e).nextSibling;me(e).remove(),e=s}}setConnected(e){this._$AM===void 0&&(this._$Cv=e,this._$AP?.(e))}},A=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,s,i,r){this.type=1,this._$AH=c,this._$AN=void 0,this.element=e,this.name=t,this._$AM=i,this.options=r,s.length>2||s[0]!==""||s[1]!==""?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=c}_$AI(e,t=this,s,i){let r=this.strings,n=!1;if(r===void 0)e=S(this,e,t,0),n=!D(e)||e!==this._$AH&&e!==x,n&&(this._$AH=e);else{let l=e,a,h;for(e=r[0],a=0;a<r.length-1;a++)h=S(this,l[s+a],t,a),h===x&&(h=this._$AH[a]),n||=!D(h)||h!==this._$AH[a],h===c?e=c:e!==c&&(e+=(h??"")+r[a+1]),this._$AH[a]=h}n&&!i&&this.j(e)}j(e){e===c?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},X=class extends A{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===c?void 0:e}},Z=class extends A{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==c)}},Q=class extends A{constructor(e,t,s,i,r){super(e,t,s,i,r),this.type=5}_$AI(e,t=this){if((e=S(this,e,t,0)??c)===x)return;let s=this._$AH,i=e===c&&s!==c||e.capture!==s.capture||e.once!==s.once||e.passive!==s.passive,r=e!==c&&(s===c||i);i&&this.element.removeEventListener(this.name,this,s),r&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}},ee=class{constructor(e,t,s){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=s}get _$AU(){return this._$AM._$AU}_$AI(e){S(this,e)}};var qe=te.litHtmlPolyfillSupport;qe?.(N,M),(te.litHtmlVersions??=[]).push("3.3.3");var Ae=(o,e,t)=>{let s=t?.renderBefore??e,i=s._$litPart$;if(i===void 0){let r=t?.renderBefore??null;s._$litPart$=i=new M(e.insertBefore(P(),r),r,void 0,t??{})}return i._$AI(o),i};var oe=globalThis,g=class extends f{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=Ae(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return x}};g._$litElement$=!0,g.finalized=!0,oe.litElementHydrateSupport?.({LitElement:g});var Be=oe.litElementPolyfillSupport;Be?.({LitElement:g});(oe.litElementVersions??=[]).push("4.2.2");var We={attribute:!0,type:String,converter:O,reflect:!1,hasChanged:F},Ve=(o=We,e,t)=>{let{kind:s,metadata:i}=t,r=globalThis.litPropertyMetadata.get(i);if(r===void 0&&globalThis.litPropertyMetadata.set(i,r=new Map),s==="setter"&&((o=Object.create(o)).wrapped=!0),r.set(t.name,o),s==="accessor"){let{name:n}=t;return{set(l){let a=e.get.call(this);e.set.call(this,l),this.requestUpdate(n,a,o,!0,l)},init(l){return l!==void 0&&this.C(n,void 0,o,l),l}}}if(s==="setter"){let{name:n}=t;return function(l){let a=this[n];e.call(this,l),this.requestUpdate(n,a,o,!0,l)}}throw Error("Unsupported decorator location: "+s)};function H(o){return(e,t)=>typeof t=="object"?Ve(o,e,t):((s,i,r)=>{let n=i.hasOwnProperty(r);return i.constructor.createProperty(r,s),n?Object.getOwnPropertyDescriptor(i,r):void 0})(o,e,t)}function B(o){return H({...o,state:!0,attribute:!1})}function re(o,e){return new Date(o.estimated_time).getTime()-new Date(e.estimated_time).getTime()}function Ge(o,e){let t=new Map;for(let i of e)t.set(i,[]);for(let i of o){let r=t.get(i.stop_id)??[];r.push(i),t.set(i.stop_id,r)}let s=[];for(;[...t.values()].some(i=>i.length>0);)for(let i of t.values()){let r=i.shift();r&&s.push(r)}return s}function ne(o,e,t,s){let i=e==="hide"?o.filter(r=>!r.cancelled):[...o];return t==="balanced"?i=Ge(i,s):t==="route"?i.sort((r,n)=>r.route_name.localeCompare(n.route_name,void 0,{numeric:!0})||re(r,n)):t==="realtime"?i.sort((r,n)=>Number(n.realtime)-Number(r.realtime)||re(r,n)):i.sort(re),e==="move"&&i.sort((r,n)=>Number(r.cancelled)-Number(n.cancelled)),i}function Ce(o,e,t=Date.now()){return o?t-new Date(o).getTime()>e*6e4:!0}function Ee(o,e=1){let t=!o.cancelled&&o.delay_seconds>=e*60;return{delayed:t,displayTime:o.cancelled?o.scheduled_time:o.estimated_time,scheduledTime:t?o.scheduled_time:void 0,delayMinutes:t?Math.round(o.delay_seconds/60):void 0}}function ke(o,e=[]){return[...new Set([...e,...Object.keys(o.states)])].find(s=>{let i=o.states[s]?.attributes;return Array.isArray(i?.stops)&&Array.isArray(i?.departures)})}var V=3,Oe=12,le=12,Ke=[{value:"grouped",label:"Grouped by stop"},{value:"combined",label:"Combined by time"}],Ye=[{value:"chronological",label:"Chronological"},{value:"balanced",label:"Balance stops"},{value:"route",label:"Group routes"},{value:"realtime",label:"Realtime first"}],Je=[{value:"both",label:"Countdown and clock"},{value:"countdown",label:"Countdown only"},{value:"clock",label:"Clock only"}],Xe=[{value:"compact",label:"+7 min"},{value:"text",label:"7 min late"}],Ze=[{value:"show",label:"Show in schedule order"},{value:"move",label:"Move below active departures"},{value:"hide",label:"Hide"}],Qe=[{value:"comfortable",label:"Comfortable"},{value:"compact",label:"Compact"},{value:"minimal",label:"Minimal"}],et=[{value:"official",label:"Official route colors"},{value:"theme",label:"Theme primary color"},{value:"monochrome",label:"Monochrome"}],tt=[{value:"show",label:"Show in configured order"},{value:"move",label:"Move to bottom"},{value:"hide",label:"Hide"}],st=[{value:"primary",label:"Theme primary"},{value:"surface",label:"Card surface"},{value:"transparent",label:"Transparent"}],it=[{value:"accent",label:"Accent"},{value:"plain",label:"Plain"},{value:"compact",label:"Compact"}];function ot(o,e=Date.now()){return Math.max(0,Math.round((new Date(o).getTime()-e)/6e4))}function ae(o,e){let t=e?.time_format==="12"?!0:e?.time_format==="24"?!1:void 0;return new Intl.DateTimeFormat(e?.language,{hour:"numeric",hour12:t,minute:"2-digit"}).format(new Date(o))}var C=class extends g{constructor(){super(...arguments);this.collapsedStops=new Set;this.initializedStops=new Set}static async getConfigElement(){return document.createElement("translink-schedule-card-editor")}static getStubConfig(t,s=[]){return{entity:ke(t,s)??"",view:"grouped",departures_per_stop:V}}getGridOptions(){return{columns:12,min_columns:6}}setConfig(t){if(!t.entity)throw new Error("A TransLink Schedule entity is required");this.config?.entity!==t.entity&&(this.collapsedStops=new Set,this.initializedStops.clear()),this.config={view:"grouped",departures_per_stop:V,max_departures:le,time_display:"both",show_scheduled_time:!0,delay_threshold_minutes:1,delay_format:"compact",density:"comfortable",empty_stop_behavior:"show",cancelled_behavior:"show",route_color_mode:"official",combined_order:"chronological",show_header:!0,show_brand:!0,header_style:"primary",stop_heading_style:"accent",show_clock:!0,show_alerts:!0,show_stop_codes:!0,show_realtime_status:!1,show_stale_warning:!1,stale_after_minutes:3,...t}}connectedCallback(){super.connectedCallback(),this.ticker=window.setInterval(()=>this.requestUpdate(),3e4)}disconnectedCallback(){this.ticker!==void 0&&window.clearInterval(this.ticker),super.disconnectedCallback()}render(){if(!this.config||!this.hass)return c;let t=this.hass.states[this.config.entity];if(!t)return d`<ha-card><div class="message error">
+var Ne=Object.defineProperty;var Me=Object.getOwnPropertyDescriptor;var v=(o,e,t,i)=>{for(var s=i>1?void 0:i?Me(e,t):e,r=o.length-1,n;r>=0;r--)(n=o[r])&&(s=(i?n(e,t,s):n(s))||s);return i&&s&&Ne(e,t,s),s};var z=globalThis,L=z.ShadowRoot&&(z.ShadyCSS===void 0||z.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,G=Symbol(),he=new WeakMap,E=class{constructor(e,t,i){if(this._$cssResult$=!0,i!==G)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o,t=this.t;if(L&&e===void 0){let i=t!==void 0&&t.length===1;i&&(e=he.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),i&&he.set(t,e))}return e}toString(){return this.cssText}},pe=o=>new E(typeof o=="string"?o:o+"",void 0,G),I=(o,...e)=>{let t=o.length===1?o[0]:e.reduce((i,s,r)=>i+(n=>{if(n._$cssResult$===!0)return n.cssText;if(typeof n=="number")return n;throw Error("Value passed to 'css' function must be a 'css' function result: "+n+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+o[r+1],o[0]);return new E(t,o,G)},ue=(o,e)=>{if(L)o.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of e){let i=document.createElement("style"),s=z.litNonce;s!==void 0&&i.setAttribute("nonce",s),i.textContent=t.cssText,o.appendChild(i)}},K=L?o=>o:o=>o instanceof CSSStyleSheet?(e=>{let t="";for(let i of e.cssRules)t+=i.cssText;return pe(t)})(o):o;var{is:Ue,defineProperty:Fe,getOwnPropertyDescriptor:He,getOwnPropertyNames:ze,getOwnPropertySymbols:Le,getPrototypeOf:Ie}=Object,j=globalThis,me=j.trustedTypes,je=me?me.emptyScript:"",qe=j.reactiveElementPolyfillSupport,R=(o,e)=>o,k={toAttribute(o,e){switch(e){case Boolean:o=o?je:null;break;case Object:case Array:o=o==null?o:JSON.stringify(o)}return o},fromAttribute(o,e){let t=o;switch(e){case Boolean:t=o!==null;break;case Number:t=o===null?null:Number(o);break;case Object:case Array:try{t=JSON.parse(o)}catch{t=null}}return t}},q=(o,e)=>!Ue(o,e),fe={attribute:!0,type:String,converter:k,reflect:!1,useDefault:!1,hasChanged:q};Symbol.metadata??=Symbol("metadata"),j.litPropertyMetadata??=new WeakMap;var g=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=fe){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){let i=Symbol(),s=this.getPropertyDescriptor(e,i,t);s!==void 0&&Fe(this.prototype,e,s)}}static getPropertyDescriptor(e,t,i){let{get:s,set:r}=He(this.prototype,e)??{get(){return this[t]},set(n){this[t]=n}};return{get:s,set(n){let a=s?.call(this);r?.call(this,n),this.requestUpdate(e,a,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??fe}static _$Ei(){if(this.hasOwnProperty(R("elementProperties")))return;let e=Ie(this);e.finalize(),e.l!==void 0&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(R("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(R("properties"))){let t=this.properties,i=[...ze(t),...Le(t)];for(let s of i)this.createProperty(s,t[s])}let e=this[Symbol.metadata];if(e!==null){let t=litPropertyMetadata.get(e);if(t!==void 0)for(let[i,s]of t)this.elementProperties.set(i,s)}this._$Eh=new Map;for(let[t,i]of this.elementProperties){let s=this._$Eu(t,i);s!==void 0&&this._$Eh.set(s,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){let t=[];if(Array.isArray(e)){let i=new Set(e.flat(1/0).reverse());for(let s of i)t.unshift(K(s))}else e!==void 0&&t.push(K(e));return t}static _$Eu(e,t){let i=t.attribute;return i===!1?void 0:typeof i=="string"?i:typeof e=="string"?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),this.renderRoot!==void 0&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){let e=new Map,t=this.constructor.elementProperties;for(let i of t.keys())this.hasOwnProperty(i)&&(e.set(i,this[i]),delete this[i]);e.size>0&&(this._$Ep=e)}createRenderRoot(){let e=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return ue(e,this.constructor.elementStyles),e}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ET(e,t){let i=this.constructor.elementProperties.get(e),s=this.constructor._$Eu(e,i);if(s!==void 0&&i.reflect===!0){let r=(i.converter?.toAttribute!==void 0?i.converter:k).toAttribute(t,i.type);this._$Em=e,r==null?this.removeAttribute(s):this.setAttribute(s,r),this._$Em=null}}_$AK(e,t){let i=this.constructor,s=i._$Eh.get(e);if(s!==void 0&&this._$Em!==s){let r=i.getPropertyOptions(s),n=typeof r.converter=="function"?{fromAttribute:r.converter}:r.converter?.fromAttribute!==void 0?r.converter:k;this._$Em=s;let a=n.fromAttribute(t,r.type);this[s]=a??this._$Ej?.get(s)??a,this._$Em=null}}requestUpdate(e,t,i,s=!1,r){if(e!==void 0){let n=this.constructor;if(s===!1&&(r=this[e]),i??=n.getPropertyOptions(e),!((i.hasChanged??q)(r,t)||i.useDefault&&i.reflect&&r===this._$Ej?.get(e)&&!this.hasAttribute(n._$Eu(e,i))))return;this.C(e,t,i)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(e,t,{useDefault:i,reflect:s,wrapped:r},n){i&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,n??t??this[e]),r!==!0||n!==void 0)||(this._$AL.has(e)||(this.hasUpdated||i||(t=void 0),this._$AL.set(e,t)),s===!0&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[s,r]of this._$Ep)this[s]=r;this._$Ep=void 0}let i=this.constructor.elementProperties;if(i.size>0)for(let[s,r]of i){let{wrapped:n}=r,a=this[s];n!==!0||this._$AL.has(s)||a===void 0||this.C(s,void 0,r,a)}}let e=!1,t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(i=>i.hostUpdate?.()),this.update(t)):this._$EM()}catch(i){throw e=!1,this._$EM(),i}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(e){}firstUpdated(e){}};g.elementStyles=[],g.shadowRootOptions={mode:"open"},g[R("elementProperties")]=new Map,g[R("finalized")]=new Map,qe?.({ReactiveElement:g}),(j.reactiveElementVersions??=[]).push("2.1.2");var te=globalThis,ge=o=>o,B=te.trustedTypes,_e=B?B.createPolicy("lit-html",{createHTML:o=>o}):void 0,we="$lit$",y=`lit$${Math.random().toFixed(9).slice(2)}$`,Se="?"+y,Be=`<${Se}>`,x=document,O=()=>x.createComment(""),P=o=>o===null||typeof o!="object"&&typeof o!="function",ie=Array.isArray,We=o=>ie(o)||typeof o?.[Symbol.iterator]=="function",Y=`[ 	
+\f\r]`,T=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ye=/-->/g,ve=/>/g,b=RegExp(`>|${Y}(?:([^\\s"'>=/]+)(${Y}*=${Y}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),be=/'/g,$e=/"/g,Ae=/^(?:script|style|textarea|title)$/i,se=o=>(e,...t)=>({_$litType$:o,strings:e,values:t}),d=se(1),ft=se(2),gt=se(3),w=Symbol.for("lit-noChange"),c=Symbol.for("lit-nothing"),xe=new WeakMap,$=x.createTreeWalker(x,129);function Ce(o,e){if(!ie(o)||!o.hasOwnProperty("raw"))throw Error("invalid template strings array");return _e!==void 0?_e.createHTML(e):e}var Ve=(o,e)=>{let t=o.length-1,i=[],s,r=e===2?"<svg>":e===3?"<math>":"",n=T;for(let a=0;a<t;a++){let l=o[a],p,u,h=-1,f=0;for(;f<l.length&&(n.lastIndex=f,u=n.exec(l),u!==null);)f=n.lastIndex,n===T?u[1]==="!--"?n=ye:u[1]!==void 0?n=ve:u[2]!==void 0?(Ae.test(u[2])&&(s=RegExp("</"+u[2],"g")),n=b):u[3]!==void 0&&(n=b):n===b?u[0]===">"?(n=s??T,h=-1):u[1]===void 0?h=-2:(h=n.lastIndex-u[2].length,p=u[1],n=u[3]===void 0?b:u[3]==='"'?$e:be):n===$e||n===be?n=b:n===ye||n===ve?n=T:(n=b,s=void 0);let m=n===b&&o[a+1].startsWith("/>")?" ":"";r+=n===T?l+Be:h>=0?(i.push(p),l.slice(0,h)+we+l.slice(h)+y+m):l+y+(h===-2?a:m)}return[Ce(o,r+(o[t]||"<?>")+(e===2?"</svg>":e===3?"</math>":"")),i]},D=class o{constructor({strings:e,_$litType$:t},i){let s;this.parts=[];let r=0,n=0,a=e.length-1,l=this.parts,[p,u]=Ve(e,t);if(this.el=o.createElement(p,i),$.currentNode=this.el.content,t===2||t===3){let h=this.el.content.firstChild;h.replaceWith(...h.childNodes)}for(;(s=$.nextNode())!==null&&l.length<a;){if(s.nodeType===1){if(s.hasAttributes())for(let h of s.getAttributeNames())if(h.endsWith(we)){let f=u[n++],m=s.getAttribute(h).split(y),H=/([.?@])?(.*)/.exec(f);l.push({type:1,index:r,name:H[2],strings:m,ctor:H[1]==="."?J:H[1]==="?"?Z:H[1]==="@"?Q:C}),s.removeAttribute(h)}else h.startsWith(y)&&(l.push({type:6,index:r}),s.removeAttribute(h));if(Ae.test(s.tagName)){let h=s.textContent.split(y),f=h.length-1;if(f>0){s.textContent=B?B.emptyScript:"";for(let m=0;m<f;m++)s.append(h[m],O()),$.nextNode(),l.push({type:2,index:++r});s.append(h[f],O())}}}else if(s.nodeType===8)if(s.data===Se)l.push({type:2,index:r});else{let h=-1;for(;(h=s.data.indexOf(y,h+1))!==-1;)l.push({type:7,index:r}),h+=y.length-1}r++}}static createElement(e,t){let i=x.createElement("template");return i.innerHTML=e,i}};function A(o,e,t=o,i){if(e===w)return e;let s=i!==void 0?t._$Co?.[i]:t._$Cl,r=P(e)?void 0:e._$litDirective$;return s?.constructor!==r&&(s?._$AO?.(!1),r===void 0?s=void 0:(s=new r(o),s._$AT(o,t,i)),i!==void 0?(t._$Co??=[])[i]=s:t._$Cl=s),s!==void 0&&(e=A(o,s._$AS(o,e.values),s,i)),e}var X=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){let{el:{content:t},parts:i}=this._$AD,s=(e?.creationScope??x).importNode(t,!0);$.currentNode=s;let r=$.nextNode(),n=0,a=0,l=i[0];for(;l!==void 0;){if(n===l.index){let p;l.type===2?p=new N(r,r.nextSibling,this,e):l.type===1?p=new l.ctor(r,l.name,l.strings,this,e):l.type===6&&(p=new ee(r,this,e)),this._$AV.push(p),l=i[++a]}n!==l?.index&&(r=$.nextNode(),n++)}return $.currentNode=x,s}p(e){let t=0;for(let i of this._$AV)i!==void 0&&(i.strings!==void 0?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}},N=class o{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,s){this.type=2,this._$AH=c,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode,t=this._$AM;return t!==void 0&&e?.nodeType===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=A(this,e,t),P(e)?e===c||e==null||e===""?(this._$AH!==c&&this._$AR(),this._$AH=c):e!==this._$AH&&e!==w&&this._(e):e._$litType$!==void 0?this.$(e):e.nodeType!==void 0?this.T(e):We(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==c&&P(this._$AH)?this._$AA.nextSibling.data=e:this.T(x.createTextNode(e)),this._$AH=e}$(e){let{values:t,_$litType$:i}=e,s=typeof i=="number"?this._$AC(e):(i.el===void 0&&(i.el=D.createElement(Ce(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(t);else{let r=new X(s,this),n=r.u(this.options);r.p(t),this.T(n),this._$AH=r}}_$AC(e){let t=xe.get(e.strings);return t===void 0&&xe.set(e.strings,t=new D(e)),t}k(e){ie(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,i,s=0;for(let r of e)s===t.length?t.push(i=new o(this.O(O()),this.O(O()),this,this.options)):i=t[s],i._$AI(r),s++;s<t.length&&(this._$AR(i&&i._$AB.nextSibling,s),t.length=s)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){let i=ge(e).nextSibling;ge(e).remove(),e=i}}setConnected(e){this._$AM===void 0&&(this._$Cv=e,this._$AP?.(e))}},C=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,s,r){this.type=1,this._$AH=c,this._$AN=void 0,this.element=e,this.name=t,this._$AM=s,this.options=r,i.length>2||i[0]!==""||i[1]!==""?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=c}_$AI(e,t=this,i,s){let r=this.strings,n=!1;if(r===void 0)e=A(this,e,t,0),n=!P(e)||e!==this._$AH&&e!==w,n&&(this._$AH=e);else{let a=e,l,p;for(e=r[0],l=0;l<r.length-1;l++)p=A(this,a[i+l],t,l),p===w&&(p=this._$AH[l]),n||=!P(p)||p!==this._$AH[l],p===c?e=c:e!==c&&(e+=(p??"")+r[l+1]),this._$AH[l]=p}n&&!s&&this.j(e)}j(e){e===c?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},J=class extends C{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===c?void 0:e}},Z=class extends C{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==c)}},Q=class extends C{constructor(e,t,i,s,r){super(e,t,i,s,r),this.type=5}_$AI(e,t=this){if((e=A(this,e,t,0)??c)===w)return;let i=this._$AH,s=e===c&&i!==c||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,r=e!==c&&(i===c||s);s&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}},ee=class{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){A(this,e)}};var Ge=te.litHtmlPolyfillSupport;Ge?.(D,N),(te.litHtmlVersions??=[]).push("3.3.3");var Ee=(o,e,t)=>{let i=t?.renderBefore??e,s=i._$litPart$;if(s===void 0){let r=t?.renderBefore??null;i._$litPart$=s=new N(e.insertBefore(O(),r),r,void 0,t??{})}return s._$AI(o),s};var oe=globalThis,_=class extends g{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=Ee(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return w}};_._$litElement$=!0,_.finalized=!0,oe.litElementHydrateSupport?.({LitElement:_});var Ke=oe.litElementPolyfillSupport;Ke?.({LitElement:_});(oe.litElementVersions??=[]).push("4.2.2");var Ye={attribute:!0,type:String,converter:k,reflect:!1,hasChanged:q},Xe=(o=Ye,e,t)=>{let{kind:i,metadata:s}=t,r=globalThis.litPropertyMetadata.get(s);if(r===void 0&&globalThis.litPropertyMetadata.set(s,r=new Map),i==="setter"&&((o=Object.create(o)).wrapped=!0),r.set(t.name,o),i==="accessor"){let{name:n}=t;return{set(a){let l=e.get.call(this);e.set.call(this,a),this.requestUpdate(n,l,o,!0,a)},init(a){return a!==void 0&&this.C(n,void 0,o,a),a}}}if(i==="setter"){let{name:n}=t;return function(a){let l=this[n];e.call(this,a),this.requestUpdate(n,l,o,!0,a)}}throw Error("Unsupported decorator location: "+i)};function M(o){return(e,t)=>typeof t=="object"?Xe(o,e,t):((i,s,r)=>{let n=s.hasOwnProperty(r);return s.constructor.createProperty(r,i),n?Object.getOwnPropertyDescriptor(s,r):void 0})(o,e,t)}function U(o){return M({...o,state:!0,attribute:!1})}function re(o,e){return new Date(o.estimated_time).getTime()-new Date(e.estimated_time).getTime()}function Je(o,e){let t=new Map;for(let s of e)t.set(s,[]);for(let s of o){let r=t.get(s.stop_id)??[];r.push(s),t.set(s.stop_id,r)}let i=[];for(;[...t.values()].some(s=>s.length>0);)for(let s of t.values()){let r=s.shift();r&&i.push(r)}return i}function ne(o,e,t,i){let s=e==="hide"?o.filter(r=>!r.cancelled):[...o];return t==="balanced"?s=Je(s,i):t==="route"?s.sort((r,n)=>r.route_name.localeCompare(n.route_name,void 0,{numeric:!0})||re(r,n)):t==="realtime"?s.sort((r,n)=>Number(n.realtime)-Number(r.realtime)||re(r,n)):s.sort(re),e==="move"&&s.sort((r,n)=>Number(r.cancelled)-Number(n.cancelled)),s}function Re(o){let e=new Map;for(let t of o){let i=t.route_name.trim();if(!i)continue;let s=e.get(i);s?s.count+=1:e.set(i,{name:i,count:1,color:t.route_color,textColor:t.route_text_color})}return[...e.values()].sort((t,i)=>t.name.localeCompare(i.name,void 0,{numeric:!0,sensitivity:"base"}))}function ae(o,e){return e.size===0?o:o.filter(t=>e.has(t.route_name.trim()))}function ke(o,e,t=Date.now()){return o?t-new Date(o).getTime()>e*6e4:!0}function Te(o,e=1){let t=!o.cancelled&&o.delay_seconds>=e*60;return{delayed:t,displayTime:o.cancelled?o.scheduled_time:o.estimated_time,scheduledTime:t?o.scheduled_time:void 0,delayMinutes:t?Math.round(o.delay_seconds/60):void 0}}function Oe(o,e=[]){return[...new Set([...e,...Object.keys(o.states)])].find(i=>{let s=o.states[i]?.attributes;return Array.isArray(s?.stops)&&Array.isArray(s?.departures)})}var V=3,Pe=12,ce=12,de=5,De=60,Ze=[{value:"grouped",label:"Grouped by stop"},{value:"combined",label:"Combined by time"}],Qe=[{value:"chronological",label:"Chronological"},{value:"balanced",label:"Balance stops"},{value:"route",label:"Group routes"},{value:"realtime",label:"Realtime first"}],et=[{value:"both",label:"Countdown and clock"},{value:"countdown",label:"Countdown only"},{value:"clock",label:"Clock only"}],tt=[{value:"compact",label:"+7 min"},{value:"text",label:"7 min late"}],it=[{value:"show",label:"Show in schedule order"},{value:"move",label:"Move below active departures"},{value:"hide",label:"Hide"}],st=[{value:"comfortable",label:"Comfortable"},{value:"compact",label:"Compact"},{value:"minimal",label:"Minimal"}],ot=[{value:"official",label:"Official route colors"},{value:"theme",label:"Theme primary color"},{value:"monochrome",label:"Monochrome"}],rt=[{value:"multiple",label:"Allow multiple routes"},{value:"single",label:"One route at a time"}],nt=[{value:"show",label:"Show in configured order"},{value:"move",label:"Move to bottom"},{value:"hide",label:"Hide"}],at=[{value:"primary",label:"Theme primary"},{value:"surface",label:"Card surface"},{value:"transparent",label:"Transparent"}],lt=[{value:"accent",label:"Accent"},{value:"plain",label:"Plain"},{value:"compact",label:"Compact"}];function ct(o,e=Date.now()){return Math.max(0,Math.round((new Date(o).getTime()-e)/6e4))}function le(o,e){let t=e?.time_format==="12"?!0:e?.time_format==="24"?!1:void 0;return new Intl.DateTimeFormat(e?.language,{hour:"numeric",hour12:t,minute:"2-digit"}).format(new Date(o))}var S=class extends _{constructor(){super(...arguments);this.collapsedStops=new Set;this.selectedRoutes=new Set;this.initializedStops=new Set}static async getConfigElement(){return document.createElement("translink-schedule-card-editor")}static getStubConfig(t,i=[]){return{entity:Oe(t,i)??"",view:"grouped",departures_per_stop:V}}getGridOptions(){return{columns:12,min_columns:6}}setConfig(t){if(!t.entity)throw new Error("A TransLink Schedule entity is required");let i=t.route_filter_selection_mode??"multiple";this.config?.entity!==t.entity?(this.collapsedStops=new Set,this.initializedStops.clear(),this.resetRouteFilter()):(this.config?.show_route_filter&&t.show_route_filter!==!0||this.config?.route_filter_selection_mode!==i)&&this.resetRouteFilter(),this.config={view:"grouped",departures_per_stop:V,max_departures:ce,time_display:"both",show_scheduled_time:!0,delay_threshold_minutes:1,delay_format:"compact",density:"comfortable",empty_stop_behavior:"show",cancelled_behavior:"show",route_color_mode:"official",show_route_filter:!1,route_filter_reset_minutes:de,route_filter_selection_mode:"multiple",route_filter_show_counts:!1,combined_order:"chronological",show_header:!0,show_brand:!0,header_style:"primary",stop_heading_style:"accent",show_clock:!0,show_alerts:!0,show_stop_codes:!0,show_realtime_status:!1,show_stale_warning:!1,stale_after_minutes:3,...t},this.selectedRoutes.size>0&&this.scheduleRouteFilterReset()}connectedCallback(){super.connectedCallback(),this.ticker=window.setInterval(()=>this.requestUpdate(),3e4)}disconnectedCallback(){this.ticker!==void 0&&window.clearInterval(this.ticker),this.clearRouteFilterResetTimer(),super.disconnectedCallback()}render(){if(!this.config||!this.hass)return c;let t=this.hass.states[this.config.entity];if(!t)return d`<ha-card><div class="message error">
         Entity ${this.config.entity} was not found.
-      </div></ha-card>`;let s=t.attributes.stops??[],i=t.attributes.departures??[],r=t.attributes.alerts??[],n=this.config.title??t.attributes.board_name??"TransLink departures",l=t.attributes.last_updated,a=this.config.show_stale_warning&&Ce(l,this.config.stale_after_minutes??3),h=[`density-${this.config.density}`,`header-${this.config.header_style}`,`routes-${this.config.route_color_mode}`,`stops-${this.config.stop_heading_style}`].join(" ");return d`
-      <ha-card class=${h}>
+      </div></ha-card>`;let i=t.attributes.stops??[],s=t.attributes.departures??[],r=s.length?s:i.flatMap(m=>m.departures),n=Re(r),a=this.activeSelectedRoutes(n),l=t.attributes.alerts??[],p=this.config.title??t.attributes.board_name??"TransLink departures",u=t.attributes.last_updated,h=this.config.show_stale_warning&&ke(u,this.config.stale_after_minutes??3),f=[`density-${this.config.density}`,`header-${this.config.header_style}`,`routes-${this.config.route_color_mode}`,`stops-${this.config.stop_heading_style}`].join(" ");return d`
+      <ha-card class=${f}>
         ${this.config.show_header?d`<header>
               <div class="header-title">
                 ${this.config.header_icon?d`<ha-icon
@@ -12,79 +12,103 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
                     ></ha-icon>`:c}
                 <div>
                   ${this.config.show_brand?d`<div class="eyebrow">TransLink</div>`:c}
-                  <h1>${n}</h1>
+                  <h1>${p}</h1>
                 </div>
               </div>
-              ${this.config.show_clock?d`<div class="clock">${ae(new Date().toISOString(),this.hass.locale)}</div>`:c}
+              ${this.config.show_clock?d`<div class="clock">${le(new Date().toISOString(),this.hass.locale)}</div>`:c}
             </header>`:c}
-        ${this.config.show_alerts&&r.length?d`<div class="alerts">
-              ${r.map(p=>d`<div>
+        ${this.config.show_alerts&&l.length?d`<div class="alerts">
+              ${l.map(m=>d`<div>
                   <ha-icon icon="mdi:alert" aria-hidden="true"></ha-icon>
                   <span>
-                    <strong>${p.header}</strong>
-                    ${p.description?d`<small>${p.description}</small>`:c}
+                    <strong>${m.header}</strong>
+                    ${m.description?d`<small>${m.description}</small>`:c}
                   </span>
                 </div>`)}
             </div>`:c}
-        ${a?d`<div class="stale" role="status">
+        ${h?d`<div class="stale" role="status">
               <ha-icon icon="mdi:cloud-alert" aria-hidden="true"></ha-icon>
               Realtime data has not updated recently.
             </div>`:c}
+        ${this.config.show_route_filter&&n.length>0?this.renderRouteFilter(n,a):c}
         <main>
-          ${this.config.view==="combined"?this.renderCombined(i,s):this.renderGrouped(s)}
+          ${this.config.view==="combined"?this.renderCombined(s,i,a):this.renderGrouped(i,a)}
         </main>
       </ha-card>
-    `}renderGrouped(t){let s=this.config?.empty_stop_behavior??(this.config?.hide_empty_stops?"hide":"show"),i=t.map(n=>({stop:n,departures:ne(n.departures,this.config?.cancelled_behavior??"show","chronological",[n.stop_id])}));s==="hide"?i=i.filter(({departures:n})=>n.length>0):s==="move"&&i.sort((n,l)=>+(n.departures.length===0)-+(l.departures.length===0));let r=i.map(({stop:n,departures:l})=>{let a=this.isStopCollapsed(n),h=n.departures_per_stop??this.config?.departures_per_stop??V;return d`
-        <section class=${a?"collapsed":""}>
+    `}renderRouteFilter(t,i){let s=this.config?.route_filter_show_counts===!0,r=t.reduce((n,a)=>n+a.count,0);return d`
+      <nav class="route-filter" aria-label="Filter departures by route">
+        <button
+          type="button"
+          class="route-filter-chip all"
+          aria-pressed=${String(i.size===0)}
+          @click=${()=>this.selectAllRoutes()}
+        >
+          All${s?d` <span>${r}</span>`:c}
+        </button>
+        ${t.map(n=>{let a=i.has(n.name),l=this.config?.route_color_mode==="official"&&a?[n.color?`background:#${n.color}`:"",n.textColor?`color:#${n.textColor}`:""].filter(Boolean).join(";"):"";return d`
+            <button
+              type="button"
+              class="route-filter-chip"
+              style=${l}
+              aria-label="Filter route ${n.name}"
+              aria-pressed=${String(a)}
+              @click=${()=>this.toggleRoute(n.name)}
+            >
+              ${n.name}${s?d` <span>${n.count}</span>`:c}
+            </button>
+          `})}
+      </nav>
+    `}renderGrouped(t,i){let s=this.config?.empty_stop_behavior??(this.config?.hide_empty_stops?"hide":"show"),r=t.map(a=>({stop:a,departures:ne(ae(a.departures,i),this.config?.cancelled_behavior??"show","chronological",[a.stop_id])}));s==="hide"?r=r.filter(({departures:a})=>a.length>0):s==="move"&&r.sort((a,l)=>+(a.departures.length===0)-+(l.departures.length===0));let n=r.map(({stop:a,departures:l})=>{let p=this.isStopCollapsed(a),u=a.departures_per_stop??this.config?.departures_per_stop??V;return d`
+        <section class=${p?"collapsed":""}>
           <button
             class="stop-heading"
             type="button"
-            aria-expanded=${String(!a)}
-            @click=${()=>this.toggleStop(n.stop_id)}
+            aria-expanded=${String(!p)}
+            @click=${()=>this.toggleStop(a.stop_id)}
           >
             <span class="stop-title">
               <ha-icon
-                icon=${a?"mdi:chevron-right":"mdi:chevron-down"}
+                icon=${p?"mdi:chevron-right":"mdi:chevron-down"}
                 aria-hidden="true"
               ></ha-icon>
-              ${n.display_name||n.stop_name}
+              ${a.display_name||a.stop_name}
             </span>
-            ${this.config?.show_stop_codes!==!1&&n.show_stop_code!==!1&&n.stop_code?d`<span class="stop-code">#${n.stop_code}</span>`:c}
+            ${this.config?.show_stop_codes!==!1&&a.show_stop_code!==!1&&a.stop_code?d`<span class="stop-code">#${a.stop_code}</span>`:c}
           </button>
-          ${a?c:l.length?l.slice(0,h).map(p=>this.renderDeparture(p,!1)):d`<div class="empty-stop">No upcoming departures</div>`}
+          ${p?c:l.length?l.slice(0,u).map(h=>this.renderDeparture(h,!1)):d`<div class="empty-stop">No upcoming departures</div>`}
         </section>
-      `});return r.length?r:d`<div class="message">No upcoming departures.</div>`}renderCombined(t,s){let i=ne(t,this.config?.cancelled_behavior??"show",this.config?.combined_order??"chronological",s.map(r=>r.stop_id));return i.length===0?d`<div class="message">No upcoming departures.</div>`:d`
+      `});return n.length?n:d`<div class="message">No upcoming departures.</div>`}renderCombined(t,i,s){let r=ne(ae(t,s),this.config?.cancelled_behavior??"show",this.config?.combined_order??"chronological",i.map(n=>n.stop_id));return r.length===0?d`<div class="message">No upcoming departures.</div>`:d`
       <section>
-        ${i.slice(0,this.config?.max_departures??le).map(r=>this.renderDeparture(r,!0))}
+        ${r.slice(0,this.config?.max_departures??ce).map(n=>this.renderDeparture(n,!0))}
       </section>
-    `}renderDeparture(t,s){let i=this.config?.route_color_mode==="official"?[t.route_color?`background:#${t.route_color}`:"",t.route_text_color?`color:#${t.route_text_color}`:""].filter(Boolean).join(";"):"",r=Ee(t,this.config?.delay_threshold_minutes),n=this.config?.time_display!=="clock",l=this.config?.time_display!=="countdown",a=t.destination||t.route_long_name,h=t.cancelled?"cancelled":r.delayed?`${r.delayMinutes} minutes late`:t.realtime?"live prediction":"scheduled",p=this.config?.delay_format==="text"?`${r.delayMinutes} min late`:`+${r.delayMinutes} min`;return d`
+    `}renderDeparture(t,i){let s=this.config?.route_color_mode==="official"?[t.route_color?`background:#${t.route_color}`:"",t.route_text_color?`color:#${t.route_text_color}`:""].filter(Boolean).join(";"):"",r=Te(t,this.config?.delay_threshold_minutes),n=this.config?.time_display!=="clock",a=this.config?.time_display!=="countdown",l=t.destination||t.route_long_name,p=t.cancelled?"cancelled":r.delayed?`${r.delayMinutes} minutes late`:t.realtime?"live prediction":"scheduled",u=this.config?.delay_format==="text"?`${r.delayMinutes} min late`:`+${r.delayMinutes} min`;return d`
       <div
         class="departure ${t.cancelled?"cancelled":""}"
         role="group"
-        aria-label="Route ${t.route_name} to ${a}, ${h}"
+        aria-label="Route ${t.route_name} to ${l}, ${p}"
       >
-        <span class="route" style=${i}>${t.route_name}</span>
+        <span class="route" style=${s}>${t.route_name}</span>
         <div class="destination">
-          <strong>${a}</strong>
-          ${s?d`<small>${t.stop_name}</small>`:c}
+          <strong>${l}</strong>
+          ${i?d`<small>${t.stop_name}</small>`:c}
         </div>
         <div class="timing">
-          ${t.cancelled?d`<strong>Cancelled</strong>`:n?d`<strong>${ot(t.estimated_time)} min</strong>`:c}
-          ${l?d`<small class="time-details ${n?"":"clock-only"}">
-                ${r.scheduledTime&&this.config?.show_scheduled_time!==!1?d`<s>${ae(r.scheduledTime,this.hass?.locale)}</s>`:c}
+          ${t.cancelled?d`<strong>Cancelled</strong>`:n?d`<strong>${ct(t.estimated_time)} min</strong>`:c}
+          ${a?d`<small class="time-details ${n?"":"clock-only"}">
+                ${r.scheduledTime&&this.config?.show_scheduled_time!==!1?d`<s>${le(r.scheduledTime,this.hass?.locale)}</s>`:c}
                 <span class=${r.delayed?"predicted-time":""}>
-                  ${ae(r.displayTime,this.hass?.locale)}
+                  ${le(r.displayTime,this.hass?.locale)}
                 </span>
               </small>`:c}
           <small class="status-details">
-            ${r.delayMinutes!==void 0?d`<span class="delay">${p}</span>`:c}
+            ${r.delayMinutes!==void 0?d`<span class="delay">${u}</span>`:c}
             ${this.config?.show_realtime_status?d`<span class="realtime ${t.realtime?"live":""}">
                   ${t.realtime?"Live":"Scheduled"}
                 </span>`:c}
           </small>
         </div>
       </div>
-    `}isStopCollapsed(t){return this.initializedStops.has(t.stop_id)||(this.initializedStops.add(t.stop_id),t.collapsed&&this.collapsedStops.add(t.stop_id)),this.collapsedStops.has(t.stop_id)}toggleStop(t){let s=new Set(this.collapsedStops);s.has(t)?s.delete(t):s.add(t),this.collapsedStops=s}static{this.styles=z`
+    `}isStopCollapsed(t){return this.initializedStops.has(t.stop_id)||(this.initializedStops.add(t.stop_id),t.collapsed&&this.collapsedStops.add(t.stop_id)),this.collapsedStops.has(t.stop_id)}toggleStop(t){let i=new Set(this.collapsedStops);i.has(t)?i.delete(t):i.add(t),this.collapsedStops=i}activeSelectedRoutes(t){let i=new Set(t.map(r=>r.name)),s=new Set([...this.selectedRoutes].filter(r=>i.has(r)));if(s.size!==this.selectedRoutes.size){this.selectedRoutes.clear();for(let r of s)this.selectedRoutes.add(r);s.size===0&&this.clearRouteFilterResetTimer()}return s}selectAllRoutes(){this.resetRouteFilter()}toggleRoute(t){let i=new Set(this.selectedRoutes);this.config?.route_filter_selection_mode==="single"?i.size===1&&i.has(t)?i.clear():(i.clear(),i.add(t)):i.has(t)?i.delete(t):i.add(t),this.selectedRoutes=i,i.size>0?this.scheduleRouteFilterReset():this.clearRouteFilterResetTimer()}resetRouteFilter(){this.clearRouteFilterResetTimer(),this.selectedRoutes.size>0&&(this.selectedRoutes=new Set)}scheduleRouteFilterReset(){this.clearRouteFilterResetTimer();let t=this.config?.route_filter_reset_minutes??de;t<=0||(this.routeFilterResetTimer=window.setTimeout(()=>this.resetRouteFilter(),t*6e4))}clearRouteFilterResetTimer(){this.routeFilterResetTimer!==void 0&&(window.clearTimeout(this.routeFilterResetTimer),this.routeFilterResetTimer=void 0)}static{this.styles=I`
     :host { display: block; }
     ha-card {
       background: var(--ha-card-background, var(--card-background-color));
@@ -127,6 +151,50 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
       font-size: 12px;
       gap: 8px;
       padding: 7px 16px;
+    }
+    .route-filter {
+      background: color-mix(in srgb, var(--card-background-color), var(--primary-color) 4%);
+      border-bottom: 1px solid var(--divider-color);
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 9px 12px;
+      scrollbar-width: thin;
+    }
+    .route-filter-chip {
+      background: var(--secondary-background-color);
+      border: 1px solid var(--divider-color);
+      border-radius: 999px;
+      color: var(--primary-text-color);
+      cursor: pointer;
+      flex: 0 0 auto;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 38px;
+      padding: 6px 11px;
+    }
+    .route-filter-chip[aria-pressed="true"] {
+      background: var(--primary-color);
+      color: var(--text-primary-color);
+    }
+    .route-filter-chip:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    .route-filter-chip span {
+      color: inherit;
+      font-size: 10px;
+      margin-left: 3px;
+      opacity: .78;
+    }
+    .routes-theme .route-filter-chip[aria-pressed="true"] {
+      background: var(--primary-color) !important;
+      color: var(--text-primary-color) !important;
+    }
+    .routes-monochrome .route-filter-chip[aria-pressed="true"] {
+      background: var(--primary-text-color) !important;
+      color: var(--card-background-color) !important;
     }
     main { padding: 4px 0; }
     section + section { border-top: 1px solid var(--divider-color); }
@@ -211,7 +279,7 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
       .departure { gap: 8px; padding-inline: 12px; }
       header { padding-inline: 16px; }
     }
-  `}};w([H({attribute:!1})],C.prototype,"hass",2),w([B()],C.prototype,"config",2),w([B()],C.prototype,"collapsedStops",2);var U=class extends g{setConfig(e){this.config=e}render(){return this.config?d`
+  `}};v([M({attribute:!1})],S.prototype,"hass",2),v([U()],S.prototype,"config",2),v([U()],S.prototype,"collapsedStops",2),v([U()],S.prototype,"selectedRoutes",2);var F=class extends _{setConfig(e){this.config=e}render(){return this.config?d`
       <div class="form">
         <ha-entity-picker
           .hass=${this.hass}
@@ -227,24 +295,24 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
           data-key="title"
           @input=${this.valueChanged}
         ></ha-textfield>
-        ${this.selectField("view","Layout",this.config.view??"grouped",Ke)}
-        ${this.selectField("combined_order","Combined ordering",this.config.combined_order??"chronological",Ye)}
+        ${this.selectField("view","Layout",this.config.view??"grouped",Ze)}
+        ${this.selectField("combined_order","Combined ordering",this.config.combined_order??"chronological",Qe)}
         <ha-textfield
           type="number"
           min="1"
-          max=${Oe}
+          max=${Pe}
           .value=${String(this.config.departures_per_stop??V)}
           label="Departures per stop"
           data-key="departures_per_stop"
           data-min="1"
-          data-max=${Oe}
+          data-max=${Pe}
           @input=${this.numberChanged}
         ></ha-textfield>
         <ha-textfield
           type="number"
           min="1"
           max="50"
-          .value=${String(this.config.max_departures??le)}
+          .value=${String(this.config.max_departures??ce)}
           label="Maximum combined departures"
           data-key="max_departures"
           data-min="1"
@@ -253,7 +321,7 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
         ></ha-textfield>
 
         <h3>Timing and status</h3>
-        ${this.selectField("time_display","Time display",this.config.time_display??"both",Je)}
+        ${this.selectField("time_display","Time display",this.config.time_display??"both",et)}
         <ha-textfield
           type="number"
           min="1"
@@ -265,8 +333,8 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
           data-max="30"
           @input=${this.numberChanged}
         ></ha-textfield>
-        ${this.selectField("delay_format","Delay label",this.config.delay_format??"compact",Xe)}
-        ${this.selectField("cancelled_behavior","Cancelled departures",this.config.cancelled_behavior??"show",Ze)}
+        ${this.selectField("delay_format","Delay label",this.config.delay_format??"compact",tt)}
+        ${this.selectField("cancelled_behavior","Cancelled departures",this.config.cancelled_behavior??"show",it)}
         ${this.booleanField("show_scheduled_time","Show struck-through scheduled time",this.config.show_scheduled_time!==!1)}
         ${this.booleanField("show_realtime_status","Show Live/Scheduled labels",this.config.show_realtime_status===!0)}
         ${this.booleanField("show_stale_warning","Warn when realtime data is stale",this.config.show_stale_warning===!0)}
@@ -283,17 +351,35 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
         ></ha-textfield>
 
         <h3>Appearance</h3>
-        ${this.selectField("density","Row density",this.config.density??"comfortable",Qe)}
-        ${this.selectField("route_color_mode","Route badge colors",this.config.route_color_mode??"official",et)}
-        ${this.selectField("empty_stop_behavior","Stops without departures",this.config.empty_stop_behavior??(this.config.hide_empty_stops?"hide":"show"),tt)}
+        ${this.selectField("density","Row density",this.config.density??"comfortable",st)}
+        ${this.selectField("route_color_mode","Route badge colors",this.config.route_color_mode??"official",ot)}
+        ${this.selectField("empty_stop_behavior","Stops without departures",this.config.empty_stop_behavior??(this.config.hide_empty_stops?"hide":"show"),nt)}
         ${this.booleanField("show_stop_codes","Show stop numbers",this.config.show_stop_codes!==!1)}
+
+        <h3>Route filter</h3>
+        ${this.booleanField("show_route_filter","Show route filter",this.config.show_route_filter===!0)}
+        ${this.config.show_route_filter?d`
+              ${this.selectField("route_filter_selection_mode","Route selection",this.config.route_filter_selection_mode??"multiple",rt)}
+              ${this.booleanField("route_filter_show_counts","Show departure counts",this.config.route_filter_show_counts===!0)}
+              <ha-textfield
+                type="number"
+                min="0"
+                max=${De}
+                .value=${String(this.config.route_filter_reset_minutes??de)}
+                label="Reset to All after (minutes, 0 = never)"
+                data-key="route_filter_reset_minutes"
+                data-min="0"
+                data-max=${De}
+                @input=${this.numberChanged}
+              ></ha-textfield>
+            `:c}
 
         <h3>Header</h3>
         ${this.booleanField("show_header","Show header",this.config.show_header!==!1)}
         ${this.booleanField("show_brand","Show TransLink label",this.config.show_brand!==!1)}
         ${this.booleanField("show_clock","Show current time",this.config.show_clock!==!1)}
-        ${this.selectField("header_style","Header colors",this.config.header_style??"primary",st)}
-        ${this.selectField("stop_heading_style","Stop heading style",this.config.stop_heading_style??"accent",it)}
+        ${this.selectField("header_style","Header colors",this.config.header_style??"primary",at)}
+        ${this.selectField("stop_heading_style","Stop heading style",this.config.stop_heading_style??"accent",lt)}
         <ha-textfield
           .value=${this.config.header_icon??""}
           label="Header icon (for example mdi:bus)"
@@ -308,23 +394,23 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
           ></ha-switch>
         </ha-formfield>
       </div>
-    `:c}selectField(e,t,s,i){return d`
+    `:c}selectField(e,t,i,s){return d`
       <ha-select
         .label=${t}
-        .value=${s}
-        .options=${i}
+        .value=${i}
+        .options=${s}
         data-key=${e}
         @selected=${this.valueChanged}
       ></ha-select>
-    `}booleanField(e,t,s){return d`
+    `}booleanField(e,t,i){return d`
       <ha-formfield label=${t}>
         <ha-switch
-          .checked=${s}
+          .checked=${i}
           data-key=${e}
           @change=${this.booleanChanged}
         ></ha-switch>
       </ha-formfield>
-    `}valueChanged(e){if(!this.config)return;let t=e.currentTarget,s=t.dataset.key,r=e.detail?.value??t.value;this.config={...this.config,[s]:r},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}booleanChanged(e){if(!this.config)return;let t=e.currentTarget,s=t.dataset.key;this.config={...this.config,[s]:t.checked},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}numberChanged(e){if(!this.config)return;let t=e.currentTarget,s=Number.parseInt(t.value,10);if(!Number.isFinite(s))return;let i=t.dataset.key,r=Number.parseInt(t.dataset.min??"1",10),n=Number.parseInt(t.dataset.max??"12",10);this.config={...this.config,[i]:Math.min(n,Math.max(r,s))},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=z`
+    `}valueChanged(e){if(!this.config)return;let t=e.currentTarget,i=t.dataset.key,r=e.detail?.value??t.value;this.config={...this.config,[i]:r},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}booleanChanged(e){if(!this.config)return;let t=e.currentTarget,i=t.dataset.key;this.config={...this.config,[i]:t.checked},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}numberChanged(e){if(!this.config)return;let t=e.currentTarget,i=Number.parseInt(t.value,10);if(!Number.isFinite(i))return;let s=t.dataset.key,r=Number.parseInt(t.dataset.min??"1",10),n=Number.parseInt(t.dataset.max??"12",10);this.config={...this.config,[s]:Math.min(n,Math.max(r,i))},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=I`
     .form { display: grid; gap: 16px; padding: 8px 0; }
     h3 {
       border-bottom: 1px solid var(--divider-color);
@@ -332,7 +418,7 @@ var Te=Object.defineProperty;var Pe=Object.getOwnPropertyDescriptor;var w=(o,e,t
       margin: 8px 0 0;
       padding-bottom: 6px;
     }
-  `}};w([H({attribute:!1})],U.prototype,"hass",2),w([B()],U.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",C);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",U);window.customCards=window.customCards??[];window.customCards.some(o=>o.type==="translink-schedule-card")||window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{C as TransLinkScheduleCard,U as TransLinkScheduleCardEditor};
+  `}};v([M({attribute:!1})],F.prototype,"hass",2),v([U()],F.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",S);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",F);window.customCards=window.customCards??[];window.customCards.some(o=>o.type==="translink-schedule-card")||window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{S as TransLinkScheduleCard,F as TransLinkScheduleCardEditor};
 /*! Bundled license information:
 
 @lit/reactive-element/css-tag.js:

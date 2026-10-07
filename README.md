@@ -131,6 +131,10 @@ density: comfortable
 empty_stop_behavior: show
 cancelled_behavior: show
 route_color_mode: official
+show_route_filter: false
+route_filter_reset_minutes: 5
+route_filter_selection_mode: multiple
+route_filter_show_counts: false
 combined_order: chronological
 show_header: true
 show_brand: true
@@ -162,6 +166,16 @@ or `text` (`7 min late`).
 `route_color_mode` accepts `official`, `theme`, or `monochrome`.
 `header_style` accepts `primary`, `surface`, or `transparent`, while
 `stop_heading_style` accepts `accent`, `plain`, or `compact`.
+
+Enable `show_route_filter` to add a horizontally scrollable **All** and route
+chip row above the schedule. Route choices are sorted naturally and filter
+both grouped and combined views before departure limits are applied.
+
+`route_filter_selection_mode` accepts `multiple` or `single`.
+`route_filter_show_counts` adds the number of available departures to each
+chip. `route_filter_reset_minutes` resets the selection to **All** after the
+latest filter interaction; set it to `0` to keep the selection until it is
+changed manually. These settings are also available in the visual editor.
 
 Use `view: combined` and `max_departures` to display a single list.
 `combined_order` accepts `chronological`, `balanced`, `route`, or `realtime`:

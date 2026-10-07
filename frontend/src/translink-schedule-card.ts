@@ -1,7 +1,13 @@
 import { LitElement, css, html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
 
-import { isDataStale, prepareDepartures } from "./departure-list";
+import {
+  filterDeparturesByRoute,
+  getRouteOptions,
+  isDataStale,
+  prepareDepartures,
+  type RouteOption,
+} from "./departure-list";
 import { getDepartureTiming } from "./departure-timing";
 import { findScheduleEntity } from "./entity-selection";
 import type {
@@ -15,6 +21,8 @@ import type {
 const DEFAULT_PER_STOP = 3;
 const MAX_PER_STOP = 12;
 const DEFAULT_MAX = 12;
+const DEFAULT_ROUTE_FILTER_RESET = 5;
+const MAX_ROUTE_FILTER_RESET = 60;
 
 interface SelectOption {
   value: string;
@@ -54,6 +62,10 @@ const ROUTE_COLOR_OPTIONS: SelectOption[] = [
   { value: "official", label: "Official route colors" },
   { value: "theme", label: "Theme primary color" },
   { value: "monochrome", label: "Monochrome" },
+];
+const ROUTE_FILTER_SELECTION_OPTIONS: SelectOption[] = [
+  { value: "multiple", label: "Allow multiple routes" },
+  { value: "single", label: "One route at a time" },
 ];
 const EMPTY_STOP_OPTIONS: SelectOption[] = [
   { value: "show", label: "Show in configured order" },
@@ -96,7 +108,9 @@ export class TransLinkScheduleCard extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private config?: CardConfig;
   @state() private collapsedStops = new Set<string>();
+  @state() private selectedRoutes = new Set<string>();
   private initializedStops = new Set<string>();
+  private routeFilterResetTimer?: number;
   private ticker?: number;
 
   public static async getConfigElement(): Promise<HTMLElement> {
@@ -125,9 +139,19 @@ export class TransLinkScheduleCard extends LitElement {
     if (!config.entity) {
       throw new Error("A TransLink Schedule entity is required");
     }
+    const nextSelectionMode =
+      config.route_filter_selection_mode ?? "multiple";
     if (this.config?.entity !== config.entity) {
       this.collapsedStops = new Set();
       this.initializedStops.clear();
+      this.resetRouteFilter();
+    } else if (
+      (this.config?.show_route_filter &&
+        config.show_route_filter !== true) ||
+      this.config?.route_filter_selection_mode !==
+        nextSelectionMode
+    ) {
+      this.resetRouteFilter();
     }
     this.config = {
       view: "grouped",
@@ -141,6 +165,10 @@ export class TransLinkScheduleCard extends LitElement {
       empty_stop_behavior: "show",
       cancelled_behavior: "show",
       route_color_mode: "official",
+      show_route_filter: false,
+      route_filter_reset_minutes: DEFAULT_ROUTE_FILTER_RESET,
+      route_filter_selection_mode: "multiple",
+      route_filter_show_counts: false,
       combined_order: "chronological",
       show_header: true,
       show_brand: true,
@@ -154,6 +182,7 @@ export class TransLinkScheduleCard extends LitElement {
       stale_after_minutes: 3,
       ...config,
     };
+    if (this.selectedRoutes.size > 0) this.scheduleRouteFilterReset();
   }
 
   public connectedCallback(): void {
@@ -163,6 +192,7 @@ export class TransLinkScheduleCard extends LitElement {
 
   public disconnectedCallback(): void {
     if (this.ticker !== undefined) window.clearInterval(this.ticker);
+    this.clearRouteFilterResetTimer();
     super.disconnectedCallback();
   }
 
@@ -176,6 +206,11 @@ export class TransLinkScheduleCard extends LitElement {
     }
     const stops = (entity.attributes.stops ?? []) as StopDepartures[];
     const departures = (entity.attributes.departures ?? []) as Departure[];
+    const routeSource = departures.length
+      ? departures
+      : stops.flatMap((stop) => stop.departures);
+    const routeOptions = getRouteOptions(routeSource);
+    const selectedRoutes = this.activeSelectedRoutes(routeOptions);
     const alerts = (entity.attributes.alerts ?? []) as ServiceAlert[];
     const title =
       this.config.title ??
@@ -239,23 +274,75 @@ export class TransLinkScheduleCard extends LitElement {
               Realtime data has not updated recently.
             </div>`
           : nothing}
+        ${this.config.show_route_filter && routeOptions.length > 0
+          ? this.renderRouteFilter(routeOptions, selectedRoutes)
+          : nothing}
         <main>
           ${this.config.view === "combined"
-            ? this.renderCombined(departures, stops)
-            : this.renderGrouped(stops)}
+            ? this.renderCombined(departures, stops, selectedRoutes)
+            : this.renderGrouped(stops, selectedRoutes)}
         </main>
       </ha-card>
     `;
   }
 
-  private renderGrouped(stops: StopDepartures[]) {
+  private renderRouteFilter(
+    routes: RouteOption[],
+    selectedRoutes: ReadonlySet<string>,
+  ) {
+    const showCounts = this.config?.route_filter_show_counts === true;
+    const total = routes.reduce((count, route) => count + route.count, 0);
+    return html`
+      <nav class="route-filter" aria-label="Filter departures by route">
+        <button
+          type="button"
+          class="route-filter-chip all"
+          aria-pressed=${String(selectedRoutes.size === 0)}
+          @click=${() => this.selectAllRoutes()}
+        >
+          All${showCounts ? html` <span>${total}</span>` : nothing}
+        </button>
+        ${routes.map((route) => {
+          const selected = selectedRoutes.has(route.name);
+          const routeStyle =
+            this.config?.route_color_mode === "official" && selected
+              ? [
+                  route.color ? `background:#${route.color}` : "",
+                  route.textColor ? `color:#${route.textColor}` : "",
+                ]
+                  .filter(Boolean)
+                  .join(";")
+              : "";
+          return html`
+            <button
+              type="button"
+              class="route-filter-chip"
+              style=${routeStyle}
+              aria-label="Filter route ${route.name}"
+              aria-pressed=${String(selected)}
+              @click=${() => this.toggleRoute(route.name)}
+            >
+              ${route.name}${showCounts
+                ? html` <span>${route.count}</span>`
+                : nothing}
+            </button>
+          `;
+        })}
+      </nav>
+    `;
+  }
+
+  private renderGrouped(
+    stops: StopDepartures[],
+    selectedRoutes: ReadonlySet<string>,
+  ) {
     const emptyBehavior =
       this.config?.empty_stop_behavior ??
       (this.config?.hide_empty_stops ? "hide" : "show");
     let entries = stops.map((stop) => ({
       stop,
       departures: prepareDepartures(
-        stop.departures,
+        filterDeparturesByRoute(stop.departures, selectedRoutes),
         this.config?.cancelled_behavior ?? "show",
         "chronological",
         [stop.stop_id],
@@ -318,9 +405,10 @@ export class TransLinkScheduleCard extends LitElement {
   private renderCombined(
     departures: Departure[],
     stops: StopDepartures[],
+    selectedRoutes: ReadonlySet<string>,
   ) {
     const prepared = prepareDepartures(
-      departures,
+      filterDeparturesByRoute(departures, selectedRoutes),
       this.config?.cancelled_behavior ?? "show",
       this.config?.combined_order ?? "chronological",
       stops.map((stop) => stop.stop_id),
@@ -428,6 +516,66 @@ export class TransLinkScheduleCard extends LitElement {
     this.collapsedStops = collapsed;
   }
 
+  private activeSelectedRoutes(
+    routes: RouteOption[],
+  ): ReadonlySet<string> {
+    const available = new Set(routes.map((route) => route.name));
+    const active = new Set(
+      [...this.selectedRoutes].filter((route) => available.has(route)),
+    );
+    if (active.size !== this.selectedRoutes.size) {
+      this.selectedRoutes.clear();
+      for (const route of active) this.selectedRoutes.add(route);
+      if (active.size === 0) this.clearRouteFilterResetTimer();
+    }
+    return active;
+  }
+
+  private selectAllRoutes(): void {
+    this.resetRouteFilter();
+  }
+
+  private toggleRoute(route: string): void {
+    const selected = new Set(this.selectedRoutes);
+    if (this.config?.route_filter_selection_mode === "single") {
+      if (selected.size === 1 && selected.has(route)) selected.clear();
+      else {
+        selected.clear();
+        selected.add(route);
+      }
+    } else if (selected.has(route)) {
+      selected.delete(route);
+    } else {
+      selected.add(route);
+    }
+    this.selectedRoutes = selected;
+    if (selected.size > 0) this.scheduleRouteFilterReset();
+    else this.clearRouteFilterResetTimer();
+  }
+
+  private resetRouteFilter(): void {
+    this.clearRouteFilterResetTimer();
+    if (this.selectedRoutes.size > 0) this.selectedRoutes = new Set();
+  }
+
+  private scheduleRouteFilterReset(): void {
+    this.clearRouteFilterResetTimer();
+    const minutes =
+      this.config?.route_filter_reset_minutes ??
+      DEFAULT_ROUTE_FILTER_RESET;
+    if (minutes <= 0) return;
+    this.routeFilterResetTimer = window.setTimeout(
+      () => this.resetRouteFilter(),
+      minutes * 60_000,
+    );
+  }
+
+  private clearRouteFilterResetTimer(): void {
+    if (this.routeFilterResetTimer === undefined) return;
+    window.clearTimeout(this.routeFilterResetTimer);
+    this.routeFilterResetTimer = undefined;
+  }
+
   static styles = css`
     :host { display: block; }
     ha-card {
@@ -471,6 +619,50 @@ export class TransLinkScheduleCard extends LitElement {
       font-size: 12px;
       gap: 8px;
       padding: 7px 16px;
+    }
+    .route-filter {
+      background: color-mix(in srgb, var(--card-background-color), var(--primary-color) 4%);
+      border-bottom: 1px solid var(--divider-color);
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 9px 12px;
+      scrollbar-width: thin;
+    }
+    .route-filter-chip {
+      background: var(--secondary-background-color);
+      border: 1px solid var(--divider-color);
+      border-radius: 999px;
+      color: var(--primary-text-color);
+      cursor: pointer;
+      flex: 0 0 auto;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 38px;
+      padding: 6px 11px;
+    }
+    .route-filter-chip[aria-pressed="true"] {
+      background: var(--primary-color);
+      color: var(--text-primary-color);
+    }
+    .route-filter-chip:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    .route-filter-chip span {
+      color: inherit;
+      font-size: 10px;
+      margin-left: 3px;
+      opacity: .78;
+    }
+    .routes-theme .route-filter-chip[aria-pressed="true"] {
+      background: var(--primary-color) !important;
+      color: var(--text-primary-color) !important;
+    }
+    .routes-monochrome .route-filter-chip[aria-pressed="true"] {
+      background: var(--primary-text-color) !important;
+      color: var(--card-background-color) !important;
     }
     main { padding: 4px 0; }
     section + section { border-top: 1px solid var(--divider-color); }
@@ -703,6 +895,42 @@ export class TransLinkScheduleCardEditor extends LitElement {
           "Show stop numbers",
           this.config.show_stop_codes !== false,
         )}
+
+        <h3>Route filter</h3>
+        ${this.booleanField(
+          "show_route_filter",
+          "Show route filter",
+          this.config.show_route_filter === true,
+        )}
+        ${this.config.show_route_filter
+          ? html`
+              ${this.selectField(
+                "route_filter_selection_mode",
+                "Route selection",
+                this.config.route_filter_selection_mode ?? "multiple",
+                ROUTE_FILTER_SELECTION_OPTIONS,
+              )}
+              ${this.booleanField(
+                "route_filter_show_counts",
+                "Show departure counts",
+                this.config.route_filter_show_counts === true,
+              )}
+              <ha-textfield
+                type="number"
+                min="0"
+                max=${MAX_ROUTE_FILTER_RESET}
+                .value=${String(
+                  this.config.route_filter_reset_minutes ??
+                    DEFAULT_ROUTE_FILTER_RESET,
+                )}
+                label="Reset to All after (minutes, 0 = never)"
+                data-key="route_filter_reset_minutes"
+                data-min="0"
+                data-max=${MAX_ROUTE_FILTER_RESET}
+                @input=${this.numberChanged}
+              ></ha-textfield>
+            `
+          : nothing}
 
         <h3>Header</h3>
         ${this.booleanField(

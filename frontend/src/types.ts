@@ -60,6 +60,10 @@ export interface CardConfig {
   empty_stop_behavior?: "show" | "move" | "hide";
   cancelled_behavior?: "show" | "move" | "hide";
   route_color_mode?: "official" | "theme" | "monochrome";
+  show_route_filter?: boolean;
+  route_filter_reset_minutes?: number;
+  route_filter_selection_mode?: "single" | "multiple";
+  route_filter_show_counts?: boolean;
   combined_order?: "chronological" | "balanced" | "route" | "realtime";
   show_header?: boolean;
   show_brand?: boolean;
