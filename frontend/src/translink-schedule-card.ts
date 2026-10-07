@@ -1,4 +1,10 @@
-import { LitElement, css, html, nothing } from "lit";
+import {
+  LitElement,
+  css,
+  html,
+  nothing,
+  type TemplateResult,
+} from "lit";
 import { property, state } from "lit/decorators.js";
 
 import {
@@ -913,231 +919,282 @@ export class TransLinkScheduleCardEditor extends LitElement {
   protected render() {
     if (!this.config) return nothing;
     return html`
-      <div class="form">
-        <ha-entity-picker
-          .hass=${this.hass}
-          .value=${this.config.entity}
-          .includeDomains=${["sensor"]}
-          label="Entity"
-          data-key="entity"
-          @value-changed=${this.valueChanged}
-        ></ha-entity-picker>
-        <ha-textfield
-          .value=${this.config.title ?? ""}
-          label="Title"
-          data-key="title"
-          @input=${this.valueChanged}
-        ></ha-textfield>
-        ${this.selectField(
-          "view",
-          "Layout",
-          this.config.view ?? "grouped",
-          VIEW_OPTIONS,
-        )}
-        ${this.selectField(
-          "combined_order",
-          "Combined ordering",
-          this.config.combined_order ?? "chronological",
-          ORDER_OPTIONS,
-        )}
-        <ha-textfield
-          type="number"
-          min="1"
-          max=${MAX_PER_STOP}
-          .value=${String(
-            this.config.departures_per_stop ?? DEFAULT_PER_STOP,
-          )}
-          label="Departures per stop"
-          data-key="departures_per_stop"
-          data-min="1"
-          data-max=${MAX_PER_STOP}
-          @input=${this.numberChanged}
-        ></ha-textfield>
-        <ha-textfield
-          type="number"
-          min="1"
-          max="50"
-          .value=${String(this.config.max_departures ?? DEFAULT_MAX)}
-          label="Maximum combined departures"
-          data-key="max_departures"
-          data-min="1"
-          data-max="50"
-          @input=${this.numberChanged}
-        ></ha-textfield>
-
-        <h3>Timing and status</h3>
-        ${this.selectField(
-          "time_display",
-          "Time display",
-          this.config.time_display ?? "both",
-          TIME_OPTIONS,
-        )}
-        <ha-textfield
-          type="number"
-          min="1"
-          max="30"
-          .value=${String(this.config.delay_threshold_minutes ?? 1)}
-          label="Delay threshold (minutes)"
-          data-key="delay_threshold_minutes"
-          data-min="1"
-          data-max="30"
-          @input=${this.numberChanged}
-        ></ha-textfield>
-        ${this.selectField(
-          "delay_format",
-          "Delay label",
-          this.config.delay_format ?? "compact",
-          DELAY_OPTIONS,
-        )}
-        ${this.selectField(
-          "cancelled_behavior",
-          "Cancelled departures",
-          this.config.cancelled_behavior ?? "show",
-          CANCELLED_OPTIONS,
-        )}
-        ${this.booleanField(
-          "show_scheduled_time",
-          "Show struck-through scheduled time",
-          this.config.show_scheduled_time !== false,
-        )}
-        ${this.booleanField(
-          "show_realtime_status",
-          "Show Live/Scheduled labels",
-          this.config.show_realtime_status === true,
-        )}
-        ${this.booleanField(
-          "show_stale_warning",
-          "Warn when realtime data is stale",
-          this.config.show_stale_warning === true,
-        )}
-        <ha-textfield
-          type="number"
-          min="2"
-          max="30"
-          .value=${String(this.config.stale_after_minutes ?? 3)}
-          label="Stale warning after (minutes)"
-          data-key="stale_after_minutes"
-          data-min="2"
-          data-max="30"
-          @input=${this.numberChanged}
-        ></ha-textfield>
-
-        <h3>Appearance</h3>
-        ${this.selectField(
-          "density",
-          "Row density",
-          this.config.density ?? "comfortable",
-          DENSITY_OPTIONS,
-        )}
-        ${this.selectField(
-          "route_color_mode",
-          "Route badge colors",
-          this.config.route_color_mode ?? "official",
-          ROUTE_COLOR_OPTIONS,
-        )}
-        ${this.selectField(
-          "empty_stop_behavior",
-          "Stops without departures",
-          this.config.empty_stop_behavior ??
-            (this.config.hide_empty_stops ? "hide" : "show"),
-          EMPTY_STOP_OPTIONS,
-        )}
-        ${this.booleanField(
-          "show_stop_codes",
-          "Show stop numbers",
-          this.config.show_stop_codes !== false,
-        )}
-
-        <h3>Route filter</h3>
-        ${this.booleanField(
-          "show_route_filter",
-          "Show route filter",
-          this.config.show_route_filter === true,
-        )}
-        ${this.config.show_route_filter
-          ? html`
-              ${this.selectField(
-                "route_filter_selection_mode",
-                "Route selection",
-                this.config.route_filter_selection_mode ?? "multiple",
-                ROUTE_FILTER_SELECTION_OPTIONS,
+      <div class="card-config">
+        ${this.editorPanel(
+          "Card & layout",
+          "Entity, layout, ordering, and departure limits",
+          "mdi:view-dashboard-outline",
+          html`
+            <ha-entity-picker
+              .hass=${this.hass}
+              .value=${this.config.entity}
+              .includeDomains=${["sensor"]}
+              label="Entity"
+              data-key="entity"
+              @value-changed=${this.valueChanged}
+            ></ha-entity-picker>
+            <ha-textfield
+              .value=${this.config.title ?? ""}
+              label="Title"
+              data-key="title"
+              @input=${this.valueChanged}
+            ></ha-textfield>
+            ${this.selectField(
+              "view",
+              "Layout",
+              this.config.view ?? "grouped",
+              VIEW_OPTIONS,
+            )}
+            ${this.selectField(
+              "combined_order",
+              "Combined ordering",
+              this.config.combined_order ?? "chronological",
+              ORDER_OPTIONS,
+            )}
+            <ha-textfield
+              type="number"
+              min="1"
+              max=${MAX_PER_STOP}
+              .value=${String(
+                this.config.departures_per_stop ?? DEFAULT_PER_STOP,
               )}
-              ${this.booleanField(
-                "route_filter_show_counts",
-                "Show departure counts",
-                this.config.route_filter_show_counts === true,
+              label="Departures per stop"
+              data-key="departures_per_stop"
+              data-min="1"
+              data-max=${MAX_PER_STOP}
+              @input=${this.numberChanged}
+            ></ha-textfield>
+            <ha-textfield
+              type="number"
+              min="1"
+              max="50"
+              .value=${String(
+                this.config.max_departures ?? DEFAULT_MAX,
               )}
-              <ha-textfield
-                type="number"
-                min="0"
-                max=${MAX_ROUTE_FILTER_RESET}
-                .value=${String(
-                  this.config.route_filter_reset_minutes ??
-                    DEFAULT_ROUTE_FILTER_RESET,
-                )}
-                label="Reset to All after (minutes, 0 = never)"
-                data-key="route_filter_reset_minutes"
-                data-min="0"
-                data-max=${MAX_ROUTE_FILTER_RESET}
-                @input=${this.numberChanged}
-              ></ha-textfield>
-            `
-          : nothing}
-
-        <h3>Header</h3>
-        ${this.booleanField(
-          "show_header",
-          "Show header",
-          this.config.show_header !== false,
+              label="Maximum combined departures"
+              data-key="max_departures"
+              data-min="1"
+              data-max="50"
+              @input=${this.numberChanged}
+            ></ha-textfield>
+          `,
         )}
-        ${this.booleanField(
-          "show_brand",
-          "Show TransLink label",
-          this.config.show_brand !== false,
+        ${this.editorPanel(
+          "Timing & status",
+          "Departure times, delays, cancellations, and realtime state",
+          "mdi:clock-outline",
+          html`
+            ${this.selectField(
+              "time_display",
+              "Time display",
+              this.config.time_display ?? "both",
+              TIME_OPTIONS,
+            )}
+            <ha-textfield
+              type="number"
+              min="1"
+              max="30"
+              .value=${String(
+                this.config.delay_threshold_minutes ?? 1,
+              )}
+              label="Delay threshold (minutes)"
+              data-key="delay_threshold_minutes"
+              data-min="1"
+              data-max="30"
+              @input=${this.numberChanged}
+            ></ha-textfield>
+            ${this.selectField(
+              "delay_format",
+              "Delay label",
+              this.config.delay_format ?? "compact",
+              DELAY_OPTIONS,
+            )}
+            ${this.selectField(
+              "cancelled_behavior",
+              "Cancelled departures",
+              this.config.cancelled_behavior ?? "show",
+              CANCELLED_OPTIONS,
+            )}
+            ${this.booleanField(
+              "show_scheduled_time",
+              "Show struck-through scheduled time",
+              this.config.show_scheduled_time !== false,
+            )}
+            ${this.booleanField(
+              "show_realtime_status",
+              "Show Live/Scheduled labels",
+              this.config.show_realtime_status === true,
+            )}
+            ${this.booleanField(
+              "show_stale_warning",
+              "Warn when realtime data is stale",
+              this.config.show_stale_warning === true,
+            )}
+            <ha-textfield
+              type="number"
+              min="2"
+              max="30"
+              .value=${String(this.config.stale_after_minutes ?? 3)}
+              label="Stale warning after (minutes)"
+              data-key="stale_after_minutes"
+              data-min="2"
+              data-max="30"
+              @input=${this.numberChanged}
+            ></ha-textfield>
+          `,
         )}
-        ${this.selectField(
-          "header_time_mode",
-          "Header right-side display",
-          this.config.header_time_mode ??
-            (this.config.show_clock === false ? "hidden" : "clock"),
-          HEADER_TIME_MODE_OPTIONS,
+        ${this.editorPanel(
+          "Appearance",
+          "Density, route colors, stops, and section headings",
+          "mdi:palette-outline",
+          html`
+            ${this.selectField(
+              "density",
+              "Row density",
+              this.config.density ?? "comfortable",
+              DENSITY_OPTIONS,
+            )}
+            ${this.selectField(
+              "route_color_mode",
+              "Route badge colors",
+              this.config.route_color_mode ?? "official",
+              ROUTE_COLOR_OPTIONS,
+            )}
+            ${this.selectField(
+              "empty_stop_behavior",
+              "Stops without departures",
+              this.config.empty_stop_behavior ??
+                (this.config.hide_empty_stops ? "hide" : "show"),
+              EMPTY_STOP_OPTIONS,
+            )}
+            ${this.selectField(
+              "stop_heading_style",
+              "Stop heading style",
+              this.config.stop_heading_style ?? "accent",
+              STOP_HEADING_OPTIONS,
+            )}
+            ${this.booleanField(
+              "show_stop_codes",
+              "Show stop numbers",
+              this.config.show_stop_codes !== false,
+            )}
+          `,
         )}
-        ${(this.config.header_time_mode ??
-          (this.config.show_clock === false ? "hidden" : "clock")) ===
-        "next_departure"
-          ? this.selectField(
-              "header_next_departure_format",
-              "Next departure display",
-              this.config.header_next_departure_format ?? "countdown",
-              HEADER_NEXT_DEPARTURE_OPTIONS,
-            )
-          : nothing}
-        ${this.selectField(
-          "header_style",
-          "Header colors",
-          this.config.header_style ?? "primary",
-          HEADER_STYLE_OPTIONS,
+        ${this.editorPanel(
+          "Route filter",
+          "Interactive route selection and automatic reset",
+          "mdi:filter-variant",
+          html`
+            ${this.booleanField(
+              "show_route_filter",
+              "Show route filter",
+              this.config.show_route_filter === true,
+            )}
+            ${this.config.show_route_filter
+              ? html`
+                  ${this.selectField(
+                    "route_filter_selection_mode",
+                    "Route selection",
+                    this.config.route_filter_selection_mode ??
+                      "multiple",
+                    ROUTE_FILTER_SELECTION_OPTIONS,
+                  )}
+                  ${this.booleanField(
+                    "route_filter_show_counts",
+                    "Show departure counts",
+                    this.config.route_filter_show_counts === true,
+                  )}
+                  <ha-textfield
+                    type="number"
+                    min="0"
+                    max=${MAX_ROUTE_FILTER_RESET}
+                    .value=${String(
+                      this.config.route_filter_reset_minutes ??
+                        DEFAULT_ROUTE_FILTER_RESET,
+                    )}
+                    label="Reset to All after (minutes, 0 = never)"
+                    data-key="route_filter_reset_minutes"
+                    data-min="0"
+                    data-max=${MAX_ROUTE_FILTER_RESET}
+                    @input=${this.numberChanged}
+                  ></ha-textfield>
+                `
+              : nothing}
+          `,
         )}
-        ${this.selectField(
-          "stop_heading_style",
-          "Stop heading style",
-          this.config.stop_heading_style ?? "accent",
-          STOP_HEADING_OPTIONS,
+        ${this.editorPanel(
+          "Header & notices",
+          "Title, right-side display, colors, icon, and service notices",
+          "mdi:card-text-outline",
+          html`
+            ${this.booleanField(
+              "show_header",
+              "Show header",
+              this.config.show_header !== false,
+            )}
+            ${this.booleanField(
+              "show_brand",
+              "Show TransLink label",
+              this.config.show_brand !== false,
+            )}
+            ${this.selectField(
+              "header_time_mode",
+              "Header right-side display",
+              this.config.header_time_mode ??
+                (this.config.show_clock === false ? "hidden" : "clock"),
+              HEADER_TIME_MODE_OPTIONS,
+            )}
+            ${(this.config.header_time_mode ??
+              (this.config.show_clock === false ? "hidden" : "clock")) ===
+            "next_departure"
+              ? this.selectField(
+                  "header_next_departure_format",
+                  "Next departure display",
+                  this.config.header_next_departure_format ?? "countdown",
+                  HEADER_NEXT_DEPARTURE_OPTIONS,
+                )
+              : nothing}
+            ${this.selectField(
+              "header_style",
+              "Header colors",
+              this.config.header_style ?? "primary",
+              HEADER_STYLE_OPTIONS,
+            )}
+            <ha-textfield
+              .value=${this.config.header_icon ?? ""}
+              label="Header icon (for example mdi:bus)"
+              data-key="header_icon"
+              @input=${this.valueChanged}
+            ></ha-textfield>
+            <ha-formfield label="Show service notices">
+              <ha-switch
+                .checked=${this.config.show_alerts !== false}
+                data-key="show_alerts"
+                @change=${this.booleanChanged}
+              ></ha-switch>
+            </ha-formfield>
+          `,
         )}
-        <ha-textfield
-          .value=${this.config.header_icon ?? ""}
-          label="Header icon (for example mdi:bus)"
-          data-key="header_icon"
-          @input=${this.valueChanged}
-        ></ha-textfield>
-        <ha-formfield label="Show service notices">
-          <ha-switch
-            .checked=${this.config.show_alerts !== false}
-            data-key="show_alerts"
-            @change=${this.booleanChanged}
-          ></ha-switch>
-        </ha-formfield>
       </div>
+    `;
+  }
+
+  private editorPanel(
+    header: string,
+    secondary: string,
+    icon: string,
+    content: TemplateResult,
+  ) {
+    return html`
+      <ha-expansion-panel
+        outlined
+        .header=${header}
+        .secondary=${secondary}
+        .leftChevron=${false}
+      >
+        <ha-icon slot="leading-icon" .icon=${icon}></ha-icon>
+        <div class="panel-body">${content}</div>
+      </ha-expansion-panel>
     `;
   }
 
@@ -1226,12 +1283,17 @@ export class TransLinkScheduleCardEditor extends LitElement {
   }
 
   static styles = css`
-    .form { display: grid; gap: 16px; padding: 8px 0; }
-    h3 {
-      border-bottom: 1px solid var(--divider-color);
-      font-size: 14px;
-      margin: 8px 0 0;
-      padding-bottom: 6px;
+    .card-config {
+      display: flex;
+      flex-direction: column;
+      padding: 4px 0;
+    }
+    ha-expansion-panel { margin: 8px 0; }
+    .panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 8px 0 4px;
     }
   `;
 }

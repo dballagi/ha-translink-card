@@ -1,6 +1,6 @@
-import{b as f}from"./chunks/chunk-GFBGSF4Y.js";var I=globalThis,j=I.ShadowRoot&&(I.ShadyCSS===void 0||I.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,Y=Symbol(),me=new WeakMap,O=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==Y)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o,e=this.t;if(j&&t===void 0){let i=e!==void 0&&e.length===1;i&&(t=me.get(e)),t===void 0&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&me.set(e,t))}return t}toString(){return this.cssText}},B=a=>new O(typeof a=="string"?a:a+"",void 0,Y),T=(a,...t)=>{let e=a.length===1?a[0]:t.reduce((i,o,r)=>i+(s=>{if(s._$cssResult$===!0)return s.cssText;if(typeof s=="number")return s;throw Error("Value passed to 'css' function must be a 'css' function result: "+s+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(o)+a[r+1],a[0]);return new O(e,a,Y)},ge=(a,t)=>{if(j)a.adoptedStyleSheets=t.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(let e of t){let i=document.createElement("style"),o=I.litNonce;o!==void 0&&i.setAttribute("nonce",o),i.textContent=e.cssText,a.appendChild(i)}},Z=j?a=>a:a=>a instanceof CSSStyleSheet?(t=>{let e="";for(let i of t.cssRules)e+=i.cssText;return B(e)})(a):a;var{is:Le,defineProperty:He,getOwnPropertyDescriptor:Ie,getOwnPropertyNames:je,getOwnPropertySymbols:Be,getPrototypeOf:qe}=Object,q=globalThis,be=q.trustedTypes,Ke=be?be.emptyScript:"",Ve=q.reactiveElementPolyfillSupport,M=(a,t)=>a,P={toAttribute(a,t){switch(t){case Boolean:a=a?Ke:null;break;case Object:case Array:a=a==null?a:JSON.stringify(a)}return a},fromAttribute(a,t){let e=a;switch(t){case Boolean:e=a!==null;break;case Number:e=a===null?null:Number(a);break;case Object:case Array:try{e=JSON.parse(a)}catch{e=null}}return e}},K=(a,t)=>!Le(a,t),ve={attribute:!0,type:String,converter:P,reflect:!1,useDefault:!1,hasChanged:K};Symbol.metadata??=Symbol("metadata"),q.litPropertyMetadata??=new WeakMap;var y=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=ve){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){let i=Symbol(),o=this.getPropertyDescriptor(t,i,e);o!==void 0&&He(this.prototype,t,o)}}static getPropertyDescriptor(t,e,i){let{get:o,set:r}=Ie(this.prototype,t)??{get(){return this[e]},set(s){this[e]=s}};return{get:o,set(s){let n=o?.call(this);r?.call(this,s),this.requestUpdate(t,n,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??ve}static _$Ei(){if(this.hasOwnProperty(M("elementProperties")))return;let t=qe(this);t.finalize(),t.l!==void 0&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(M("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(M("properties"))){let e=this.properties,i=[...je(e),...Be(e)];for(let o of i)this.createProperty(o,e[o])}let t=this[Symbol.metadata];if(t!==null){let e=litPropertyMetadata.get(t);if(e!==void 0)for(let[i,o]of e)this.elementProperties.set(i,o)}this._$Eh=new Map;for(let[e,i]of this.elementProperties){let o=this._$Eu(e,i);o!==void 0&&this._$Eh.set(o,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){let e=[];if(Array.isArray(t)){let i=new Set(t.flat(1/0).reverse());for(let o of i)e.unshift(Z(o))}else t!==void 0&&e.push(Z(t));return e}static _$Eu(t,e){let i=e.attribute;return i===!1?void 0:typeof i=="string"?i:typeof t=="string"?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),this.renderRoot!==void 0&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){let t=new Map,e=this.constructor.elementProperties;for(let i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){let t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return ge(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){let i=this.constructor.elementProperties.get(t),o=this.constructor._$Eu(t,i);if(o!==void 0&&i.reflect===!0){let r=(i.converter?.toAttribute!==void 0?i.converter:P).toAttribute(e,i.type);this._$Em=t,r==null?this.removeAttribute(o):this.setAttribute(o,r),this._$Em=null}}_$AK(t,e){let i=this.constructor,o=i._$Eh.get(t);if(o!==void 0&&this._$Em!==o){let r=i.getPropertyOptions(o),s=typeof r.converter=="function"?{fromAttribute:r.converter}:r.converter?.fromAttribute!==void 0?r.converter:P;this._$Em=o;let n=s.fromAttribute(e,r.type);this[o]=n??this._$Ej?.get(o)??n,this._$Em=null}}requestUpdate(t,e,i,o=!1,r){if(t!==void 0){let s=this.constructor;if(o===!1&&(r=this[t]),i??=s.getPropertyOptions(t),!((i.hasChanged??K)(r,e)||i.useDefault&&i.reflect&&r===this._$Ej?.get(t)&&!this.hasAttribute(s._$Eu(t,i))))return;this.C(t,e,i)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:o,wrapped:r},s){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,s??e??this[t]),r!==!0||s!==void 0)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),o===!0&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}let t=this.scheduleUpdate();return t!=null&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[o,r]of this._$Ep)this[o]=r;this._$Ep=void 0}let i=this.constructor.elementProperties;if(i.size>0)for(let[o,r]of i){let{wrapped:s}=r,n=this[o];s!==!0||this._$AL.has(o)||n===void 0||this.C(o,void 0,r,n)}}let t=!1,e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(i=>i.hostUpdate?.()),this.update(e)):this._$EM()}catch(i){throw t=!1,this._$EM(),i}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(t){}firstUpdated(t){}};y.elementStyles=[],y.shadowRootOptions={mode:"open"},y[M("elementProperties")]=new Map,y[M("finalized")]=new Map,Ve?.({ReactiveElement:y}),(q.reactiveElementVersions??=[]).push("2.1.2");var ae=globalThis,xe=a=>a,V=ae.trustedTypes,_e=V?V.createPolicy("lit-html",{createHTML:a=>a}):void 0,Ae="$lit$",w=`lit$${Math.random().toFixed(9).slice(2)}$`,Ee="?"+w,We=`<${Ee}>`,A=document,N=()=>A.createComment(""),U=a=>a===null||typeof a!="object"&&typeof a!="function",se=Array.isArray,Ge=a=>se(a)||typeof a?.[Symbol.iterator]=="function",Q=`[ 	
+import{b as f}from"./chunks/chunk-GFBGSF4Y.js";var I=globalThis,j=I.ShadowRoot&&(I.ShadyCSS===void 0||I.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,Y=Symbol(),me=new WeakMap,O=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==Y)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o,e=this.t;if(j&&t===void 0){let i=e!==void 0&&e.length===1;i&&(t=me.get(e)),t===void 0&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&me.set(e,t))}return t}toString(){return this.cssText}},B=a=>new O(typeof a=="string"?a:a+"",void 0,Y),T=(a,...t)=>{let e=a.length===1?a[0]:t.reduce((i,o,r)=>i+(n=>{if(n._$cssResult$===!0)return n.cssText;if(typeof n=="number")return n;throw Error("Value passed to 'css' function must be a 'css' function result: "+n+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(o)+a[r+1],a[0]);return new O(e,a,Y)},ge=(a,t)=>{if(j)a.adoptedStyleSheets=t.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(let e of t){let i=document.createElement("style"),o=I.litNonce;o!==void 0&&i.setAttribute("nonce",o),i.textContent=e.cssText,a.appendChild(i)}},Z=j?a=>a:a=>a instanceof CSSStyleSheet?(t=>{let e="";for(let i of t.cssRules)e+=i.cssText;return B(e)})(a):a;var{is:Le,defineProperty:He,getOwnPropertyDescriptor:Ie,getOwnPropertyNames:je,getOwnPropertySymbols:Be,getPrototypeOf:qe}=Object,q=globalThis,be=q.trustedTypes,Ke=be?be.emptyScript:"",Ve=q.reactiveElementPolyfillSupport,P=(a,t)=>a,M={toAttribute(a,t){switch(t){case Boolean:a=a?Ke:null;break;case Object:case Array:a=a==null?a:JSON.stringify(a)}return a},fromAttribute(a,t){let e=a;switch(t){case Boolean:e=a!==null;break;case Number:e=a===null?null:Number(a);break;case Object:case Array:try{e=JSON.parse(a)}catch{e=null}}return e}},K=(a,t)=>!Le(a,t),ve={attribute:!0,type:String,converter:M,reflect:!1,useDefault:!1,hasChanged:K};Symbol.metadata??=Symbol("metadata"),q.litPropertyMetadata??=new WeakMap;var y=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=ve){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){let i=Symbol(),o=this.getPropertyDescriptor(t,i,e);o!==void 0&&He(this.prototype,t,o)}}static getPropertyDescriptor(t,e,i){let{get:o,set:r}=Ie(this.prototype,t)??{get(){return this[e]},set(n){this[e]=n}};return{get:o,set(n){let s=o?.call(this);r?.call(this,n),this.requestUpdate(t,s,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??ve}static _$Ei(){if(this.hasOwnProperty(P("elementProperties")))return;let t=qe(this);t.finalize(),t.l!==void 0&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(P("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(P("properties"))){let e=this.properties,i=[...je(e),...Be(e)];for(let o of i)this.createProperty(o,e[o])}let t=this[Symbol.metadata];if(t!==null){let e=litPropertyMetadata.get(t);if(e!==void 0)for(let[i,o]of e)this.elementProperties.set(i,o)}this._$Eh=new Map;for(let[e,i]of this.elementProperties){let o=this._$Eu(e,i);o!==void 0&&this._$Eh.set(o,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){let e=[];if(Array.isArray(t)){let i=new Set(t.flat(1/0).reverse());for(let o of i)e.unshift(Z(o))}else t!==void 0&&e.push(Z(t));return e}static _$Eu(t,e){let i=e.attribute;return i===!1?void 0:typeof i=="string"?i:typeof t=="string"?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),this.renderRoot!==void 0&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){let t=new Map,e=this.constructor.elementProperties;for(let i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){let t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return ge(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){let i=this.constructor.elementProperties.get(t),o=this.constructor._$Eu(t,i);if(o!==void 0&&i.reflect===!0){let r=(i.converter?.toAttribute!==void 0?i.converter:M).toAttribute(e,i.type);this._$Em=t,r==null?this.removeAttribute(o):this.setAttribute(o,r),this._$Em=null}}_$AK(t,e){let i=this.constructor,o=i._$Eh.get(t);if(o!==void 0&&this._$Em!==o){let r=i.getPropertyOptions(o),n=typeof r.converter=="function"?{fromAttribute:r.converter}:r.converter?.fromAttribute!==void 0?r.converter:M;this._$Em=o;let s=n.fromAttribute(e,r.type);this[o]=s??this._$Ej?.get(o)??s,this._$Em=null}}requestUpdate(t,e,i,o=!1,r){if(t!==void 0){let n=this.constructor;if(o===!1&&(r=this[t]),i??=n.getPropertyOptions(t),!((i.hasChanged??K)(r,e)||i.useDefault&&i.reflect&&r===this._$Ej?.get(t)&&!this.hasAttribute(n._$Eu(t,i))))return;this.C(t,e,i)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:o,wrapped:r},n){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,n??e??this[t]),r!==!0||n!==void 0)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),o===!0&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}let t=this.scheduleUpdate();return t!=null&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[o,r]of this._$Ep)this[o]=r;this._$Ep=void 0}let i=this.constructor.elementProperties;if(i.size>0)for(let[o,r]of i){let{wrapped:n}=r,s=this[o];n!==!0||this._$AL.has(o)||s===void 0||this.C(o,void 0,r,s)}}let t=!1,e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(i=>i.hostUpdate?.()),this.update(e)):this._$EM()}catch(i){throw t=!1,this._$EM(),i}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(t){}firstUpdated(t){}};y.elementStyles=[],y.shadowRootOptions={mode:"open"},y[P("elementProperties")]=new Map,y[P("finalized")]=new Map,Ve?.({ReactiveElement:y}),(q.reactiveElementVersions??=[]).push("2.1.2");var ae=globalThis,xe=a=>a,V=ae.trustedTypes,_e=V?V.createPolicy("lit-html",{createHTML:a=>a}):void 0,Ae="$lit$",w=`lit$${Math.random().toFixed(9).slice(2)}$`,Ee="?"+w,We=`<${Ee}>`,A=document,N=()=>A.createComment(""),U=a=>a===null||typeof a!="object"&&typeof a!="function",ne=Array.isArray,Ge=a=>ne(a)||typeof a?.[Symbol.iterator]=="function",Q=`[ 	
 \f\r]`,D=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ye=/-->/g,$e=/>/g,k=RegExp(`>|${Q}(?:([^\\s"'>=/]+)(${Q}*=${Q}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),we=/'/g,ke=/"/g,Ce=/^(?:script|style|textarea|title)$/i,ne=a=>(t,...e)=>({_$litType$:a,strings:t,values:e}),c=ne(1),St=ne(2),At=ne(3),E=Symbol.for("lit-noChange"),d=Symbol.for("lit-nothing"),Se=new WeakMap,S=A.createTreeWalker(A,129);function Te(a,t){if(!se(a)||!a.hasOwnProperty("raw"))throw Error("invalid template strings array");return _e!==void 0?_e.createHTML(t):t}var Xe=(a,t)=>{let e=a.length-1,i=[],o,r=t===2?"<svg>":t===3?"<math>":"",s=D;for(let n=0;n<e;n++){let l=a[n],h,u,p=-1,m=0;for(;m<l.length&&(s.lastIndex=m,u=s.exec(l),u!==null);)m=s.lastIndex,s===D?u[1]==="!--"?s=ye:u[1]!==void 0?s=$e:u[2]!==void 0?(Ce.test(u[2])&&(o=RegExp("</"+u[2],"g")),s=k):u[3]!==void 0&&(s=k):s===k?u[0]===">"?(s=o??D,p=-1):u[1]===void 0?p=-2:(p=s.lastIndex-u[2].length,h=u[1],s=u[3]===void 0?k:u[3]==='"'?ke:we):s===ke||s===we?s=k:s===ye||s===$e?s=D:(s=k,o=void 0);let b=s===k&&a[n+1].startsWith("/>")?" ":"";r+=s===D?l+We:p>=0?(i.push(h),l.slice(0,p)+Ae+l.slice(p)+w+b):l+w+(p===-2?n:b)}return[Te(a,r+(a[e]||"<?>")+(t===2?"</svg>":t===3?"</math>":"")),i]},F=class a{constructor({strings:t,_$litType$:e},i){let o;this.parts=[];let r=0,s=0,n=t.length-1,l=this.parts,[h,u]=Xe(t,e);if(this.el=a.createElement(h,i),S.currentNode=this.el.content,e===2||e===3){let p=this.el.content.firstChild;p.replaceWith(...p.childNodes)}for(;(o=S.nextNode())!==null&&l.length<n;){if(o.nodeType===1){if(o.hasAttributes())for(let p of o.getAttributeNames())if(p.endsWith(Ae)){let m=u[s++],b=o.getAttribute(p).split(w),v=/([.?@])?(.*)/.exec(m);l.push({type:1,index:r,name:v[2],strings:b,ctor:v[1]==="."?te:v[1]==="?"?ie:v[1]==="@"?oe:z}),o.removeAttribute(p)}else p.startsWith(w)&&(l.push({type:6,index:r}),o.removeAttribute(p));if(Ce.test(o.tagName)){let p=o.textContent.split(w),m=p.length-1;if(m>0){o.textContent=V?V.emptyScript:"";for(let b=0;b<m;b++)o.append(p[b],N()),S.nextNode(),l.push({type:2,index:++r});o.append(p[m],N())}}}else if(o.nodeType===8)if(o.data===Ee)l.push({type:2,index:r});else{let p=-1;for(;(p=o.data.indexOf(w,p+1))!==-1;)l.push({type:7,index:r}),p+=w.length-1}r++}}static createElement(t,e){let i=A.createElement("template");return i.innerHTML=t,i}};function R(a,t,e=a,i){if(t===E)return t;let o=i!==void 0?e._$Co?.[i]:e._$Cl,r=U(t)?void 0:t._$litDirective$;return o?.constructor!==r&&(o?._$AO?.(!1),r===void 0?o=void 0:(o=new r(a),o._$AT(a,e,i)),i!==void 0?(e._$Co??=[])[i]=o:e._$Cl=o),o!==void 0&&(t=R(a,o._$AS(a,t.values),o,i)),t}var ee=class{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){let{el:{content:e},parts:i}=this._$AD,o=(t?.creationScope??A).importNode(e,!0);S.currentNode=o;let r=S.nextNode(),s=0,n=0,l=i[0];for(;l!==void 0;){if(s===l.index){let h;l.type===2?h=new L(r,r.nextSibling,this,t):l.type===1?h=new l.ctor(r,l.name,l.strings,this,t):l.type===6&&(h=new re(r,this,t)),this._$AV.push(h),l=i[++n]}s!==l?.index&&(r=S.nextNode(),s++)}return S.currentNode=A,o}p(t){let e=0;for(let i of this._$AV)i!==void 0&&(i.strings!==void 0?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}},L=class a{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,o){this.type=2,this._$AH=d,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode,e=this._$AM;return e!==void 0&&t?.nodeType===11&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=R(this,t,e),U(t)?t===d||t==null||t===""?(this._$AH!==d&&this._$AR(),this._$AH=d):t!==this._$AH&&t!==E&&this._(t):t._$litType$!==void 0?this.$(t):t.nodeType!==void 0?this.T(t):Ge(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==d&&U(this._$AH)?this._$AA.nextSibling.data=t:this.T(A.createTextNode(t)),this._$AH=t}$(t){let{values:e,_$litType$:i}=t,o=typeof i=="number"?this._$AC(t):(i.el===void 0&&(i.el=F.createElement(Te(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(e);else{let r=new ee(o,this),s=r.u(this.options);r.p(e),this.T(s),this._$AH=r}}_$AC(t){let e=Se.get(t.strings);return e===void 0&&Se.set(t.strings,e=new F(t)),e}k(t){se(this._$AH)||(this._$AH=[],this._$AR());let e=this._$AH,i,o=0;for(let r of t)o===e.length?e.push(i=new a(this.O(N()),this.O(N()),this,this.options)):i=e[o],i._$AI(r),o++;o<e.length&&(this._$AR(i&&i._$AB.nextSibling,o),e.length=o)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){let i=xe(t).nextSibling;xe(t).remove(),t=i}}setConnected(t){this._$AM===void 0&&(this._$Cv=t,this._$AP?.(t))}},z=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,o,r){this.type=1,this._$AH=d,this._$AN=void 0,this.element=t,this.name=e,this._$AM=o,this.options=r,i.length>2||i[0]!==""||i[1]!==""?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=d}_$AI(t,e=this,i,o){let r=this.strings,s=!1;if(r===void 0)t=R(this,t,e,0),s=!U(t)||t!==this._$AH&&t!==E,s&&(this._$AH=t);else{let n=t,l,h;for(t=r[0],l=0;l<r.length-1;l++)h=R(this,n[i+l],e,l),h===E&&(h=this._$AH[l]),s||=!U(h)||h!==this._$AH[l],h===d?t=d:t!==d&&(t+=(h??"")+r[l+1]),this._$AH[l]=h}s&&!o&&this.j(t)}j(t){t===d?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}},te=class extends z{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===d?void 0:t}},ie=class extends z{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==d)}},oe=class extends z{constructor(t,e,i,o,r){super(t,e,i,o,r),this.type=5}_$AI(t,e=this){if((t=R(this,t,e,0)??d)===E)return;let i=this._$AH,o=t===d&&i!==d||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,r=t!==d&&(i===d||o);o&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}},re=class{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){R(this,t)}};var Je=ae.litHtmlPolyfillSupport;Je?.(F,L),(ae.litHtmlVersions??=[]).push("3.3.3");var Re=(a,t,e)=>{let i=e?.renderBefore??t,o=i._$litPart$;if(o===void 0){let r=e?.renderBefore??null;i._$litPart$=o=new L(t.insertBefore(N(),r),r,void 0,e??{})}return o._$AI(a),o};var le=globalThis,g=class extends y{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){let e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Re(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return E}};g._$litElement$=!0,g.finalized=!0,le.litElementHydrateSupport?.({LitElement:g});var Ye=le.litElementPolyfillSupport;Ye?.({LitElement:g});(le.litElementVersions??=[]).push("4.2.2");var Ze={attribute:!0,type:String,converter:P,reflect:!1,hasChanged:K},Qe=(a=Ze,t,e)=>{let{kind:i,metadata:o}=e,r=globalThis.litPropertyMetadata.get(o);if(r===void 0&&globalThis.litPropertyMetadata.set(o,r=new Map),i==="setter"&&((a=Object.create(a)).wrapped=!0),r.set(e.name,a),i==="accessor"){let{name:s}=e;return{set(n){let l=t.get.call(this);t.set.call(this,n),this.requestUpdate(s,l,a,!0,n)},init(n){return n!==void 0&&this.C(s,void 0,a,n),n}}}if(i==="setter"){let{name:s}=e;return function(n){let l=this[s];t.call(this,n),this.requestUpdate(s,l,a,!0,n)}}throw Error("Unsupported decorator location: "+i)};function $(a){return(t,e)=>typeof e=="object"?Qe(a,t,e):((i,o,r)=>{let s=o.hasOwnProperty(r);return o.constructor.createProperty(r,i),s?Object.getOwnPropertyDescriptor(o,r):void 0})(a,t,e)}function x(a){return $({...a,state:!0,attribute:!1})}function ce(a,t){return new Date(a.estimated_time).getTime()-new Date(t.estimated_time).getTime()}function et(a,t){let e=new Map;for(let o of t)e.set(o,[]);for(let o of a){let r=e.get(o.stop_id)??[];r.push(o),e.set(o.stop_id,r)}let i=[];for(;[...e.values()].some(o=>o.length>0);)for(let o of e.values()){let r=o.shift();r&&i.push(r)}return i}function de(a,t,e,i){let o=t==="hide"?a.filter(r=>!r.cancelled):[...a];return e==="balanced"?o=et(o,i):e==="route"?o.sort((r,s)=>r.route_name.localeCompare(s.route_name,void 0,{numeric:!0})||ce(r,s)):e==="realtime"?o.sort((r,s)=>Number(s.realtime)-Number(r.realtime)||ce(r,s)):o.sort(ce),t==="move"&&o.sort((r,s)=>Number(r.cancelled)-Number(s.cancelled)),o}function ze(a){let t=new Map;for(let e of a){let i=e.route_name.trim();if(!i)continue;let o=t.get(i);o?o.count+=1:t.set(i,{name:i,count:1,color:e.route_color,textColor:e.route_text_color})}return[...t.values()].sort((e,i)=>e.name.localeCompare(i.name,void 0,{numeric:!0,sensitivity:"base"}))}function G(a,t){return t.size===0?a:a.filter(e=>t.has(e.route_name.trim()))}function Oe(a,t,e=Date.now()){return a?e-new Date(a).getTime()>t*6e4:!0}function Me(a,t=1){let e=!a.cancelled&&a.delay_seconds>=t*60;return{delayed:e,displayTime:a.cancelled?a.scheduled_time:a.estimated_time,scheduledTime:e?a.scheduled_time:void 0,delayMinutes:e?Math.round(a.delay_seconds/60):void 0}}function Pe(a,t=[]){return[...new Set([...t,...Object.keys(a.states)])].find(i=>{let o=a.states[i]?.attributes;return Array.isArray(o?.stops)&&Array.isArray(o?.departures)})}var De=`/* required styles */\r
+\f\r"'\`<>=]|("|')|))|$)`,"g"),we=/'/g,ke=/"/g,Ce=/^(?:script|style|textarea|title)$/i,se=a=>(t,...e)=>({_$litType$:a,strings:t,values:e}),l=se(1),St=se(2),At=se(3),E=Symbol.for("lit-noChange"),d=Symbol.for("lit-nothing"),Se=new WeakMap,S=A.createTreeWalker(A,129);function Te(a,t){if(!ne(a)||!a.hasOwnProperty("raw"))throw Error("invalid template strings array");return _e!==void 0?_e.createHTML(t):t}var Xe=(a,t)=>{let e=a.length-1,i=[],o,r=t===2?"<svg>":t===3?"<math>":"",n=D;for(let s=0;s<e;s++){let c=a[s],h,u,p=-1,m=0;for(;m<c.length&&(n.lastIndex=m,u=n.exec(c),u!==null);)m=n.lastIndex,n===D?u[1]==="!--"?n=ye:u[1]!==void 0?n=$e:u[2]!==void 0?(Ce.test(u[2])&&(o=RegExp("</"+u[2],"g")),n=k):u[3]!==void 0&&(n=k):n===k?u[0]===">"?(n=o??D,p=-1):u[1]===void 0?p=-2:(p=n.lastIndex-u[2].length,h=u[1],n=u[3]===void 0?k:u[3]==='"'?ke:we):n===ke||n===we?n=k:n===ye||n===$e?n=D:(n=k,o=void 0);let b=n===k&&a[s+1].startsWith("/>")?" ":"";r+=n===D?c+We:p>=0?(i.push(h),c.slice(0,p)+Ae+c.slice(p)+w+b):c+w+(p===-2?s:b)}return[Te(a,r+(a[e]||"<?>")+(t===2?"</svg>":t===3?"</math>":"")),i]},F=class a{constructor({strings:t,_$litType$:e},i){let o;this.parts=[];let r=0,n=0,s=t.length-1,c=this.parts,[h,u]=Xe(t,e);if(this.el=a.createElement(h,i),S.currentNode=this.el.content,e===2||e===3){let p=this.el.content.firstChild;p.replaceWith(...p.childNodes)}for(;(o=S.nextNode())!==null&&c.length<s;){if(o.nodeType===1){if(o.hasAttributes())for(let p of o.getAttributeNames())if(p.endsWith(Ae)){let m=u[n++],b=o.getAttribute(p).split(w),v=/([.?@])?(.*)/.exec(m);c.push({type:1,index:r,name:v[2],strings:b,ctor:v[1]==="."?te:v[1]==="?"?ie:v[1]==="@"?oe:z}),o.removeAttribute(p)}else p.startsWith(w)&&(c.push({type:6,index:r}),o.removeAttribute(p));if(Ce.test(o.tagName)){let p=o.textContent.split(w),m=p.length-1;if(m>0){o.textContent=V?V.emptyScript:"";for(let b=0;b<m;b++)o.append(p[b],N()),S.nextNode(),c.push({type:2,index:++r});o.append(p[m],N())}}}else if(o.nodeType===8)if(o.data===Ee)c.push({type:2,index:r});else{let p=-1;for(;(p=o.data.indexOf(w,p+1))!==-1;)c.push({type:7,index:r}),p+=w.length-1}r++}}static createElement(t,e){let i=A.createElement("template");return i.innerHTML=t,i}};function R(a,t,e=a,i){if(t===E)return t;let o=i!==void 0?e._$Co?.[i]:e._$Cl,r=U(t)?void 0:t._$litDirective$;return o?.constructor!==r&&(o?._$AO?.(!1),r===void 0?o=void 0:(o=new r(a),o._$AT(a,e,i)),i!==void 0?(e._$Co??=[])[i]=o:e._$Cl=o),o!==void 0&&(t=R(a,o._$AS(a,t.values),o,i)),t}var ee=class{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){let{el:{content:e},parts:i}=this._$AD,o=(t?.creationScope??A).importNode(e,!0);S.currentNode=o;let r=S.nextNode(),n=0,s=0,c=i[0];for(;c!==void 0;){if(n===c.index){let h;c.type===2?h=new L(r,r.nextSibling,this,t):c.type===1?h=new c.ctor(r,c.name,c.strings,this,t):c.type===6&&(h=new re(r,this,t)),this._$AV.push(h),c=i[++s]}n!==c?.index&&(r=S.nextNode(),n++)}return S.currentNode=A,o}p(t){let e=0;for(let i of this._$AV)i!==void 0&&(i.strings!==void 0?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}},L=class a{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,o){this.type=2,this._$AH=d,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode,e=this._$AM;return e!==void 0&&t?.nodeType===11&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=R(this,t,e),U(t)?t===d||t==null||t===""?(this._$AH!==d&&this._$AR(),this._$AH=d):t!==this._$AH&&t!==E&&this._(t):t._$litType$!==void 0?this.$(t):t.nodeType!==void 0?this.T(t):Ge(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==d&&U(this._$AH)?this._$AA.nextSibling.data=t:this.T(A.createTextNode(t)),this._$AH=t}$(t){let{values:e,_$litType$:i}=t,o=typeof i=="number"?this._$AC(t):(i.el===void 0&&(i.el=F.createElement(Te(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(e);else{let r=new ee(o,this),n=r.u(this.options);r.p(e),this.T(n),this._$AH=r}}_$AC(t){let e=Se.get(t.strings);return e===void 0&&Se.set(t.strings,e=new F(t)),e}k(t){ne(this._$AH)||(this._$AH=[],this._$AR());let e=this._$AH,i,o=0;for(let r of t)o===e.length?e.push(i=new a(this.O(N()),this.O(N()),this,this.options)):i=e[o],i._$AI(r),o++;o<e.length&&(this._$AR(i&&i._$AB.nextSibling,o),e.length=o)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){let i=xe(t).nextSibling;xe(t).remove(),t=i}}setConnected(t){this._$AM===void 0&&(this._$Cv=t,this._$AP?.(t))}},z=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,o,r){this.type=1,this._$AH=d,this._$AN=void 0,this.element=t,this.name=e,this._$AM=o,this.options=r,i.length>2||i[0]!==""||i[1]!==""?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=d}_$AI(t,e=this,i,o){let r=this.strings,n=!1;if(r===void 0)t=R(this,t,e,0),n=!U(t)||t!==this._$AH&&t!==E,n&&(this._$AH=t);else{let s=t,c,h;for(t=r[0],c=0;c<r.length-1;c++)h=R(this,s[i+c],e,c),h===E&&(h=this._$AH[c]),n||=!U(h)||h!==this._$AH[c],h===d?t=d:t!==d&&(t+=(h??"")+r[c+1]),this._$AH[c]=h}n&&!o&&this.j(t)}j(t){t===d?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}},te=class extends z{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===d?void 0:t}},ie=class extends z{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==d)}},oe=class extends z{constructor(t,e,i,o,r){super(t,e,i,o,r),this.type=5}_$AI(t,e=this){if((t=R(this,t,e,0)??d)===E)return;let i=this._$AH,o=t===d&&i!==d||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,r=t!==d&&(i===d||o);o&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}},re=class{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){R(this,t)}};var Je=ae.litHtmlPolyfillSupport;Je?.(F,L),(ae.litHtmlVersions??=[]).push("3.3.3");var Re=(a,t,e)=>{let i=e?.renderBefore??t,o=i._$litPart$;if(o===void 0){let r=e?.renderBefore??null;i._$litPart$=o=new L(t.insertBefore(N(),r),r,void 0,e??{})}return o._$AI(a),o};var le=globalThis,g=class extends y{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){let e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Re(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return E}};g._$litElement$=!0,g.finalized=!0,le.litElementHydrateSupport?.({LitElement:g});var Ye=le.litElementPolyfillSupport;Ye?.({LitElement:g});(le.litElementVersions??=[]).push("4.2.2");var Ze={attribute:!0,type:String,converter:M,reflect:!1,hasChanged:K},Qe=(a=Ze,t,e)=>{let{kind:i,metadata:o}=e,r=globalThis.litPropertyMetadata.get(o);if(r===void 0&&globalThis.litPropertyMetadata.set(o,r=new Map),i==="setter"&&((a=Object.create(a)).wrapped=!0),r.set(e.name,a),i==="accessor"){let{name:n}=e;return{set(s){let c=t.get.call(this);t.set.call(this,s),this.requestUpdate(n,c,a,!0,s)},init(s){return s!==void 0&&this.C(n,void 0,a,s),s}}}if(i==="setter"){let{name:n}=e;return function(s){let c=this[n];t.call(this,s),this.requestUpdate(n,c,a,!0,s)}}throw Error("Unsupported decorator location: "+i)};function $(a){return(t,e)=>typeof e=="object"?Qe(a,t,e):((i,o,r)=>{let n=o.hasOwnProperty(r);return o.constructor.createProperty(r,i),n?Object.getOwnPropertyDescriptor(o,r):void 0})(a,t,e)}function x(a){return $({...a,state:!0,attribute:!1})}function ce(a,t){return new Date(a.estimated_time).getTime()-new Date(t.estimated_time).getTime()}function et(a,t){let e=new Map;for(let o of t)e.set(o,[]);for(let o of a){let r=e.get(o.stop_id)??[];r.push(o),e.set(o.stop_id,r)}let i=[];for(;[...e.values()].some(o=>o.length>0);)for(let o of e.values()){let r=o.shift();r&&i.push(r)}return i}function de(a,t,e,i){let o=t==="hide"?a.filter(r=>!r.cancelled):[...a];return e==="balanced"?o=et(o,i):e==="route"?o.sort((r,n)=>r.route_name.localeCompare(n.route_name,void 0,{numeric:!0})||ce(r,n)):e==="realtime"?o.sort((r,n)=>Number(n.realtime)-Number(r.realtime)||ce(r,n)):o.sort(ce),t==="move"&&o.sort((r,n)=>Number(r.cancelled)-Number(n.cancelled)),o}function ze(a){let t=new Map;for(let e of a){let i=e.route_name.trim();if(!i)continue;let o=t.get(i);o?o.count+=1:t.set(i,{name:i,count:1,color:e.route_color,textColor:e.route_text_color})}return[...t.values()].sort((e,i)=>e.name.localeCompare(i.name,void 0,{numeric:!0,sensitivity:"base"}))}function G(a,t){return t.size===0?a:a.filter(e=>t.has(e.route_name.trim()))}function Oe(a,t,e=Date.now()){return a?e-new Date(a).getTime()>t*6e4:!0}function Pe(a,t=1){let e=!a.cancelled&&a.delay_seconds>=t*60;return{delayed:e,displayTime:a.cancelled?a.scheduled_time:a.estimated_time,scheduledTime:e?a.scheduled_time:void 0,delayMinutes:e?Math.round(a.delay_seconds/60):void 0}}function Me(a,t=[]){return[...new Set([...t,...Object.keys(a.states)])].find(i=>{let o=a.states[i]?.attributes;return Array.isArray(o?.stops)&&Array.isArray(o?.departures)})}var De=`/* required styles */\r
 \r
 .leaflet-pane,\r
 .leaflet-tile,\r
@@ -665,7 +665,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
   <div class="translink-map-bus-marker" aria-hidden="true">
     <ha-icon icon="mdi:bus"></ha-icon>
   </div>
-`,_=class extends g{constructor(){super(...arguments);this.entryId="";this.tilesUnavailable=!1;this.expanded=!1;this.handleKeydown=e=>{e.key==="Escape"&&this.close()}}connectedCallback(){super.connectedCallback(),document.addEventListener("keydown",this.handleKeydown)}disconnectedCallback(){document.removeEventListener("keydown",this.handleKeydown),this.map?.remove(),super.disconnectedCallback()}firstUpdated(){this.load()}updated(){this.data&&!this.map&&!this.error&&requestAnimationFrame(()=>void this.createMap())}render(){let e=this.departure?.destination||this.departure?.route_long_name||"";return c`
+`,_=class extends g{constructor(){super(...arguments);this.entryId="";this.tilesUnavailable=!1;this.expanded=!1;this.handleKeydown=e=>{e.key==="Escape"&&this.close()}}connectedCallback(){super.connectedCallback(),document.addEventListener("keydown",this.handleKeydown)}disconnectedCallback(){document.removeEventListener("keydown",this.handleKeydown),this.map?.remove(),super.disconnectedCallback()}firstUpdated(){this.load()}updated(){this.data&&!this.map&&!this.error&&requestAnimationFrame(()=>void this.createMap())}render(){let e=this.departure?.destination||this.departure?.route_long_name||"";return l`
       <div class="backdrop" @click=${this.backdropClicked}>
         <section
           class="dialog ${this.expanded?"expanded":""}"
@@ -693,13 +693,13 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
               <ha-icon icon="mdi:close"></ha-icon>
             </button>
           </header>
-          ${this.error?c`<div class="state error" role="alert">
+          ${this.error?l`<div class="state error" role="alert">
                 <ha-icon icon="mdi:map-marker-alert"></ha-icon>
                 <div>
                   <strong>Route map unavailable</strong>
                   <span>${this.error}</span>
                 </div>
-              </div>`:this.data?c`
+              </div>`:this.data?l`
                   <div class="map" aria-label="Planned route map"></div>
                   <footer>
                     <div class=${this.data.vehicle?"live":"unavailable"}>
@@ -710,24 +710,24 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
                         <strong>
                           ${this.data.vehicle?this.vehicleLabel(this.data):"Live vehicle position unavailable"}
                         </strong>
-                        ${this.data.vehicle?.timestamp?c`<small>
+                        ${this.data.vehicle?.timestamp?l`<small>
                               Last reported
                               ${this.positionAge(this.data.vehicle.timestamp)}
-                            </small>`:this.data.vehicle_error?c`<small>${this.data.vehicle_error}</small>`:d}
+                            </small>`:this.data.vehicle_error?l`<small>${this.data.vehicle_error}</small>`:d}
                       </span>
                     </div>
-                    ${this.tilesUnavailable?c`<small class="tile-warning">
+                    ${this.tilesUnavailable?l`<small class="tile-warning">
                           Basemap tiles could not be loaded. Route geometry is
                           still shown.
                         </small>`:d}
                   </footer>
-                `:c`<div class="state" role="status">
+                `:l`<div class="state" role="status">
                   <ha-circular-progress active></ha-circular-progress>
                   Loading planned route and vehicle position...
                 </div>`}
         </section>
       </div>
-    `}async load(){if(!this.hass?.callApi||!this.departure||!this.entryId){this.error="This departure is missing map identity data.";return}let e=new URLSearchParams({entry_id:this.entryId,trip_id:this.departure.trip_id,stop_id:this.departure.stop_id});try{let[i,o]=await Promise.all([this.hass.callApi("GET",`translink_schedule/trip-map?${e}`),this.loadMapTilesToken()]);this.mapTilesToken=o,this.data=i}catch(i){this.error=i instanceof Error?i.message:"Unable to load map data."}}async loadMapTilesToken(){if(this.hass?.connection)try{return(await this.hass.connection.sendMessagePromise({type:"map_tiles/access_token"})).token}catch{return}}async createMap(){let e=this.renderRoot.querySelector(".map");if(!(!e||!this.data||this.map))try{let o=(await import("./chunks/leaflet-src-ECJ6RXIK.js")).default;if(!this.isConnected||this.map)return;this.leaflet=o;let r=this.data.shape.map(s=>[s.latitude,s.longitude]);this.map=o.map(e,{attributionControl:!0,zoomControl:!0}),this.mapTilesToken?o.tileLayer(it(this.mapTilesToken),{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',maxNativeZoom:19,maxZoom:20}).on("tileerror",()=>{this.tilesUnavailable=!0}).addTo(this.map):this.tilesUnavailable=!0,o.polyline(r,{color:ot,opacity:1,weight:8,lineCap:"round",lineJoin:"round"}).addTo(this.map),o.polyline(r,{color:pe,opacity:1,weight:6,lineCap:"round",lineJoin:"round"}).addTo(this.map),this.addPoint(this.data.shape[0],"Route start",{color:pe,fillColor:he,radius:6,weight:3}),this.addPoint(this.data.boarding_stop,`Board at ${this.data.boarding_stop.name}`,{color:he,fillColor:pe,radius:7,weight:3}),this.addPoint(this.data.destination_point,this.data.destination,{color:rt,fillColor:he,radius:8,weight:3}),this.data.vehicle&&o.marker([this.data.vehicle.latitude,this.data.vehicle.longitude],{icon:o.divIcon({className:"translink-map-bus-icon",html:at,iconAnchor:[20,20],iconSize:[40,40],tooltipAnchor:[0,-20]}),keyboard:!0,title:this.vehicleLabel(this.data)}).bindTooltip(this.vehicleLabel(this.data)).addTo(this.map),this.map.fitBounds(o.latLngBounds(r),{padding:[24,24]})}catch(i){this.error=i instanceof Error?`Unable to initialize route map: ${i.message}`:"Unable to initialize route map."}}addPoint(e,i,o){let r=this.leaflet;r&&r.circleMarker([e.latitude,e.longitude],{className:"translink-map-node",color:o.color,fillColor:o.fillColor,fillOpacity:1,radius:o.radius,weight:o.weight}).bindTooltip(i).addTo(this.map)}vehicleLabel(e){let i=e.vehicle?.vehicle_label??e.vehicle?.vehicle_id;return i?`Bus ${i}`:"Last reported bus position"}positionAge(e){let i=Math.max(0,Math.round((Date.now()-new Date(e).getTime())/1e3));return i<60?`${i} sec ago`:`${Math.round(i/60)} min ago`}backdropClicked(e){e.target===e.currentTarget&&this.close()}toggleExpanded(){this.expanded=!this.expanded,this.updateComplete.then(()=>this.refitMap())}headerKeydown(e){e.target===e.currentTarget&&(e.key!=="Enter"&&e.key!==" "||(e.preventDefault(),this.toggleExpanded()))}refitMap(){if(!this.map||!this.leaflet||!this.data)return;let e=this.leaflet.latLngBounds(this.data.shape.map(i=>[i.latitude,i.longitude]));this.map.invalidateSize(),this.map.fitBounds(e,{padding:[24,24]})}closeClicked(e){e.stopPropagation(),this.close()}close(){this.remove()}static{this.styles=[B(De),T`
+    `}async load(){if(!this.hass?.callApi||!this.departure||!this.entryId){this.error="This departure is missing map identity data.";return}let e=new URLSearchParams({entry_id:this.entryId,trip_id:this.departure.trip_id,stop_id:this.departure.stop_id});try{let[i,o]=await Promise.all([this.hass.callApi("GET",`translink_schedule/trip-map?${e}`),this.loadMapTilesToken()]);this.mapTilesToken=o,this.data=i}catch(i){this.error=i instanceof Error?i.message:"Unable to load map data."}}async loadMapTilesToken(){if(this.hass?.connection)try{return(await this.hass.connection.sendMessagePromise({type:"map_tiles/access_token"})).token}catch{return}}async createMap(){let e=this.renderRoot.querySelector(".map");if(!(!e||!this.data||this.map))try{let o=(await import("./chunks/leaflet-src-ECJ6RXIK.js")).default;if(!this.isConnected||this.map)return;this.leaflet=o;let r=this.data.shape.map(n=>[n.latitude,n.longitude]);this.map=o.map(e,{attributionControl:!0,zoomControl:!0}),this.mapTilesToken?o.tileLayer(it(this.mapTilesToken),{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',maxNativeZoom:19,maxZoom:20}).on("tileerror",()=>{this.tilesUnavailable=!0}).addTo(this.map):this.tilesUnavailable=!0,o.polyline(r,{color:ot,opacity:1,weight:8,lineCap:"round",lineJoin:"round"}).addTo(this.map),o.polyline(r,{color:pe,opacity:1,weight:6,lineCap:"round",lineJoin:"round"}).addTo(this.map),this.addPoint(this.data.shape[0],"Route start",{color:pe,fillColor:he,radius:6,weight:3}),this.addPoint(this.data.boarding_stop,`Board at ${this.data.boarding_stop.name}`,{color:he,fillColor:pe,radius:7,weight:3}),this.addPoint(this.data.destination_point,this.data.destination,{color:rt,fillColor:he,radius:8,weight:3}),this.data.vehicle&&o.marker([this.data.vehicle.latitude,this.data.vehicle.longitude],{icon:o.divIcon({className:"translink-map-bus-icon",html:at,iconAnchor:[20,20],iconSize:[40,40],tooltipAnchor:[0,-20]}),keyboard:!0,title:this.vehicleLabel(this.data)}).bindTooltip(this.vehicleLabel(this.data)).addTo(this.map),this.map.fitBounds(o.latLngBounds(r),{padding:[24,24]})}catch(i){this.error=i instanceof Error?`Unable to initialize route map: ${i.message}`:"Unable to initialize route map."}}addPoint(e,i,o){let r=this.leaflet;r&&r.circleMarker([e.latitude,e.longitude],{className:"translink-map-node",color:o.color,fillColor:o.fillColor,fillOpacity:1,radius:o.radius,weight:o.weight}).bindTooltip(i).addTo(this.map)}vehicleLabel(e){let i=e.vehicle?.vehicle_label??e.vehicle?.vehicle_id;return i?`Bus ${i}`:"Last reported bus position"}positionAge(e){let i=Math.max(0,Math.round((Date.now()-new Date(e).getTime())/1e3));return i<60?`${i} sec ago`:`${Math.round(i/60)} min ago`}backdropClicked(e){e.target===e.currentTarget&&this.close()}toggleExpanded(){this.expanded=!this.expanded,this.updateComplete.then(()=>this.refitMap())}headerKeydown(e){e.target===e.currentTarget&&(e.key!=="Enter"&&e.key!==" "||(e.preventDefault(),this.toggleExpanded()))}refitMap(){if(!this.map||!this.leaflet||!this.data)return;let e=this.leaflet.latLngBounds(this.data.shape.map(i=>[i.latitude,i.longitude]));this.map.invalidateSize(),this.map.fitBounds(e,{padding:[24,24]})}closeClicked(e){e.stopPropagation(),this.close()}close(){this.remove()}static{this.styles=[B(De),T`
     :host {
       color: var(--primary-text-color);
       font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif);
@@ -853,59 +853,59 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
       .map { height: 56vh; min-height: 280px; }
       .expanded .map { height: auto; min-height: 0; }
     }
-    `]}};f([$({attribute:!1})],_.prototype,"hass",2),f([$()],_.prototype,"entryId",2),f([$({attribute:!1})],_.prototype,"departure",2),f([x()],_.prototype,"data",2),f([x()],_.prototype,"error",2),f([x()],_.prototype,"tilesUnavailable",2),f([x()],_.prototype,"expanded",2);customElements.get("translink-trip-map-dialog")||customElements.define("translink-trip-map-dialog",_);var J=3,Ne=12,ue=12,fe=5,Ue=60,st=[{value:"grouped",label:"Grouped by stop"},{value:"combined",label:"Combined by time"}],nt=[{value:"chronological",label:"Chronological"},{value:"balanced",label:"Balance stops"},{value:"route",label:"Group routes"},{value:"realtime",label:"Realtime first"}],lt=[{value:"both",label:"Countdown and clock"},{value:"countdown",label:"Countdown only"},{value:"clock",label:"Clock only"}],ct=[{value:"compact",label:"+7 min"},{value:"text",label:"7 min late"}],dt=[{value:"show",label:"Show in schedule order"},{value:"move",label:"Move below active departures"},{value:"hide",label:"Hide"}],pt=[{value:"comfortable",label:"Comfortable"},{value:"compact",label:"Compact"},{value:"minimal",label:"Minimal"}],ht=[{value:"official",label:"Official route colors"},{value:"theme",label:"Theme primary color"},{value:"monochrome",label:"Monochrome"}],ut=[{value:"multiple",label:"Allow multiple routes"},{value:"single",label:"One route at a time"}],ft=[{value:"show",label:"Show in configured order"},{value:"move",label:"Move to bottom"},{value:"hide",label:"Hide"}],mt=[{value:"primary",label:"Theme primary"},{value:"surface",label:"Card surface"},{value:"transparent",label:"Transparent"}],gt=[{value:"clock",label:"Current time"},{value:"next_departure",label:"Next departure"},{value:"hidden",label:"Hidden"}],bt=[{value:"countdown",label:"Countdown"},{value:"clock",label:"Clock time"},{value:"both",label:"Countdown and clock time"}],vt=[{value:"accent",label:"Accent"},{value:"plain",label:"Plain"},{value:"compact",label:"Compact"}];function xt(a,t=Date.now()){return Math.max(0,Math.round((new Date(a).getTime()-t)/6e4))}function Fe(a,t=Date.now()){let e=xt(a,t);return e===0?"Now":`${e} min`}function _t(a,t){return G(a,t).filter(e=>!e.cancelled).sort((e,i)=>new Date(e.estimated_time).getTime()-new Date(i.estimated_time).getTime())[0]}function X(a,t){let e=t?.time_format==="12"?!0:t?.time_format==="24"?!1:void 0;return new Intl.DateTimeFormat(t?.language,{hour:"numeric",hour12:e,minute:"2-digit"}).format(new Date(a))}var C=class extends g{constructor(){super(...arguments);this.collapsedStops=new Set;this.selectedRoutes=new Set;this.initializedStops=new Set}static async getConfigElement(){return document.createElement("translink-schedule-card-editor")}static getStubConfig(e,i=[]){return{entity:Pe(e,i)??"",view:"grouped",departures_per_stop:J}}getGridOptions(){return{columns:12,min_columns:6}}setConfig(e){if(!e.entity)throw new Error("A TransLink Schedule entity is required");let i=e.route_filter_selection_mode??"multiple",o=e.header_time_mode??(e.show_clock===!1?"hidden":"clock");this.config?.entity!==e.entity?(this.collapsedStops=new Set,this.initializedStops.clear(),this.resetRouteFilter()):(this.config?.show_route_filter&&e.show_route_filter!==!0||this.config?.route_filter_selection_mode!==i)&&this.resetRouteFilter(),this.config={view:"grouped",departures_per_stop:J,max_departures:ue,time_display:"both",show_scheduled_time:!0,delay_threshold_minutes:1,delay_format:"compact",density:"comfortable",empty_stop_behavior:"show",cancelled_behavior:"show",route_color_mode:"official",show_route_filter:!1,route_filter_reset_minutes:fe,route_filter_selection_mode:"multiple",route_filter_show_counts:!1,combined_order:"chronological",show_header:!0,show_brand:!0,header_style:"primary",stop_heading_style:"accent",header_next_departure_format:"countdown",show_clock:!0,show_alerts:!0,show_stop_codes:!0,show_realtime_status:!1,show_stale_warning:!1,stale_after_minutes:3,...e,header_time_mode:o},this.selectedRoutes.size>0&&this.scheduleRouteFilterReset()}connectedCallback(){super.connectedCallback(),this.ticker=window.setInterval(()=>this.requestUpdate(),3e4)}disconnectedCallback(){this.ticker!==void 0&&window.clearInterval(this.ticker),this.clearRouteFilterResetTimer(),super.disconnectedCallback()}render(){if(!this.config||!this.hass)return d;let e=this.hass.states[this.config.entity];if(!e)return c`<ha-card><div class="message error">
+    `]}};f([$({attribute:!1})],_.prototype,"hass",2),f([$()],_.prototype,"entryId",2),f([$({attribute:!1})],_.prototype,"departure",2),f([x()],_.prototype,"data",2),f([x()],_.prototype,"error",2),f([x()],_.prototype,"tilesUnavailable",2),f([x()],_.prototype,"expanded",2);customElements.get("translink-trip-map-dialog")||customElements.define("translink-trip-map-dialog",_);var J=3,Ne=12,ue=12,fe=5,Ue=60,nt=[{value:"grouped",label:"Grouped by stop"},{value:"combined",label:"Combined by time"}],st=[{value:"chronological",label:"Chronological"},{value:"balanced",label:"Balance stops"},{value:"route",label:"Group routes"},{value:"realtime",label:"Realtime first"}],lt=[{value:"both",label:"Countdown and clock"},{value:"countdown",label:"Countdown only"},{value:"clock",label:"Clock only"}],ct=[{value:"compact",label:"+7 min"},{value:"text",label:"7 min late"}],dt=[{value:"show",label:"Show in schedule order"},{value:"move",label:"Move below active departures"},{value:"hide",label:"Hide"}],pt=[{value:"comfortable",label:"Comfortable"},{value:"compact",label:"Compact"},{value:"minimal",label:"Minimal"}],ht=[{value:"official",label:"Official route colors"},{value:"theme",label:"Theme primary color"},{value:"monochrome",label:"Monochrome"}],ut=[{value:"multiple",label:"Allow multiple routes"},{value:"single",label:"One route at a time"}],ft=[{value:"show",label:"Show in configured order"},{value:"move",label:"Move to bottom"},{value:"hide",label:"Hide"}],mt=[{value:"primary",label:"Theme primary"},{value:"surface",label:"Card surface"},{value:"transparent",label:"Transparent"}],gt=[{value:"clock",label:"Current time"},{value:"next_departure",label:"Next departure"},{value:"hidden",label:"Hidden"}],bt=[{value:"countdown",label:"Countdown"},{value:"clock",label:"Clock time"},{value:"both",label:"Countdown and clock time"}],vt=[{value:"accent",label:"Accent"},{value:"plain",label:"Plain"},{value:"compact",label:"Compact"}];function xt(a,t=Date.now()){return Math.max(0,Math.round((new Date(a).getTime()-t)/6e4))}function Fe(a,t=Date.now()){let e=xt(a,t);return e===0?"Now":`${e} min`}function _t(a,t){return G(a,t).filter(e=>!e.cancelled).sort((e,i)=>new Date(e.estimated_time).getTime()-new Date(i.estimated_time).getTime())[0]}function X(a,t){let e=t?.time_format==="12"?!0:t?.time_format==="24"?!1:void 0;return new Intl.DateTimeFormat(t?.language,{hour:"numeric",hour12:e,minute:"2-digit"}).format(new Date(a))}var C=class extends g{constructor(){super(...arguments);this.collapsedStops=new Set;this.selectedRoutes=new Set;this.initializedStops=new Set}static async getConfigElement(){return document.createElement("translink-schedule-card-editor")}static getStubConfig(e,i=[]){return{entity:Me(e,i)??"",view:"grouped",departures_per_stop:J}}getGridOptions(){return{columns:12,min_columns:6}}setConfig(e){if(!e.entity)throw new Error("A TransLink Schedule entity is required");let i=e.route_filter_selection_mode??"multiple",o=e.header_time_mode??(e.show_clock===!1?"hidden":"clock");this.config?.entity!==e.entity?(this.collapsedStops=new Set,this.initializedStops.clear(),this.resetRouteFilter()):(this.config?.show_route_filter&&e.show_route_filter!==!0||this.config?.route_filter_selection_mode!==i)&&this.resetRouteFilter(),this.config={view:"grouped",departures_per_stop:J,max_departures:ue,time_display:"both",show_scheduled_time:!0,delay_threshold_minutes:1,delay_format:"compact",density:"comfortable",empty_stop_behavior:"show",cancelled_behavior:"show",route_color_mode:"official",show_route_filter:!1,route_filter_reset_minutes:fe,route_filter_selection_mode:"multiple",route_filter_show_counts:!1,combined_order:"chronological",show_header:!0,show_brand:!0,header_style:"primary",stop_heading_style:"accent",header_next_departure_format:"countdown",show_clock:!0,show_alerts:!0,show_stop_codes:!0,show_realtime_status:!1,show_stale_warning:!1,stale_after_minutes:3,...e,header_time_mode:o},this.selectedRoutes.size>0&&this.scheduleRouteFilterReset()}connectedCallback(){super.connectedCallback(),this.ticker=window.setInterval(()=>this.requestUpdate(),3e4)}disconnectedCallback(){this.ticker!==void 0&&window.clearInterval(this.ticker),this.clearRouteFilterResetTimer(),super.disconnectedCallback()}render(){if(!this.config||!this.hass)return d;let e=this.hass.states[this.config.entity];if(!e)return l`<ha-card><div class="message error">
         Entity ${this.config.entity} was not found.
-      </div></ha-card>`;let i=e.attributes.stops??[],o=e.attributes.departures??[],r=o.length?o:i.flatMap(v=>v.departures),s=ze(r),n=this.activeSelectedRoutes(s),l=_t(r,n),h=e.attributes.alerts??[],u=this.config.title??e.attributes.board_name??"TransLink departures",p=e.attributes.last_updated,m=this.config.show_stale_warning&&Oe(p,this.config.stale_after_minutes??3),b=[`density-${this.config.density}`,`header-${this.config.header_style}`,`routes-${this.config.route_color_mode}`,`stops-${this.config.stop_heading_style}`].join(" ");return c`
+      </div></ha-card>`;let i=e.attributes.stops??[],o=e.attributes.departures??[],r=o.length?o:i.flatMap(v=>v.departures),n=ze(r),s=this.activeSelectedRoutes(n),c=_t(r,s),h=e.attributes.alerts??[],u=this.config.title??e.attributes.board_name??"TransLink departures",p=e.attributes.last_updated,m=this.config.show_stale_warning&&Oe(p,this.config.stale_after_minutes??3),b=[`density-${this.config.density}`,`header-${this.config.header_style}`,`routes-${this.config.route_color_mode}`,`stops-${this.config.stop_heading_style}`].join(" ");return l`
       <ha-card class=${b}>
-        ${this.config.show_header?c`<header>
+        ${this.config.show_header?l`<header>
               <div class="header-title">
-                ${this.config.header_icon?c`<ha-icon
+                ${this.config.header_icon?l`<ha-icon
                       .icon=${this.config.header_icon}
                       aria-hidden="true"
                     ></ha-icon>`:d}
                 <div>
-                  ${this.config.show_brand?c`<div class="eyebrow">TransLink</div>`:d}
+                  ${this.config.show_brand?l`<div class="eyebrow">TransLink</div>`:d}
                   <h1>${u}</h1>
                 </div>
               </div>
-              ${this.renderHeaderTime(l)}
+              ${this.renderHeaderTime(c)}
             </header>`:d}
-        ${this.config.show_alerts&&h.length?c`<div class="alerts">
-              ${h.map(v=>c`<div>
+        ${this.config.show_alerts&&h.length?l`<div class="alerts">
+              ${h.map(v=>l`<div>
                   <ha-icon icon="mdi:alert" aria-hidden="true"></ha-icon>
                   <span>
                     <strong>${v.header}</strong>
-                    ${v.description?c`<small>${v.description}</small>`:d}
+                    ${v.description?l`<small>${v.description}</small>`:d}
                   </span>
                 </div>`)}
             </div>`:d}
-        ${m?c`<div class="stale" role="status">
+        ${m?l`<div class="stale" role="status">
               <ha-icon icon="mdi:cloud-alert" aria-hidden="true"></ha-icon>
               Realtime data has not updated recently.
             </div>`:d}
-        ${this.config.show_route_filter&&s.length>0?this.renderRouteFilter(s,n):d}
+        ${this.config.show_route_filter&&n.length>0?this.renderRouteFilter(n,s):d}
         <main>
-          ${this.config.view==="combined"?this.renderCombined(o,i,n):this.renderGrouped(i,n)}
+          ${this.config.view==="combined"?this.renderCombined(o,i,s):this.renderGrouped(i,s)}
         </main>
       </ha-card>
-    `}renderHeaderTime(e){let i=this.config?.header_time_mode??"clock";if(i==="hidden")return d;if(i==="clock")return c`<div class="clock">
+    `}renderHeaderTime(e){let i=this.config?.header_time_mode??"clock";if(i==="hidden")return d;if(i==="clock")return l`<div class="clock">
         ${X(new Date().toISOString(),this.hass?.locale)}
-      </div>`;if(!e)return c`<div
+      </div>`;if(!e)return l`<div
         class="header-time next-departure"
         aria-label="No upcoming departures"
       >
         <small>Next</small>
         <strong>—</strong>
-      </div>`;let o=Fe(e.estimated_time),r=X(e.estimated_time,this.hass?.locale),s=this.config?.header_next_departure_format??"countdown",n=`Next departure route ${e.route_name} to ${e.destination||e.route_long_name}, ${o}, at ${r}`;return c`<div
+      </div>`;let o=Fe(e.estimated_time),r=X(e.estimated_time,this.hass?.locale),n=this.config?.header_next_departure_format??"countdown",s=`Next departure route ${e.route_name} to ${e.destination||e.route_long_name}, ${o}, at ${r}`;return l`<div
       class="header-time next-departure"
-      aria-label=${n}
+      aria-label=${s}
     >
       <small>Next</small>
-      ${s==="clock"?c`<strong>${r}</strong>`:c`
+      ${n==="clock"?l`<strong>${r}</strong>`:l`
             <strong>${o}</strong>
-            ${s==="both"?c`<span>${r}</span>`:d}
+            ${n==="both"?l`<span>${r}</span>`:d}
           `}
-    </div>`}renderRouteFilter(e,i){let o=this.config?.route_filter_show_counts===!0,r=e.reduce((s,n)=>s+n.count,0);return c`
+    </div>`}renderRouteFilter(e,i){let o=this.config?.route_filter_show_counts===!0,r=e.reduce((n,s)=>n+s.count,0);return l`
       <nav class="route-filter" aria-label="Filter departures by route">
         <button
           type="button"
@@ -913,69 +913,69 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
           aria-pressed=${String(i.size===0)}
           @click=${()=>this.selectAllRoutes()}
         >
-          All${o?c` <span>${r}</span>`:d}
+          All${o?l` <span>${r}</span>`:d}
         </button>
-        ${e.map(s=>{let n=i.has(s.name),l=this.config?.route_color_mode==="official"&&n?[s.color?`background:#${s.color}`:"",s.textColor?`color:#${s.textColor}`:""].filter(Boolean).join(";"):"";return c`
+        ${e.map(n=>{let s=i.has(n.name),c=this.config?.route_color_mode==="official"&&s?[n.color?`background:#${n.color}`:"",n.textColor?`color:#${n.textColor}`:""].filter(Boolean).join(";"):"";return l`
             <button
               type="button"
               class="route-filter-chip"
-              style=${l}
-              aria-label="Filter route ${s.name}"
-              aria-pressed=${String(n)}
-              @click=${()=>this.toggleRoute(s.name)}
+              style=${c}
+              aria-label="Filter route ${n.name}"
+              aria-pressed=${String(s)}
+              @click=${()=>this.toggleRoute(n.name)}
             >
-              ${s.name}${o?c` <span>${s.count}</span>`:d}
+              ${n.name}${o?l` <span>${n.count}</span>`:d}
             </button>
           `})}
       </nav>
-    `}renderGrouped(e,i){let o=this.config?.empty_stop_behavior??(this.config?.hide_empty_stops?"hide":"show"),r=e.map(n=>({stop:n,departures:de(G(n.departures,i),this.config?.cancelled_behavior??"show","chronological",[n.stop_id])}));o==="hide"?r=r.filter(({departures:n})=>n.length>0):o==="move"&&r.sort((n,l)=>+(n.departures.length===0)-+(l.departures.length===0));let s=r.map(({stop:n,departures:l})=>{let h=this.isStopCollapsed(n),u=n.departures_per_stop??this.config?.departures_per_stop??J;return c`
+    `}renderGrouped(e,i){let o=this.config?.empty_stop_behavior??(this.config?.hide_empty_stops?"hide":"show"),r=e.map(s=>({stop:s,departures:de(G(s.departures,i),this.config?.cancelled_behavior??"show","chronological",[s.stop_id])}));o==="hide"?r=r.filter(({departures:s})=>s.length>0):o==="move"&&r.sort((s,c)=>+(s.departures.length===0)-+(c.departures.length===0));let n=r.map(({stop:s,departures:c})=>{let h=this.isStopCollapsed(s),u=s.departures_per_stop??this.config?.departures_per_stop??J;return l`
         <section class=${h?"collapsed":""}>
           <button
             class="stop-heading"
             type="button"
             aria-expanded=${String(!h)}
-            @click=${()=>this.toggleStop(n.stop_id)}
+            @click=${()=>this.toggleStop(s.stop_id)}
           >
             <span class="stop-title">
               <ha-icon
                 icon=${h?"mdi:chevron-right":"mdi:chevron-down"}
                 aria-hidden="true"
               ></ha-icon>
-              ${n.display_name||n.stop_name}
+              ${s.display_name||s.stop_name}
             </span>
-            ${this.config?.show_stop_codes!==!1&&n.show_stop_code!==!1&&n.stop_code?c`<span class="stop-code">#${n.stop_code}</span>`:d}
+            ${this.config?.show_stop_codes!==!1&&s.show_stop_code!==!1&&s.stop_code?l`<span class="stop-code">#${s.stop_code}</span>`:d}
           </button>
-          ${h?d:l.length?l.slice(0,u).map(p=>this.renderDeparture(p,!1)):c`<div class="empty-stop">No upcoming departures</div>`}
+          ${h?d:c.length?c.slice(0,u).map(p=>this.renderDeparture(p,!1)):l`<div class="empty-stop">No upcoming departures</div>`}
         </section>
-      `});return s.length?s:c`<div class="message">No upcoming departures.</div>`}renderCombined(e,i,o){let r=de(G(e,o),this.config?.cancelled_behavior??"show",this.config?.combined_order??"chronological",i.map(s=>s.stop_id));return r.length===0?c`<div class="message">No upcoming departures.</div>`:c`
+      `});return n.length?n:l`<div class="message">No upcoming departures.</div>`}renderCombined(e,i,o){let r=de(G(e,o),this.config?.cancelled_behavior??"show",this.config?.combined_order??"chronological",i.map(n=>n.stop_id));return r.length===0?l`<div class="message">No upcoming departures.</div>`:l`
       <section>
-        ${r.slice(0,this.config?.max_departures??ue).map(s=>this.renderDeparture(s,!0))}
+        ${r.slice(0,this.config?.max_departures??ue).map(n=>this.renderDeparture(n,!0))}
       </section>
-    `}renderDeparture(e,i){let o=this.config?.route_color_mode==="official"?[e.route_color?`background:#${e.route_color}`:"",e.route_text_color?`color:#${e.route_text_color}`:""].filter(Boolean).join(";"):"",r=Me(e,this.config?.delay_threshold_minutes),s=this.config?.time_display!=="clock",n=this.config?.time_display!=="countdown",l=e.destination||e.route_long_name,h=e.cancelled?"cancelled":r.delayed?`${r.delayMinutes} minutes late`:e.realtime?"live prediction":"scheduled",u=this.config?.delay_format==="text"?`${r.delayMinutes} min late`:`+${r.delayMinutes} min`;return c`
+    `}renderDeparture(e,i){let o=this.config?.route_color_mode==="official"?[e.route_color?`background:#${e.route_color}`:"",e.route_text_color?`color:#${e.route_text_color}`:""].filter(Boolean).join(";"):"",r=Pe(e,this.config?.delay_threshold_minutes),n=this.config?.time_display!=="clock",s=this.config?.time_display!=="countdown",c=e.destination||e.route_long_name,h=e.cancelled?"cancelled":r.delayed?`${r.delayMinutes} minutes late`:e.realtime?"live prediction":"scheduled",u=this.config?.delay_format==="text"?`${r.delayMinutes} min late`:`+${r.delayMinutes} min`;return l`
       <div
         class="departure ${e.cancelled?"cancelled":""}"
         role="button"
         tabindex="0"
-        aria-label="Route ${e.route_name} to ${l}, ${h}. Open route map."
+        aria-label="Route ${e.route_name} to ${c}, ${h}. Open route map."
         @click=${()=>this.openTripMap(e)}
         @keydown=${p=>this.departureKeydown(p,e)}
       >
         <span class="route" style=${o}>${e.route_name}</span>
         <div class="destination">
-          <strong>${l}</strong>
-          ${i?c`<small>${e.stop_name}</small>`:d}
+          <strong>${c}</strong>
+          ${i?l`<small>${e.stop_name}</small>`:d}
         </div>
         <div class="timing">
-          ${e.cancelled?c`<strong>Cancelled</strong>`:s?c`<strong>${Fe(e.estimated_time)}</strong>`:d}
-          ${n?c`<small class="time-details ${s?"":"clock-only"}">
-                ${r.scheduledTime&&this.config?.show_scheduled_time!==!1?c`<s>${X(r.scheduledTime,this.hass?.locale)}</s>`:d}
+          ${e.cancelled?l`<strong>Cancelled</strong>`:n?l`<strong>${Fe(e.estimated_time)}</strong>`:d}
+          ${s?l`<small class="time-details ${n?"":"clock-only"}">
+                ${r.scheduledTime&&this.config?.show_scheduled_time!==!1?l`<s>${X(r.scheduledTime,this.hass?.locale)}</s>`:d}
                 <span class=${r.delayed?"predicted-time":""}>
                   ${X(r.displayTime,this.hass?.locale)}
                 </span>
               </small>`:d}
           <small class="status-details">
-            ${r.delayMinutes!==void 0?c`<span class="delay">${u}</span>`:d}
-            ${this.config?.show_realtime_status?c`<span class="realtime ${e.realtime?"live":""}">
+            ${r.delayMinutes!==void 0?l`<span class="delay">${u}</span>`:d}
+            ${this.config?.show_realtime_status?l`<span class="realtime ${e.realtime?"live":""}">
                   ${e.realtime?"Live":"Scheduled"}
                 </span>`:d}
           </small>
@@ -1199,123 +1199,135 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
       .departure { gap: 8px; padding-inline: 12px; }
       header { padding-inline: 16px; }
     }
-  `}};f([$({attribute:!1})],C.prototype,"hass",2),f([x()],C.prototype,"config",2),f([x()],C.prototype,"collapsedStops",2),f([x()],C.prototype,"selectedRoutes",2);var H=class extends g{setConfig(t){this.config=t}render(){return this.config?c`
-      <div class="form">
-        <ha-entity-picker
-          .hass=${this.hass}
-          .value=${this.config.entity}
-          .includeDomains=${["sensor"]}
-          label="Entity"
-          data-key="entity"
-          @value-changed=${this.valueChanged}
-        ></ha-entity-picker>
-        <ha-textfield
-          .value=${this.config.title??""}
-          label="Title"
-          data-key="title"
-          @input=${this.valueChanged}
-        ></ha-textfield>
-        ${this.selectField("view","Layout",this.config.view??"grouped",st)}
-        ${this.selectField("combined_order","Combined ordering",this.config.combined_order??"chronological",nt)}
-        <ha-textfield
-          type="number"
-          min="1"
-          max=${Ne}
-          .value=${String(this.config.departures_per_stop??J)}
-          label="Departures per stop"
-          data-key="departures_per_stop"
-          data-min="1"
-          data-max=${Ne}
-          @input=${this.numberChanged}
-        ></ha-textfield>
-        <ha-textfield
-          type="number"
-          min="1"
-          max="50"
-          .value=${String(this.config.max_departures??ue)}
-          label="Maximum combined departures"
-          data-key="max_departures"
-          data-min="1"
-          data-max="50"
-          @input=${this.numberChanged}
-        ></ha-textfield>
-
-        <h3>Timing and status</h3>
-        ${this.selectField("time_display","Time display",this.config.time_display??"both",lt)}
-        <ha-textfield
-          type="number"
-          min="1"
-          max="30"
-          .value=${String(this.config.delay_threshold_minutes??1)}
-          label="Delay threshold (minutes)"
-          data-key="delay_threshold_minutes"
-          data-min="1"
-          data-max="30"
-          @input=${this.numberChanged}
-        ></ha-textfield>
-        ${this.selectField("delay_format","Delay label",this.config.delay_format??"compact",ct)}
-        ${this.selectField("cancelled_behavior","Cancelled departures",this.config.cancelled_behavior??"show",dt)}
-        ${this.booleanField("show_scheduled_time","Show struck-through scheduled time",this.config.show_scheduled_time!==!1)}
-        ${this.booleanField("show_realtime_status","Show Live/Scheduled labels",this.config.show_realtime_status===!0)}
-        ${this.booleanField("show_stale_warning","Warn when realtime data is stale",this.config.show_stale_warning===!0)}
-        <ha-textfield
-          type="number"
-          min="2"
-          max="30"
-          .value=${String(this.config.stale_after_minutes??3)}
-          label="Stale warning after (minutes)"
-          data-key="stale_after_minutes"
-          data-min="2"
-          data-max="30"
-          @input=${this.numberChanged}
-        ></ha-textfield>
-
-        <h3>Appearance</h3>
-        ${this.selectField("density","Row density",this.config.density??"comfortable",pt)}
-        ${this.selectField("route_color_mode","Route badge colors",this.config.route_color_mode??"official",ht)}
-        ${this.selectField("empty_stop_behavior","Stops without departures",this.config.empty_stop_behavior??(this.config.hide_empty_stops?"hide":"show"),ft)}
-        ${this.booleanField("show_stop_codes","Show stop numbers",this.config.show_stop_codes!==!1)}
-
-        <h3>Route filter</h3>
-        ${this.booleanField("show_route_filter","Show route filter",this.config.show_route_filter===!0)}
-        ${this.config.show_route_filter?c`
-              ${this.selectField("route_filter_selection_mode","Route selection",this.config.route_filter_selection_mode??"multiple",ut)}
-              ${this.booleanField("route_filter_show_counts","Show departure counts",this.config.route_filter_show_counts===!0)}
-              <ha-textfield
-                type="number"
-                min="0"
-                max=${Ue}
-                .value=${String(this.config.route_filter_reset_minutes??fe)}
-                label="Reset to All after (minutes, 0 = never)"
-                data-key="route_filter_reset_minutes"
-                data-min="0"
-                data-max=${Ue}
-                @input=${this.numberChanged}
-              ></ha-textfield>
-            `:d}
-
-        <h3>Header</h3>
-        ${this.booleanField("show_header","Show header",this.config.show_header!==!1)}
-        ${this.booleanField("show_brand","Show TransLink label",this.config.show_brand!==!1)}
-        ${this.selectField("header_time_mode","Header right-side display",this.config.header_time_mode??(this.config.show_clock===!1?"hidden":"clock"),gt)}
-        ${(this.config.header_time_mode??(this.config.show_clock===!1?"hidden":"clock"))==="next_departure"?this.selectField("header_next_departure_format","Next departure display",this.config.header_next_departure_format??"countdown",bt):d}
-        ${this.selectField("header_style","Header colors",this.config.header_style??"primary",mt)}
-        ${this.selectField("stop_heading_style","Stop heading style",this.config.stop_heading_style??"accent",vt)}
-        <ha-textfield
-          .value=${this.config.header_icon??""}
-          label="Header icon (for example mdi:bus)"
-          data-key="header_icon"
-          @input=${this.valueChanged}
-        ></ha-textfield>
-        <ha-formfield label="Show service notices">
-          <ha-switch
-            .checked=${this.config.show_alerts!==!1}
-            data-key="show_alerts"
-            @change=${this.booleanChanged}
-          ></ha-switch>
-        </ha-formfield>
+  `}};f([$({attribute:!1})],C.prototype,"hass",2),f([x()],C.prototype,"config",2),f([x()],C.prototype,"collapsedStops",2),f([x()],C.prototype,"selectedRoutes",2);var H=class extends g{setConfig(t){this.config=t}render(){return this.config?l`
+      <div class="card-config">
+        ${this.editorPanel("Card & layout","Entity, layout, ordering, and departure limits","mdi:view-dashboard-outline",l`
+            <ha-entity-picker
+              .hass=${this.hass}
+              .value=${this.config.entity}
+              .includeDomains=${["sensor"]}
+              label="Entity"
+              data-key="entity"
+              @value-changed=${this.valueChanged}
+            ></ha-entity-picker>
+            <ha-textfield
+              .value=${this.config.title??""}
+              label="Title"
+              data-key="title"
+              @input=${this.valueChanged}
+            ></ha-textfield>
+            ${this.selectField("view","Layout",this.config.view??"grouped",nt)}
+            ${this.selectField("combined_order","Combined ordering",this.config.combined_order??"chronological",st)}
+            <ha-textfield
+              type="number"
+              min="1"
+              max=${Ne}
+              .value=${String(this.config.departures_per_stop??J)}
+              label="Departures per stop"
+              data-key="departures_per_stop"
+              data-min="1"
+              data-max=${Ne}
+              @input=${this.numberChanged}
+            ></ha-textfield>
+            <ha-textfield
+              type="number"
+              min="1"
+              max="50"
+              .value=${String(this.config.max_departures??ue)}
+              label="Maximum combined departures"
+              data-key="max_departures"
+              data-min="1"
+              data-max="50"
+              @input=${this.numberChanged}
+            ></ha-textfield>
+          `)}
+        ${this.editorPanel("Timing & status","Departure times, delays, cancellations, and realtime state","mdi:clock-outline",l`
+            ${this.selectField("time_display","Time display",this.config.time_display??"both",lt)}
+            <ha-textfield
+              type="number"
+              min="1"
+              max="30"
+              .value=${String(this.config.delay_threshold_minutes??1)}
+              label="Delay threshold (minutes)"
+              data-key="delay_threshold_minutes"
+              data-min="1"
+              data-max="30"
+              @input=${this.numberChanged}
+            ></ha-textfield>
+            ${this.selectField("delay_format","Delay label",this.config.delay_format??"compact",ct)}
+            ${this.selectField("cancelled_behavior","Cancelled departures",this.config.cancelled_behavior??"show",dt)}
+            ${this.booleanField("show_scheduled_time","Show struck-through scheduled time",this.config.show_scheduled_time!==!1)}
+            ${this.booleanField("show_realtime_status","Show Live/Scheduled labels",this.config.show_realtime_status===!0)}
+            ${this.booleanField("show_stale_warning","Warn when realtime data is stale",this.config.show_stale_warning===!0)}
+            <ha-textfield
+              type="number"
+              min="2"
+              max="30"
+              .value=${String(this.config.stale_after_minutes??3)}
+              label="Stale warning after (minutes)"
+              data-key="stale_after_minutes"
+              data-min="2"
+              data-max="30"
+              @input=${this.numberChanged}
+            ></ha-textfield>
+          `)}
+        ${this.editorPanel("Appearance","Density, route colors, stops, and section headings","mdi:palette-outline",l`
+            ${this.selectField("density","Row density",this.config.density??"comfortable",pt)}
+            ${this.selectField("route_color_mode","Route badge colors",this.config.route_color_mode??"official",ht)}
+            ${this.selectField("empty_stop_behavior","Stops without departures",this.config.empty_stop_behavior??(this.config.hide_empty_stops?"hide":"show"),ft)}
+            ${this.selectField("stop_heading_style","Stop heading style",this.config.stop_heading_style??"accent",vt)}
+            ${this.booleanField("show_stop_codes","Show stop numbers",this.config.show_stop_codes!==!1)}
+          `)}
+        ${this.editorPanel("Route filter","Interactive route selection and automatic reset","mdi:filter-variant",l`
+            ${this.booleanField("show_route_filter","Show route filter",this.config.show_route_filter===!0)}
+            ${this.config.show_route_filter?l`
+                  ${this.selectField("route_filter_selection_mode","Route selection",this.config.route_filter_selection_mode??"multiple",ut)}
+                  ${this.booleanField("route_filter_show_counts","Show departure counts",this.config.route_filter_show_counts===!0)}
+                  <ha-textfield
+                    type="number"
+                    min="0"
+                    max=${Ue}
+                    .value=${String(this.config.route_filter_reset_minutes??fe)}
+                    label="Reset to All after (minutes, 0 = never)"
+                    data-key="route_filter_reset_minutes"
+                    data-min="0"
+                    data-max=${Ue}
+                    @input=${this.numberChanged}
+                  ></ha-textfield>
+                `:d}
+          `)}
+        ${this.editorPanel("Header & notices","Title, right-side display, colors, icon, and service notices","mdi:card-text-outline",l`
+            ${this.booleanField("show_header","Show header",this.config.show_header!==!1)}
+            ${this.booleanField("show_brand","Show TransLink label",this.config.show_brand!==!1)}
+            ${this.selectField("header_time_mode","Header right-side display",this.config.header_time_mode??(this.config.show_clock===!1?"hidden":"clock"),gt)}
+            ${(this.config.header_time_mode??(this.config.show_clock===!1?"hidden":"clock"))==="next_departure"?this.selectField("header_next_departure_format","Next departure display",this.config.header_next_departure_format??"countdown",bt):d}
+            ${this.selectField("header_style","Header colors",this.config.header_style??"primary",mt)}
+            <ha-textfield
+              .value=${this.config.header_icon??""}
+              label="Header icon (for example mdi:bus)"
+              data-key="header_icon"
+              @input=${this.valueChanged}
+            ></ha-textfield>
+            <ha-formfield label="Show service notices">
+              <ha-switch
+                .checked=${this.config.show_alerts!==!1}
+                data-key="show_alerts"
+                @change=${this.booleanChanged}
+              ></ha-switch>
+            </ha-formfield>
+          `)}
       </div>
-    `:d}selectField(t,e,i,o){return c`
+    `:d}editorPanel(t,e,i,o){return l`
+      <ha-expansion-panel
+        outlined
+        .header=${t}
+        .secondary=${e}
+        .leftChevron=${!1}
+      >
+        <ha-icon slot="leading-icon" .icon=${i}></ha-icon>
+        <div class="panel-body">${o}</div>
+      </ha-expansion-panel>
+    `}selectField(t,e,i,o){return l`
       <ha-select
         .label=${e}
         .value=${i}
@@ -1323,7 +1335,7 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
         data-key=${t}
         @selected=${this.valueChanged}
       ></ha-select>
-    `}booleanField(t,e,i){return c`
+    `}booleanField(t,e,i){return l`
       <ha-formfield label=${e}>
         <ha-switch
           .checked=${i}
@@ -1331,13 +1343,18 @@ svg.leaflet-image-layer.leaflet-interactive path {\r
           @change=${this.booleanChanged}
         ></ha-switch>
       </ha-formfield>
-    `}valueChanged(t){if(!this.config)return;let e=t.currentTarget,i=e.dataset.key,r=t.detail?.value??e.value;this.config={...this.config,[i]:r},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}booleanChanged(t){if(!this.config)return;let e=t.currentTarget,i=e.dataset.key;this.config={...this.config,[i]:e.checked},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}numberChanged(t){if(!this.config)return;let e=t.currentTarget,i=Number.parseInt(e.value,10);if(!Number.isFinite(i))return;let o=e.dataset.key,r=Number.parseInt(e.dataset.min??"1",10),s=Number.parseInt(e.dataset.max??"12",10);this.config={...this.config,[o]:Math.min(s,Math.max(r,i))},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=T`
-    .form { display: grid; gap: 16px; padding: 8px 0; }
-    h3 {
-      border-bottom: 1px solid var(--divider-color);
-      font-size: 14px;
-      margin: 8px 0 0;
-      padding-bottom: 6px;
+    `}valueChanged(t){if(!this.config)return;let e=t.currentTarget,i=e.dataset.key,r=t.detail?.value??e.value;this.config={...this.config,[i]:r},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}booleanChanged(t){if(!this.config)return;let e=t.currentTarget,i=e.dataset.key;this.config={...this.config,[i]:e.checked},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}numberChanged(t){if(!this.config)return;let e=t.currentTarget,i=Number.parseInt(e.value,10);if(!Number.isFinite(i))return;let o=e.dataset.key,r=Number.parseInt(e.dataset.min??"1",10),n=Number.parseInt(e.dataset.max??"12",10);this.config={...this.config,[o]:Math.min(n,Math.max(r,i))},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}static{this.styles=T`
+    .card-config {
+      display: flex;
+      flex-direction: column;
+      padding: 4px 0;
+    }
+    ha-expansion-panel { margin: 8px 0; }
+    .panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 8px 0 4px;
     }
   `}};f([$({attribute:!1})],H.prototype,"hass",2),f([x()],H.prototype,"config",2);customElements.get("translink-schedule-card")||customElements.define("translink-schedule-card",C);customElements.get("translink-schedule-card-editor")||customElements.define("translink-schedule-card-editor",H);window.customCards=window.customCards??[];window.customCards.some(a=>a.type==="translink-schedule-card")||window.customCards.push({type:"translink-schedule-card",name:"TransLink Schedule Card",description:"Upcoming departures from multiple TransLink stops.",preview:!0});export{C as TransLinkScheduleCard,H as TransLinkScheduleCardEditor,Fe as countdownLabel,_t as getNextDeparture};
 /*! Bundled license information:

@@ -522,6 +522,35 @@ describe("departure route map", () => {
 });
 
 describe("card editor", () => {
+  it("organizes settings into outlined icon-led panels", async () => {
+    const editor = new TransLinkScheduleCardEditor();
+    editor.setConfig({
+      type: "custom:translink-schedule-card",
+      entity: "sensor.departures",
+    });
+    document.body.append(editor);
+    await editor.updateComplete;
+
+    const panels = Array.from(
+      editor.shadowRoot!.querySelectorAll("ha-expansion-panel"),
+    ) as Array<HTMLElement & { header: string; leftChevron: boolean }>;
+    expect(panels.map((panel) => panel.header)).toEqual([
+      "Card & layout",
+      "Timing & status",
+      "Appearance",
+      "Route filter",
+      "Header & notices",
+    ]);
+    expect(
+      panels.every(
+        (panel) =>
+          panel.hasAttribute("outlined") &&
+          panel.leftChevron === false &&
+          panel.querySelector('ha-icon[slot="leading-icon"]'),
+      ),
+    ).toBe(true);
+  });
+
   it("binds labeled select options and emits selected values", async () => {
     const editor = new TransLinkScheduleCardEditor();
     editor.setConfig({
