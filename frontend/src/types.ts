@@ -80,9 +80,60 @@ export interface ServiceAlert {
   url: string | null;
 }
 
+export interface CardLayoutConfig {
+  title?: string;
+  view?: "grouped" | "combined";
+  combined_order?: "chronological" | "balanced" | "route" | "realtime";
+  departures_per_stop?: number;
+  max_departures?: number;
+}
+
+export interface CardTimingConfig {
+  time_display?: "both" | "countdown" | "clock";
+  show_scheduled_time?: boolean;
+  delay_threshold_minutes?: number;
+  delay_format?: "compact" | "text";
+  cancelled_behavior?: "show" | "move" | "hide";
+  show_realtime_status?: boolean;
+  show_stale_warning?: boolean;
+  stale_after_minutes?: number;
+}
+
+export interface CardAppearanceConfig {
+  density?: "comfortable" | "compact" | "minimal";
+  empty_stop_behavior?: "show" | "move" | "hide";
+  route_color_mode?: "official" | "theme" | "monochrome";
+  stop_heading_style?: "accent" | "plain" | "compact";
+  show_stop_codes?: boolean;
+}
+
+export interface CardRouteFilterConfig {
+  show?: boolean;
+  reset_minutes?: number;
+  selection_mode?: "single" | "multiple";
+  show_counts?: boolean;
+}
+
+export interface CardHeaderConfig {
+  show?: boolean;
+  show_brand?: boolean;
+  style?: "primary" | "surface" | "transparent";
+  icon?: string;
+  time_mode?: "clock" | "next_departure" | "hidden";
+  next_departure_format?: "countdown" | "clock" | "both";
+  show_alerts?: boolean;
+}
+
 export interface CardConfig {
   type: string;
   entity: string;
+  layout?: CardLayoutConfig;
+  timing?: CardTimingConfig;
+  appearance?: CardAppearanceConfig;
+  route_filter?: CardRouteFilterConfig;
+  header?: CardHeaderConfig;
+
+  // Legacy flat options remain accepted for backward compatibility.
   title?: string;
   view?: "grouped" | "combined";
   departures_per_stop?: number;

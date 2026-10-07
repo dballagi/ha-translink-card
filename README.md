@@ -1,18 +1,32 @@
+<div align="center">
+  <img src="docs/readme-header.png" alt="TransLink Schedule for Home Assistant">
+  <br><br>
+  <a href="https://www.home-assistant.io/"><img alt="Home Assistant integration" src="docs/badges/home-assistant.svg"></a>&nbsp;
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=dballagi&repository=ha-translink-card&category=integration"><img alt="HACS custom repository" src="docs/badges/hacs.svg"></a>&nbsp;
+  <a href="https://github.com/dballagi/ha-translink-card/releases"><img alt="GitHub releases" src="docs/badges/releases.svg"></a>&nbsp;
+  <a href="https://github.com/dballagi/ha-translink-card/actions/workflows/validate.yml"><img alt="Validation workflow" src="docs/badges/validation.svg"></a>&nbsp;
+  <a href="LICENSE"><img alt="MIT license" src="docs/badges/license.svg"></a>
+</div>
+
 # TransLink Schedule
-
-![TransLink Schedule for Home Assistant](docs/readme-header.png)
-
-[![Validate](https://github.com/dballagi/ha-translink-card/actions/workflows/validate.yml/badge.svg)](https://github.com/dballagi/ha-translink-card/actions/workflows/validate.yml)
-[![GitHub release](https://img.shields.io/github/v/release/dballagi/ha-translink-card?display_name=tag)](https://github.com/dballagi/ha-translink-card/releases)
-[![License](https://img.shields.io/github/license/dballagi/ha-translink-card)](LICENSE)
-[![HACS custom repository](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories/)
 
 A Home Assistant custom integration and Lovelace card for upcoming departures
 from every Metro Vancouver TransLink stop around you, together in one board.
 Static GTFS schedules are merged with GTFS-Realtime predictions, delays,
 cancellations, and service alerts while the API key remains in the backend.
 
-## What it provides
+> [!NOTE]
+> This card is under active development and is primarily built for personal
+> use around my own specific transit needs. Everyone is welcome to use it,
+> adapt it to their dashboard, and share feedback.
+
+## Why this card
+
+Nearby transit rarely means a single stop. TransLink Schedule combines every
+stop around you into one dashboard-native departure board while keeping API
+keys, GTFS downloads, and realtime polling in the Home Assistant integration.
+
+**Key features:**
 
 - **Multi-stop departure boards** — group departures by stop or combine every
   configured stop into one list.
@@ -20,6 +34,8 @@ cancellations, and service alerts while the API key remains in the backend.
   times, delays, cancellations, and Live/Scheduled labels.
 - **Route-aware vehicle maps** — select a departure to see its planned GTFS
   route, boarding stop, destination, and last reported bus position.
+- **Next-departure header** — replace the clock with the next matching bus in
+  countdown, clock, or combined format.
 - **Flexible ordering** — sort combined departures chronologically, balance
   stops, group routes, or place realtime predictions first.
 - **Per-stop control** — filter routes and destinations, set custom names and
@@ -30,46 +46,74 @@ cancellations, and service alerts while the API key remains in the backend.
 - **Shared local cache** — reuse one static feed, realtime feed, and polling
   coordinator across multiple boards.
 
-## Screenshots
+## See it in action
 
 The examples below are rendered from the shipped card bundle with
 representative sensor data.
 
-### Grouped multi-stop board
+<table>
+  <tr>
+    <th>Grouped multi-stop board</th>
+    <th>Combined departures</th>
+  </tr>
+  <tr>
+    <td valign="top">
+      <img src="docs/screenshots/grouped-dark.png" alt="Grouped multi-stop TransLink departures in a dark theme" width="466"><br>
+      Per-stop headings, limits, stop numbers, and collapsed state.
+    </td>
+    <td valign="top">
+      <img src="docs/screenshots/combined-light.png" alt="Combined TransLink departures in a light theme" width="466"><br>
+      Chronological, balanced, route-grouped, or realtime-first ordering.
+    </td>
+  </tr>
+  <tr>
+    <th>Route-aware live map</th>
+    <th>Organized visual editor</th>
+  </tr>
+  <tr>
+    <td valign="top">
+      <img src="docs/screenshots/route-map-dark.png" alt="TransLink trip route with the latest reported bus position" width="529"><br>
+      Planned GTFS route, start, boarding stop, destination, and vehicle.
+    </td>
+    <td valign="top">
+      <img src="docs/screenshots/editor-dark.png" alt="TransLink Schedule visual editor sections" width="500"><br>
+      Settings grouped by layout, timing, appearance, filters, and header.
+    </td>
+  </tr>
+</table>
 
-Each stop keeps its own heading, departure limit, public stop number, and
-collapsed state.
+<table width="358">
+  <tr>
+    <th>Responsive mobile layout</th>
+  </tr>
+  <tr>
+    <td valign="top">
+      <img src="docs/screenshots/mobile-dark.png" alt="Compact TransLink departures on mobile" width="358"><br>
+      The same card adapts to narrow dashboards with compact headings and rows.
+    </td>
+  </tr>
+</table>
 
-![Grouped multi-stop TransLink departures](docs/screenshots/grouped-dark.png)
+## Installation
 
-### Combined departures
+### HACS (recommended)
 
-Merge every configured stop into one chronological, balanced, route-grouped,
-or realtime-first list.
+Open the repository directly in HACS:
 
-![Combined TransLink departures](docs/screenshots/combined-light.png)
+[![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=dballagi&repository=ha-translink-card&category=integration)
 
-### Responsive mobile layout
-
-The same card adapts to narrow dashboards with compact headings and rows.
-
-<p align="center">
-  <img src="docs/screenshots/mobile-dark.png" alt="Compact TransLink departures on mobile" width="390">
-</p>
-
-## Status
-
-This project is under active development and is not ready for general use yet.
-
-## Installation and quick start
+Or add it manually:
 
 1. In HACS, add `https://github.com/dballagi/ha-translink-card` as a custom
    **Integration** repository.
-2. Install **TransLink Schedule** and restart Home Assistant.
-3. Add the integration from **Settings → Devices & services**.
-4. Enter a TransLink developer API key and one or more comma-separated GTFS
+2. Search for **TransLink Schedule**, download it, and restart Home Assistant.
+
+### Quick start
+
+1. Add the integration from **Settings → Devices & services**.
+2. Enter a TransLink developer API key and one or more comma-separated GTFS
    stop IDs or public five-digit stop numbers.
-5. Open **Settings → Dashboards → ⋮ → Resources**, add
+3. Open **Settings → Dashboards → ⋮ → Resources**, add
    `/translink_schedule/translink-schedule-card.js` as a **JavaScript module**,
    then refresh the browser.
 
@@ -112,7 +156,7 @@ resource is a one-time step because dashboard resources belong to the user's
 Lovelace configuration.
 
 Add the card from the dashboard card picker and use its visual editor, or
-configure it directly in YAML:
+configure the same five groups directly in YAML:
 
 In Sections dashboards, the card defaults to the full 12-column width and can
 be resized down to 6 columns. **Auto height** expands with the schedule; when
@@ -122,133 +166,140 @@ departure content.
 ```yaml
 type: custom:translink-schedule-card
 entity: sensor.nearby_departures
-title: Nearby Departures
-view: grouped
-departures_per_stop: 3
-max_departures: 12
-time_display: both
-show_scheduled_time: true
-delay_threshold_minutes: 1
-delay_format: compact
-density: comfortable
-empty_stop_behavior: show
-cancelled_behavior: show
-route_color_mode: official
-show_route_filter: false
-route_filter_reset_minutes: 5
-route_filter_selection_mode: multiple
-route_filter_show_counts: false
-combined_order: chronological
-show_header: true
-show_brand: true
-header_style: primary
-header_icon: mdi:bus-clock
-header_time_mode: clock
-header_next_departure_format: countdown
-show_alerts: true
-show_stop_codes: true
-stop_heading_style: accent
-show_realtime_status: false
-show_stale_warning: false
-stale_after_minutes: 3
+
+layout:
+  title: Nearby Departures
+  view: grouped
+  combined_order: chronological
+  departures_per_stop: 3
+  max_departures: 12
+
+timing:
+  time_display: both
+  show_scheduled_time: true
+  delay_threshold_minutes: 1
+  delay_format: compact
+  cancelled_behavior: show
+  show_realtime_status: false
+  show_stale_warning: false
+  stale_after_minutes: 3
+
+appearance:
+  density: comfortable
+  route_color_mode: official
+  empty_stop_behavior: show
+  stop_heading_style: accent
+  show_stop_codes: true
+
+route_filter:
+  show: false
+  selection_mode: multiple
+  show_counts: false
+  reset_minutes: 5
+
+header:
+  show: true
+  show_brand: true
+  time_mode: clock
+  next_departure_format: countdown
+  style: primary
+  icon: mdi:bus-clock
+  show_alerts: true
 ```
 
-Set `show_alerts: false` or disable **Show service notices** in the visual
-editor to hide the alert banner.
+### Top-level card settings
 
-Use `departures_per_stop` or the **Departures per stop** visual-editor field
-to show between 1 and 12 departures in each grouped stop section.
+The card type and entity sit above the grouped visual-editor controls because
+they identify the card and its data source.
 
-Timing can show `both`, `countdown`, or `clock`. The card follows Home
-Assistant's 12/24-hour preference. `delay_format` accepts `compact` (`+7 min`)
-or `text` (`7 min late`).
+| Name | Value | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `type` | `string` | **Required** | Must be `custom:translink-schedule-card`. |
+| `entity` | `string` | **Required** | TransLink Schedule sensor entity to display. |
 
-`cancelled_behavior` and `empty_stop_behavior` accept `show`, `move`, or
-`hide`. The `move` value places those rows or sections after active content.
+### Card & layout
 
-`density` accepts `comfortable`, `compact`, or `minimal`.
-`route_color_mode` accepts `official`, `theme`, or `monochrome`.
-`header_style` accepts `primary`, `surface`, or `transparent`, while
-`stop_heading_style` accepts `accent`, `plain`, or `compact`.
+| Name | Value | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `layout.title` | `string` | Board name | Heading shown in the card header. |
+| `layout.view` | `grouped` or `combined` | `grouped` | Group departures under each stop or merge them into one list. |
+| `layout.combined_order` | `chronological`, `balanced`, `route`, or `realtime` | `chronological` | Ordering used by the combined view. |
+| `layout.departures_per_stop` | `number` from 1 to 12 | `3` | Maximum visible departures in each grouped stop. Per-stop integration settings can override it. |
+| `layout.max_departures` | `number` from 1 to 50 | `12` | Maximum visible departures in the combined view. |
 
-`header_time_mode` accepts `clock`, `next_departure`, or `hidden`. The next
-departure follows the active card-level route filter, ignores cancelled trips,
-and is selected before visible row limits are applied. Use
-`header_next_departure_format` with `countdown`, `clock`, or `both`. Existing
-`show_clock` configurations continue to map to `clock` or `hidden`.
+### Timing & status
 
-Enable `show_route_filter` to add a horizontally scrollable **All** and route
-chip row above the schedule. Route choices are sorted naturally and filter
-both grouped and combined views before departure limits are applied.
+| Name | Value | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `timing.time_display` | `both`, `countdown`, or `clock` | `both` | Shows countdowns, clock times, or both. Clock values follow Home Assistant's 12/24-hour preference. |
+| `timing.show_scheduled_time` | `boolean` | `true` | Shows the struck-through scheduled time when a departure is delayed. |
+| `timing.delay_threshold_minutes` | `number` from 1 to 30 | `1` | Minimum delay before delayed styling and labels appear. |
+| `timing.delay_format` | `compact` or `text` | `compact` | Uses `+7 min` or `7 min late`. |
+| `timing.cancelled_behavior` | `show`, `move`, or `hide` | `show` | Keeps cancellations in schedule order, moves them below active trips, or hides them. |
+| `timing.show_realtime_status` | `boolean` | `false` | Shows **Live** or **Scheduled** on departure rows. |
+| `timing.show_stale_warning` | `boolean` | `false` | Warns when the coordinator has not updated recently. |
+| `timing.stale_after_minutes` | `number` from 2 to 30 | `3` | Age at which realtime data is considered stale. |
 
-`route_filter_selection_mode` accepts `multiple` or `single`.
-`route_filter_show_counts` adds the number of available departures to each
-chip. `route_filter_reset_minutes` resets the selection to **All** after the
-latest filter interaction; set it to `0` to keep the selection until it is
-changed manually. These settings are also available in the visual editor.
+### Appearance
+
+| Name | Value | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `appearance.density` | `comfortable`, `compact`, or `minimal` | `comfortable` | Controls departure-row and stop-heading spacing. |
+| `appearance.route_color_mode` | `official`, `theme`, or `monochrome` | `official` | Uses TransLink route colors, the Home Assistant primary color, or neutral badges. |
+| `appearance.empty_stop_behavior` | `show`, `move`, or `hide` | `show` | Keeps empty stops in configured order, moves them to the bottom, or hides them. |
+| `appearance.stop_heading_style` | `accent`, `plain`, or `compact` | `accent` | Controls stop-heading background and spacing. |
+| `appearance.show_stop_codes` | `boolean` | `true` | Shows public five-digit stop numbers when available. |
+
+### Route filter
+
+| Name | Value | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `route_filter.show` | `boolean` | `false` | Adds a horizontally scrollable **All** and route-chip row. |
+| `route_filter.selection_mode` | `multiple` or `single` | `multiple` | Allows several selected routes or one route at a time. |
+| `route_filter.show_counts` | `boolean` | `false` | Shows the number of available departures in each route chip. |
+| `route_filter.reset_minutes` | `number` from 0 to 60 | `5` | Resets the filter to **All** after inactivity. Set `0` to keep the selection. |
+
+The active route filter is applied before grouped and combined row limits. It
+also controls which departure appears in a next-departure header.
+
+### Header & notices
+
+| Name | Value | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `header.show` | `boolean` | `true` | Shows or hides the entire card header. |
+| `header.show_brand` | `boolean` | `true` | Shows the **TransLink** eyebrow above the title. |
+| `header.time_mode` | `clock`, `next_departure`, or `hidden` | `clock` | Shows the current time, the next matching departure, or no right-side value. |
+| `header.next_departure_format` | `countdown`, `clock`, or `both` | `countdown` | Controls next-departure timing when `header.time_mode` is `next_departure`. |
+| `header.style` | `primary`, `surface`, or `transparent` | `primary` | Uses the theme primary color, card surface, or transparent header background. |
+| `header.icon` | `string` | None | Optional Material Design icon such as `mdi:bus-clock`. |
+| `header.show_alerts` | `boolean` | `true` | Shows service notices supplied by the integration. |
+
+The next-departure header ignores cancelled trips and selects a trip before
+visible row limits are applied. Existing flat configurations remain supported;
+when grouped and flat forms are both present, grouped values take precedence.
+Legacy `show_clock` and `hide_empty_stops` values continue to map to their
+grouped equivalents.
+
+### Route maps
 
 Every departure row is clickable and keyboard accessible. Selecting one opens
 an on-demand map of that trip's planned GTFS shape. When TransLink reports a
-matching vehicle, the map also shows its last reported position and mutes the
-completed part of the planned route. If no vehicle is currently matched, the
-planned route, boarding stop, and destination remain available. Vehicle
-positions are snapshots and should not be interpreted as exact live locations.
+matching vehicle, the map also shows its last reported position. If no vehicle
+is currently matched, the planned route, boarding stop, and destination remain
+available. Vehicle positions are snapshots and should not be interpreted as
+exact live locations.
 
-Use `view: combined` and `max_departures` to display a single list.
-`combined_order` accepts `chronological`, `balanced`, `route`, or `realtime`:
+### Combined layout example
 
 ```yaml
 type: custom:translink-schedule-card
 entity: sensor.nearby_departures
-title: Next Departures
-view: combined
-max_departures: 12
-combined_order: balanced
+layout:
+  title: Next Departures
+  view: combined
+  max_departures: 12
+  combined_order: balanced
 ```
-
-Enable `show_realtime_status` to label departures as **Live** or
-**Scheduled**. Enable `show_stale_warning` to show a warning when the
-coordinator has not updated within `stale_after_minutes`.
-
-## Development
-
-Backend:
-
-```powershell
-python -m pip install -e ".[dev]"
-ruff check .
-pytest
-```
-
-Frontend:
-
-```powershell
-Set-Location frontend
-npm install
-npm run check
-npm test
-npm run build
-```
-
-## Releases
-
-HACS uses published GitHub Releases for semantic versions. To prepare a
-release:
-
-1. Update the version in `pyproject.toml` and
-   `custom_components/translink_schedule/manifest.json`.
-2. From `frontend`, run
-   `npm version <version> --no-git-tag-version` to update `package.json` and
-   `package-lock.json`.
-3. Run the backend and frontend validation commands above.
-4. Commit and push the version bump and rebuilt card bundle.
-5. In GitHub Actions, run the **Release** workflow and enter the exact version
-   without a `v` prefix.
-
-The workflow verifies that all version files match, reruns the test suites,
-checks that the committed frontend bundle is current, and publishes a
-`v<version>` GitHub Release. HACS will then display that release instead of a
-commit hash.
 
 ## Data attribution
 

@@ -101,6 +101,143 @@ const STOP_HEADING_OPTIONS: SelectOption[] = [
   { value: "compact", label: "Compact" },
 ];
 
+export function flattenCardConfig(config: CardConfig): CardConfig {
+  return {
+    ...config,
+    title: config.layout?.title ?? config.title,
+    view: config.layout?.view ?? config.view,
+    combined_order:
+      config.layout?.combined_order ?? config.combined_order,
+    departures_per_stop:
+      config.layout?.departures_per_stop ?? config.departures_per_stop,
+    max_departures:
+      config.layout?.max_departures ?? config.max_departures,
+    time_display:
+      config.timing?.time_display ?? config.time_display,
+    show_scheduled_time:
+      config.timing?.show_scheduled_time ?? config.show_scheduled_time,
+    delay_threshold_minutes:
+      config.timing?.delay_threshold_minutes ??
+      config.delay_threshold_minutes,
+    delay_format:
+      config.timing?.delay_format ?? config.delay_format,
+    cancelled_behavior:
+      config.timing?.cancelled_behavior ?? config.cancelled_behavior,
+    show_realtime_status:
+      config.timing?.show_realtime_status ??
+      config.show_realtime_status,
+    show_stale_warning:
+      config.timing?.show_stale_warning ?? config.show_stale_warning,
+    stale_after_minutes:
+      config.timing?.stale_after_minutes ?? config.stale_after_minutes,
+    density: config.appearance?.density ?? config.density,
+    route_color_mode:
+      config.appearance?.route_color_mode ?? config.route_color_mode,
+    empty_stop_behavior:
+      config.appearance?.empty_stop_behavior ??
+      config.empty_stop_behavior,
+    stop_heading_style:
+      config.appearance?.stop_heading_style ??
+      config.stop_heading_style,
+    show_stop_codes:
+      config.appearance?.show_stop_codes ?? config.show_stop_codes,
+    show_route_filter:
+      config.route_filter?.show ?? config.show_route_filter,
+    route_filter_selection_mode:
+      config.route_filter?.selection_mode ??
+      config.route_filter_selection_mode,
+    route_filter_show_counts:
+      config.route_filter?.show_counts ??
+      config.route_filter_show_counts,
+    route_filter_reset_minutes:
+      config.route_filter?.reset_minutes ??
+      config.route_filter_reset_minutes,
+    show_header: config.header?.show ?? config.show_header,
+    show_brand: config.header?.show_brand ?? config.show_brand,
+    header_time_mode:
+      config.header?.time_mode ?? config.header_time_mode,
+    header_next_departure_format:
+      config.header?.next_departure_format ??
+      config.header_next_departure_format,
+    header_style: config.header?.style ?? config.header_style,
+    header_icon: config.header?.icon ?? config.header_icon,
+    show_alerts: config.header?.show_alerts ?? config.show_alerts,
+    layout: undefined,
+    timing: undefined,
+    appearance: undefined,
+    route_filter: undefined,
+    header: undefined,
+  };
+}
+
+function compact<T extends object>(value: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, entry]) => entry !== undefined),
+  ) as Partial<T>;
+}
+
+export function groupCardConfig(config: CardConfig): CardConfig {
+  const flat = flattenCardConfig(config);
+  const layout = compact({
+    title: flat.title,
+    view: flat.view,
+    combined_order: flat.combined_order,
+    departures_per_stop: flat.departures_per_stop,
+    max_departures: flat.max_departures,
+  });
+  const timing = compact({
+    time_display: flat.time_display,
+    show_scheduled_time: flat.show_scheduled_time,
+    delay_threshold_minutes: flat.delay_threshold_minutes,
+    delay_format: flat.delay_format,
+    cancelled_behavior: flat.cancelled_behavior,
+    show_realtime_status: flat.show_realtime_status,
+    show_stale_warning: flat.show_stale_warning,
+    stale_after_minutes: flat.stale_after_minutes,
+  });
+  const appearance = compact({
+    density: flat.density,
+    route_color_mode: flat.route_color_mode,
+    empty_stop_behavior:
+      flat.empty_stop_behavior ??
+      (flat.hide_empty_stops ? "hide" : undefined),
+    stop_heading_style: flat.stop_heading_style,
+    show_stop_codes: flat.show_stop_codes,
+  });
+  const routeFilter = compact({
+    show: flat.show_route_filter,
+    selection_mode: flat.route_filter_selection_mode,
+    show_counts: flat.route_filter_show_counts,
+    reset_minutes: flat.route_filter_reset_minutes,
+  });
+  const header = compact({
+    show: flat.show_header,
+    show_brand: flat.show_brand,
+    time_mode:
+      flat.header_time_mode ??
+      (flat.show_clock === undefined
+        ? undefined
+        : flat.show_clock
+          ? "clock"
+          : "hidden"),
+    next_departure_format: flat.header_next_departure_format,
+    style: flat.header_style,
+    icon: flat.header_icon,
+    show_alerts: flat.show_alerts,
+  });
+  return {
+    type: flat.type,
+    entity: flat.entity,
+    ...(Object.keys(layout).length > 0 ? { layout } : {}),
+    ...(Object.keys(timing).length > 0 ? { timing } : {}),
+    ...(Object.keys(appearance).length > 0 ? { appearance } : {}),
+    ...(Object.keys(routeFilter).length > 0
+      ? { route_filter: routeFilter }
+      : {}),
+    ...(Object.keys(header).length > 0 ? { header } : {}),
+  };
+}
+
 function minutesUntil(value: string, now = Date.now()): number {
   return Math.max(0, Math.round((new Date(value).getTime() - now) / 60_000));
 }
@@ -162,8 +299,10 @@ export class TransLinkScheduleCard extends LitElement {
   ): Partial<CardConfig> {
     return {
       entity: findScheduleEntity(hass, entities) ?? "",
-      view: "grouped",
-      departures_per_stop: DEFAULT_PER_STOP,
+      layout: {
+        view: "grouped",
+        departures_per_stop: DEFAULT_PER_STOP,
+      },
     };
   }
 
@@ -178,18 +317,19 @@ export class TransLinkScheduleCard extends LitElement {
     if (!config.entity) {
       throw new Error("A TransLink Schedule entity is required");
     }
+    const flatConfig = flattenCardConfig(config);
     const nextSelectionMode =
-      config.route_filter_selection_mode ?? "multiple";
+      flatConfig.route_filter_selection_mode ?? "multiple";
     const headerTimeMode =
-      config.header_time_mode ??
-      (config.show_clock === false ? "hidden" : "clock");
-    if (this.config?.entity !== config.entity) {
+      flatConfig.header_time_mode ??
+      (flatConfig.show_clock === false ? "hidden" : "clock");
+    if (this.config?.entity !== flatConfig.entity) {
       this.collapsedStops = new Set();
       this.initializedStops.clear();
       this.resetRouteFilter();
     } else if (
       (this.config?.show_route_filter &&
-        config.show_route_filter !== true) ||
+        flatConfig.show_route_filter !== true) ||
       this.config?.route_filter_selection_mode !==
         nextSelectionMode
     ) {
@@ -223,7 +363,9 @@ export class TransLinkScheduleCard extends LitElement {
       show_realtime_status: false,
       show_stale_warning: false,
       stale_after_minutes: 3,
-      ...config,
+      ...compact(flatConfig),
+      type: flatConfig.type,
+      entity: flatConfig.entity,
       header_time_mode: headerTimeMode,
     };
     if (this.selectedRoutes.size > 0) this.scheduleRouteFilterReset();
@@ -696,6 +838,7 @@ export class TransLinkScheduleCard extends LitElement {
     }
     ha-card {
       background: var(--ha-card-background, var(--card-background-color));
+      color: var(--primary-text-color);
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -813,7 +956,7 @@ export class TransLinkScheduleCard extends LitElement {
     }
     section + section { border-top: 1px solid var(--divider-color); }
     .stop-heading {
-      align-items: baseline;
+      align-items: center;
       background: color-mix(in srgb, var(--card-background-color), var(--primary-color) 7%);
       border: 0;
       color: var(--primary-text-color);
@@ -835,7 +978,12 @@ export class TransLinkScheduleCard extends LitElement {
       font-size: 12px;
       padding-block: 5px;
     }
-    .stop-code { color: var(--secondary-text-color); font-size: 12px; font-weight: 500; }
+    .stop-code {
+      color: var(--secondary-text-color);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+    }
     .departure {
       align-items: center;
       cursor: pointer;
@@ -913,26 +1061,27 @@ export class TransLinkScheduleCardEditor extends LitElement {
   @state() private config?: CardConfig;
 
   public setConfig(config: CardConfig): void {
-    this.config = config;
+    this.config = flattenCardConfig(config);
   }
 
   protected render() {
     if (!this.config) return nothing;
     return html`
       <div class="card-config">
+        <ha-entity-picker
+          class="entity-picker"
+          .hass=${this.hass}
+          .value=${this.config.entity}
+          .includeDomains=${["sensor"]}
+          label="Entity"
+          data-key="entity"
+          @value-changed=${this.valueChanged}
+        ></ha-entity-picker>
         ${this.editorPanel(
           "Card & layout",
-          "Entity, layout, ordering, and departure limits",
+          "Title, layout, ordering, and departure limits",
           "mdi:view-dashboard-outline",
           html`
-            <ha-entity-picker
-              .hass=${this.hass}
-              .value=${this.config.entity}
-              .includeDomains=${["sensor"]}
-              label="Entity"
-              data-key="entity"
-              @value-changed=${this.valueChanged}
-            ></ha-entity-picker>
             <ha-textfield
               .value=${this.config.title ?? ""}
               label="Title"
@@ -1238,13 +1387,7 @@ export class TransLinkScheduleCardEditor extends LitElement {
     const detail = (event as CustomEvent<{ value?: string }>).detail;
     const value = detail?.value ?? target.value;
     this.config = { ...this.config, [key]: value };
-    this.dispatchEvent(
-      new CustomEvent("config-changed", {
-        detail: { config: this.config },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.emitConfigChanged();
   }
 
   private booleanChanged(event: Event): void {
@@ -1252,13 +1395,7 @@ export class TransLinkScheduleCardEditor extends LitElement {
     const target = event.currentTarget as HTMLElement & { checked: boolean };
     const key = target.dataset.key as keyof CardConfig;
     this.config = { ...this.config, [key]: target.checked };
-    this.dispatchEvent(
-      new CustomEvent("config-changed", {
-        detail: { config: this.config },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this.emitConfigChanged();
   }
 
   private numberChanged(event: Event): void {
@@ -1273,9 +1410,14 @@ export class TransLinkScheduleCardEditor extends LitElement {
       ...this.config,
       [key]: Math.min(maximum, Math.max(minimum, value)),
     };
+    this.emitConfigChanged();
+  }
+
+  private emitConfigChanged(): void {
+    if (!this.config) return;
     this.dispatchEvent(
       new CustomEvent("config-changed", {
-        detail: { config: this.config },
+        detail: { config: groupCardConfig(this.config) },
         bubbles: true,
         composed: true,
       }),
@@ -1288,6 +1430,7 @@ export class TransLinkScheduleCardEditor extends LitElement {
       flex-direction: column;
       padding: 4px 0;
     }
+    .entity-picker { margin: 8px 0; }
     ha-expansion-panel { margin: 8px 0; }
     .panel-body {
       display: flex;

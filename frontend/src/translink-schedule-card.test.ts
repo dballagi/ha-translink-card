@@ -11,7 +11,9 @@ import {
 import { getDepartureTiming } from "./departure-timing";
 import {
   countdownLabel,
+  flattenCardConfig,
   getNextDeparture,
+  groupCardConfig,
   TransLinkScheduleCard,
   TransLinkScheduleCardEditor,
 } from "./translink-schedule-card";
@@ -42,6 +44,58 @@ const departure: Departure = {
   cancelled: false,
   realtime: true,
 };
+
+describe("card configuration", () => {
+  it("normalizes grouped options ahead of legacy flat options", () => {
+    const config = flattenCardConfig({
+      type: "custom:translink-schedule-card",
+      entity: "sensor.departures",
+      view: "grouped",
+      show_route_filter: false,
+      layout: { view: "combined", max_departures: 8 },
+      route_filter: { show: true, selection_mode: "single" },
+    });
+
+    expect(config.view).toBe("combined");
+    expect(config.max_departures).toBe(8);
+    expect(config.show_route_filter).toBe(true);
+    expect(config.route_filter_selection_mode).toBe("single");
+  });
+
+  it("serializes flat options into grouped configuration", () => {
+    expect(
+      groupCardConfig({
+        type: "custom:translink-schedule-card",
+        entity: "sensor.departures",
+        view: "combined",
+        time_display: "clock",
+        show_route_filter: true,
+        header_style: "surface",
+      }),
+    ).toEqual({
+      type: "custom:translink-schedule-card",
+      entity: "sensor.departures",
+      layout: { view: "combined" },
+      timing: { time_display: "clock" },
+      route_filter: { show: true },
+      header: { style: "surface" },
+    });
+  });
+
+  it("preserves runtime defaults for omitted grouped options", async () => {
+    const { hass } = cardData();
+    const card = new TransLinkScheduleCard();
+    card.setConfig({
+      type: "custom:translink-schedule-card",
+      entity: "sensor.departures",
+    });
+    card.hass = hass;
+    document.body.append(card);
+    await card.updateComplete;
+
+    expect(card.shadowRoot?.querySelector("header")).not.toBeNull();
+  });
+});
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -531,6 +585,12 @@ describe("card editor", () => {
     document.body.append(editor);
     await editor.updateComplete;
 
+    const entityPicker = editor.shadowRoot!.querySelector(
+      '.card-config > ha-entity-picker[data-key="entity"]',
+    );
+    expect(entityPicker).not.toBeNull();
+    expect(entityPicker!.closest("ha-expansion-panel")).toBeNull();
+
     const panels = Array.from(
       editor.shadowRoot!.querySelectorAll("ha-expansion-panel"),
     ) as Array<HTMLElement & { header: string; leftChevron: boolean }>;
@@ -556,7 +616,7 @@ describe("card editor", () => {
     editor.setConfig({
       type: "custom:translink-schedule-card",
       entity: "sensor.departures",
-      view: "grouped",
+      layout: { view: "grouped" },
     });
     document.body.append(editor);
     await editor.updateComplete;
@@ -576,8 +636,10 @@ describe("card editor", () => {
     let changedView: string | undefined;
     editor.addEventListener("config-changed", (event) => {
       changedView = (
-        event as CustomEvent<{ config: { view?: string } }>
-      ).detail.config.view;
+        event as CustomEvent<{
+          config: { layout?: { view?: string } };
+        }>
+      ).detail.config.layout?.view;
     });
     select.dispatchEvent(
       new CustomEvent("selected", {
@@ -607,8 +669,10 @@ describe("card editor", () => {
     editor.setConfig({
       type: "custom:translink-schedule-card",
       entity: "sensor.departures",
-      show_route_filter: true,
-      route_filter_selection_mode: "multiple",
+      route_filter: {
+        show: true,
+        selection_mode: "multiple",
+      },
     });
     await editor.updateComplete;
     expect(
