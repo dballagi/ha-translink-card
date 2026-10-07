@@ -143,7 +143,8 @@ show_header: true
 show_brand: true
 header_style: primary
 header_icon: mdi:bus-clock
-show_clock: true
+header_time_mode: clock
+header_next_departure_format: countdown
 show_alerts: true
 show_stop_codes: true
 stop_heading_style: accent
@@ -169,6 +170,12 @@ or `text` (`7 min late`).
 `route_color_mode` accepts `official`, `theme`, or `monochrome`.
 `header_style` accepts `primary`, `surface`, or `transparent`, while
 `stop_heading_style` accepts `accent`, `plain`, or `compact`.
+
+`header_time_mode` accepts `clock`, `next_departure`, or `hidden`. The next
+departure follows the active card-level route filter, ignores cancelled trips,
+and is selected before visible row limits are applied. Use
+`header_next_departure_format` with `countdown`, `clock`, or `both`. Existing
+`show_clock` configurations continue to map to `clock` or `hidden`.
 
 Enable `show_route_filter` to add a horizontally scrollable **All** and route
 chip row above the schedule. Route choices are sorted naturally and filter

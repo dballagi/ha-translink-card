@@ -11,6 +11,7 @@ import {
 import { getDepartureTiming } from "./departure-timing";
 import {
   countdownLabel,
+  getNextDeparture,
   TransLinkScheduleCard,
   TransLinkScheduleCardEditor,
 } from "./translink-schedule-card";
@@ -52,6 +53,79 @@ describe("departure time arithmetic", () => {
     const now = new Date("2026-10-06T10:58:00-07:00").getTime();
     const departure = new Date("2026-10-06T11:03:00-07:00").getTime();
     expect(Math.round((departure - now) / 60_000)).toBe(5);
+  });
+
+  describe("header next departure", () => {
+    it("uses the earliest active departure after route filtering", () => {
+      const route3 = {
+        ...departure,
+        route_name: "3",
+        estimated_time: "2026-10-06T12:45:00-07:00",
+      };
+      const cancelled = {
+        ...departure,
+        route_name: "10",
+        estimated_time: "2026-10-06T12:43:00-07:00",
+        cancelled: true,
+      };
+      const route10 = {
+        ...departure,
+        route_name: "10",
+        estimated_time: "2026-10-06T12:50:00-07:00",
+      };
+
+      expect(
+        getNextDeparture(
+          [cancelled, route3, route10],
+          new Set(["10"]),
+        ),
+      ).toBe(route10);
+      expect(
+        getNextDeparture([route10, route3], new Set()),
+      ).toBe(route3);
+    });
+
+    it("renders the configured next-departure format", async () => {
+      const card = await createCard({
+        header_time_mode: "next_departure",
+        header_next_departure_format: "both",
+        show_header: true,
+        show_route_filter: false,
+      });
+      const headerTime = card.shadowRoot!.querySelector(".header-time")!;
+
+      expect(headerTime.textContent).toContain("Next");
+      expect(headerTime.querySelector("strong")?.textContent).toBeTruthy();
+      expect(headerTime.querySelector("span")?.textContent).toBeTruthy();
+    });
+
+    it("follows the active card-level route filter", async () => {
+      const card = await createCard({
+        header_time_mode: "next_departure",
+        show_header: true,
+        show_route_filter: true,
+        route_filter_reset_minutes: 0,
+      });
+      expect(
+        card.shadowRoot!
+          .querySelector(".header-time")
+          ?.getAttribute("aria-label"),
+      ).toContain("route 3");
+
+      const routes = Array.from(
+        card.shadowRoot!.querySelectorAll<HTMLButtonElement>(
+          ".route-filter-chip",
+        ),
+      );
+      routes[2].click();
+      await card.updateComplete;
+
+      expect(
+        card.shadowRoot!
+          .querySelector(".header-time")
+          ?.getAttribute("aria-label"),
+      ).toContain("route 10");
+    });
   });
 
   it("shows Now instead of a zero-minute countdown", () => {

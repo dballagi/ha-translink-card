@@ -106,6 +106,8 @@ export interface CardConfig {
   header_style?: "primary" | "surface" | "transparent";
   header_icon?: string;
   stop_heading_style?: "accent" | "plain" | "compact";
+  header_time_mode?: "clock" | "next_departure" | "hidden";
+  header_next_departure_format?: "countdown" | "clock" | "both";
   show_clock?: boolean;
   show_alerts?: boolean;
   show_stop_codes?: boolean;

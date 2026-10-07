@@ -79,6 +79,16 @@ const HEADER_STYLE_OPTIONS: SelectOption[] = [
   { value: "surface", label: "Card surface" },
   { value: "transparent", label: "Transparent" },
 ];
+const HEADER_TIME_MODE_OPTIONS: SelectOption[] = [
+  { value: "clock", label: "Current time" },
+  { value: "next_departure", label: "Next departure" },
+  { value: "hidden", label: "Hidden" },
+];
+const HEADER_NEXT_DEPARTURE_OPTIONS: SelectOption[] = [
+  { value: "countdown", label: "Countdown" },
+  { value: "clock", label: "Clock time" },
+  { value: "both", label: "Countdown and clock time" },
+];
 const STOP_HEADING_OPTIONS: SelectOption[] = [
   { value: "accent", label: "Accent" },
   { value: "plain", label: "Plain" },
@@ -95,6 +105,19 @@ export function countdownLabel(
 ): string {
   const minutes = minutesUntil(value, now);
   return minutes === 0 ? "Now" : `${minutes} min`;
+}
+
+export function getNextDeparture(
+  departures: Departure[],
+  selectedRoutes: ReadonlySet<string>,
+): Departure | undefined {
+  return filterDeparturesByRoute(departures, selectedRoutes)
+    .filter((departure) => !departure.cancelled)
+    .sort(
+      (left, right) =>
+        new Date(left.estimated_time).getTime() -
+        new Date(right.estimated_time).getTime(),
+    )[0];
 }
 
 function timeLabel(
@@ -151,6 +174,9 @@ export class TransLinkScheduleCard extends LitElement {
     }
     const nextSelectionMode =
       config.route_filter_selection_mode ?? "multiple";
+    const headerTimeMode =
+      config.header_time_mode ??
+      (config.show_clock === false ? "hidden" : "clock");
     if (this.config?.entity !== config.entity) {
       this.collapsedStops = new Set();
       this.initializedStops.clear();
@@ -184,6 +210,7 @@ export class TransLinkScheduleCard extends LitElement {
       show_brand: true,
       header_style: "primary",
       stop_heading_style: "accent",
+      header_next_departure_format: "countdown",
       show_clock: true,
       show_alerts: true,
       show_stop_codes: true,
@@ -191,6 +218,7 @@ export class TransLinkScheduleCard extends LitElement {
       show_stale_warning: false,
       stale_after_minutes: 3,
       ...config,
+      header_time_mode: headerTimeMode,
     };
     if (this.selectedRoutes.size > 0) this.scheduleRouteFilterReset();
   }
@@ -221,6 +249,7 @@ export class TransLinkScheduleCard extends LitElement {
       : stops.flatMap((stop) => stop.departures);
     const routeOptions = getRouteOptions(routeSource);
     const selectedRoutes = this.activeSelectedRoutes(routeOptions);
+    const nextDeparture = getNextDeparture(routeSource, selectedRoutes);
     const alerts = (entity.attributes.alerts ?? []) as ServiceAlert[];
     const title =
       this.config.title ??
@@ -258,9 +287,7 @@ export class TransLinkScheduleCard extends LitElement {
                   <h1>${title}</h1>
                 </div>
               </div>
-              ${this.config.show_clock
-                ? html`<div class="clock">${timeLabel(new Date().toISOString(), this.hass.locale)}</div>`
-                : nothing}
+              ${this.renderHeaderTime(nextDeparture)}
             </header>`
           : nothing}
         ${this.config.show_alerts && alerts.length
@@ -294,6 +321,47 @@ export class TransLinkScheduleCard extends LitElement {
         </main>
       </ha-card>
     `;
+  }
+
+  private renderHeaderTime(departure?: Departure) {
+    const mode = this.config?.header_time_mode ?? "clock";
+    if (mode === "hidden") return nothing;
+    if (mode === "clock") {
+      return html`<div class="clock">
+        ${timeLabel(new Date().toISOString(), this.hass?.locale)}
+      </div>`;
+    }
+
+    if (!departure) {
+      return html`<div
+        class="header-time next-departure"
+        aria-label="No upcoming departures"
+      >
+        <small>Next</small>
+        <strong>—</strong>
+      </div>`;
+    }
+
+    const countdown = countdownLabel(departure.estimated_time);
+    const clock = timeLabel(departure.estimated_time, this.hass?.locale);
+    const format =
+      this.config?.header_next_departure_format ?? "countdown";
+    const label =
+      `Next departure route ${departure.route_name} to ` +
+      `${departure.destination || departure.route_long_name}, ` +
+      `${countdown}, at ${clock}`;
+    return html`<div
+      class="header-time next-departure"
+      aria-label=${label}
+    >
+      <small>Next</small>
+      ${format === "clock"
+        ? html`<strong>${clock}</strong>`
+        : html`
+            <strong>${countdown}</strong>
+            ${format === "both" ? html`<span>${clock}</span>` : nothing}
+          `}
+    </div>`;
   }
 
   private renderRouteFilter(
@@ -653,6 +721,24 @@ export class TransLinkScheduleCard extends LitElement {
     .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; opacity: .8; text-transform: uppercase; }
     h1 { font-size: 20px; line-height: 1.2; margin: 2px 0 0; }
     .clock { font-size: 18px; font-variant-numeric: tabular-nums; font-weight: 600; }
+    .header-time {
+      align-items: flex-end;
+      display: flex;
+      flex-direction: column;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .header-time small {
+      color: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      opacity: .78;
+      text-transform: uppercase;
+    }
+    .header-time strong { font-size: 18px; }
+    .header-time span { font-size: 11px; margin-top: 2px; opacity: .82; }
     .alerts { background: var(--warning-color, #ff9800); color: #111; flex: 0 0 auto; padding: 8px 16px; }
     .alerts > div { align-items: flex-start; display: flex; gap: 8px; }
     .alerts > div + div { margin-top: 8px; }
@@ -1009,11 +1095,23 @@ export class TransLinkScheduleCardEditor extends LitElement {
           "Show TransLink label",
           this.config.show_brand !== false,
         )}
-        ${this.booleanField(
-          "show_clock",
-          "Show current time",
-          this.config.show_clock !== false,
+        ${this.selectField(
+          "header_time_mode",
+          "Header right-side display",
+          this.config.header_time_mode ??
+            (this.config.show_clock === false ? "hidden" : "clock"),
+          HEADER_TIME_MODE_OPTIONS,
         )}
+        ${(this.config.header_time_mode ??
+          (this.config.show_clock === false ? "hidden" : "clock")) ===
+        "next_departure"
+          ? this.selectField(
+              "header_next_departure_format",
+              "Next departure display",
+              this.config.header_next_departure_format ?? "countdown",
+              HEADER_NEXT_DEPARTURE_OPTIONS,
+            )
+          : nothing}
         ${this.selectField(
           "header_style",
           "Header colors",
