@@ -10,6 +10,7 @@ import {
 } from "./departure-list";
 import { getDepartureTiming } from "./departure-timing";
 import {
+  countdownLabel,
   TransLinkScheduleCard,
   TransLinkScheduleCardEditor,
 } from "./translink-schedule-card";
@@ -45,6 +46,16 @@ describe("departure time arithmetic", () => {
     const now = new Date("2026-10-06T10:58:00-07:00").getTime();
     const departure = new Date("2026-10-06T11:03:00-07:00").getTime();
     expect(Math.round((departure - now) / 60_000)).toBe(5);
+  });
+
+  it("shows Now instead of a zero-minute countdown", () => {
+    const now = new Date("2026-10-06T10:00:00-07:00").getTime();
+    expect(countdownLabel("2026-10-06T10:00:20-07:00", now)).toBe(
+      "Now",
+    );
+    expect(countdownLabel("2026-10-06T10:01:00-07:00", now)).toBe(
+      "1 min",
+    );
   });
 
   it("shows scheduled and predicted times for a delayed departure", () => {

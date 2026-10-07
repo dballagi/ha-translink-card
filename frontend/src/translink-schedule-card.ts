@@ -87,6 +87,14 @@ function minutesUntil(value: string, now = Date.now()): number {
   return Math.max(0, Math.round((new Date(value).getTime() - now) / 60_000));
 }
 
+export function countdownLabel(
+  value: string,
+  now = Date.now(),
+): string {
+  const minutes = minutesUntil(value, now);
+  return minutes === 0 ? "Now" : `${minutes} min`;
+}
+
 function timeLabel(
   value: string,
   locale?: HomeAssistant["locale"],
@@ -473,7 +481,7 @@ export class TransLinkScheduleCard extends LitElement {
           ${departure.cancelled
             ? html`<strong>Cancelled</strong>`
             : showCountdown
-              ? html`<strong>${minutesUntil(departure.estimated_time)} min</strong>`
+              ? html`<strong>${countdownLabel(departure.estimated_time)}</strong>`
               : nothing}
           ${showClock
             ? html`<small class="time-details ${showCountdown ? "" : "clock-only"}">
