@@ -113,8 +113,9 @@ Add the card from the dashboard card picker and use its visual editor, or
 configure it directly in YAML:
 
 In Sections dashboards, the card defaults to the full 12-column width and can
-be resized down to 6 columns. Its height remains automatic so expanded stops,
-notices, and departure rows are never clipped by a fixed grid size.
+be resized down to 6 columns. **Auto height** expands with the schedule; when
+you choose a fixed row height, the card fills that space and scrolls its
+departure content.
 
 ```yaml
 type: custom:translink-schedule-card

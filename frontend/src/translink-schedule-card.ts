@@ -577,9 +577,18 @@ export class TransLinkScheduleCard extends LitElement {
   }
 
   static styles = css`
-    :host { display: block; }
+    :host {
+      display: block;
+      height: 100%;
+      min-height: 0;
+      width: 100%;
+    }
     ha-card {
       background: var(--ha-card-background, var(--card-background-color));
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
       overflow: hidden;
     }
     header {
@@ -587,6 +596,7 @@ export class TransLinkScheduleCard extends LitElement {
       background: var(--primary-color);
       color: var(--text-primary-color);
       display: flex;
+      flex: 0 0 auto;
       justify-content: space-between;
       padding: 16px 20px;
     }
@@ -606,7 +616,7 @@ export class TransLinkScheduleCard extends LitElement {
     .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; opacity: .8; text-transform: uppercase; }
     h1 { font-size: 20px; line-height: 1.2; margin: 2px 0 0; }
     .clock { font-size: 18px; font-variant-numeric: tabular-nums; font-weight: 600; }
-    .alerts { background: var(--warning-color, #ff9800); color: #111; padding: 8px 16px; }
+    .alerts { background: var(--warning-color, #ff9800); color: #111; flex: 0 0 auto; padding: 8px 16px; }
     .alerts > div { align-items: flex-start; display: flex; gap: 8px; }
     .alerts > div + div { margin-top: 8px; }
     .alerts span { display: flex; flex-direction: column; }
@@ -616,6 +626,7 @@ export class TransLinkScheduleCard extends LitElement {
       background: var(--warning-color, #ff9800);
       color: #111;
       display: flex;
+      flex: 0 0 auto;
       font-size: 12px;
       gap: 8px;
       padding: 7px 16px;
@@ -624,6 +635,7 @@ export class TransLinkScheduleCard extends LitElement {
       background: color-mix(in srgb, var(--card-background-color), var(--primary-color) 4%);
       border-bottom: 1px solid var(--divider-color);
       display: flex;
+      flex: 0 0 auto;
       gap: 7px;
       overflow-x: auto;
       padding: 9px 12px;
@@ -664,7 +676,12 @@ export class TransLinkScheduleCard extends LitElement {
       background: var(--primary-text-color) !important;
       color: var(--card-background-color) !important;
     }
-    main { padding: 4px 0; }
+    main {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
     section + section { border-top: 1px solid var(--divider-color); }
     .stop-heading {
       align-items: baseline;
