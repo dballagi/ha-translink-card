@@ -22,6 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
       - uses: actions/setup-python@v7
@@ -34,56 +35,13 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Validate version
+      - name: Prepare version files
         id: version
         env:
           VERSION: ${{ inputs.version }}
         run: |
-          python - <<'PY'
-          import json
-          import os
-          import re
-          import tomllib
-          from pathlib import Path
-
-          version = os.environ["VERSION"]
-          if not re.fullmatch(
-              r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)"
-              r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?",
-              version,
-          ):
-              raise SystemExit(f"Invalid semantic version: {version}")
-
-          manifest = json.loads(
-              Path(
-                  "custom_components/translink_schedule/manifest.json"
-              ).read_text()
-          )["version"]
-          package = json.loads(Path("frontend/package.json").read_text())["version"]
-          lock = json.loads(Path("frontend/package-lock.json").read_text())["version"]
-          project = tomllib.loads(Path("pyproject.toml").read_text())["project"][
-              "version"
-          ]
-          versions = {
-              "integration manifest": manifest,
-              "frontend package": package,
-              "frontend lockfile": lock,
-              "Python project": project,
-          }
-          mismatches = {
-              name: value for name, value in versions.items() if value != version
-          }
-          if mismatches:
-              details = ", ".join(
-                  f"{name}={value}" for name, value in mismatches.items()
-              )
-              raise SystemExit(
-                  f"Requested {version}, but version files do not match: {details}"
-              )
-
-          with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
-              output.write(f"tag=v{version}\n")
-          PY
+          python .github/scripts/set_version.py "$VERSION"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Install backend dependencies
         run: pip install -e ".[dev]"
@@ -118,15 +76,43 @@ jobs:
             exit 1
           fi
 
+      - name: Commit version files
+        id: release_commit
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! git diff --quiet -- \
+            custom_components/translink_schedule/manifest.json \
+            frontend/package.json \
+            frontend/package-lock.json \
+            pyproject.toml; then
+            git config user.name "github-actions[bot]"
+            git config user.email \
+              "41898282+github-actions[bot]@users.noreply.github.com"
+            git add \
+              custom_components/translink_schedule/manifest.json \
+              frontend/package.json \
+              frontend/package-lock.json \
+              pyproject.toml
+            git commit \
+              -m "chore: prepare ${VERSION} release" \
+              -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+            git push
+          else
+            echo "Version files are already set to ${VERSION}."
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
+          TARGET: ${{ steps.release_commit.outputs.sha }}
           PRERELEASE: ${{ inputs.prerelease }}
         run: |
           args=(
             "$TAG"
-            --target "$GITHUB_SHA"
+            --target "$TARGET"
             --title "$TAG"
             --generate-notes
           )
