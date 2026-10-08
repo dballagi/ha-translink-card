@@ -8,5 +8,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/dballagi/ha-translink-card/issues",
   "requirements": ["gtfs-realtime-bindings==1.0.0"],
-  "version": "1.1.1"
+  "version": "1.1.2"
 }
