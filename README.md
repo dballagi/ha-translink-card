@@ -113,15 +113,16 @@ Or add it manually:
 1. Add the integration from **Settings → Devices & services**.
 2. Enter a TransLink developer API key and one or more comma-separated GTFS
    stop IDs or public five-digit stop numbers.
-3. Open **Settings → Dashboards → ⋮ → Resources**, add
-   `/translink_schedule/translink-schedule-card.js` as a **JavaScript module**,
-   then refresh the browser.
+3. Refresh the browser after setup. The integration automatically registers
+   and versions its card resource on storage-managed dashboards.
 
 API keys are available from the
 [TransLink Developer Portal](https://developer.translink.ca/).
 
-After upgrades, perform a hard refresh so the browser does not keep an older
-card bundle.
+The resource URL is updated automatically after upgrades so browsers load the
+matching card bundle. If Lovelace resources are managed in YAML, add
+`/translink_schedule/translink-schedule-card.js?v=<installed-version>` as a
+JavaScript module and update the version after upgrades.
 
 ## Integration configuration
 

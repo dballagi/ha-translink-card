@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, patch
 
 import custom_components.translink_schedule as integration
 from custom_components.translink_schedule.const import (
@@ -25,6 +25,7 @@ from custom_components.translink_schedule.sensor import (
 async def test_card_static_path_is_registered() -> None:
     register = AsyncMock()
     register_view = Mock()
+    register_resource = AsyncMock()
     hass = SimpleNamespace(
         http=SimpleNamespace(
             async_register_static_paths=register,
@@ -32,7 +33,12 @@ async def test_card_static_path_is_registered() -> None:
         )
     )
 
-    assert await integration.async_setup(hass, {}) is True
+    with patch.object(
+        integration,
+        "_async_register_card_resource",
+        register_resource,
+    ):
+        assert await integration.async_setup(hass, {}) is True
 
     register.assert_awaited_once()
     configs = register.await_args.args[0]
@@ -43,6 +49,57 @@ async def test_card_static_path_is_registered() -> None:
     assert configs[1].url_path == CARD_CHUNKS_URL
     assert configs[1].path.endswith(CARD_CHUNKS_FOLDER)
     register_view.assert_called_once()
+    register_resource.assert_awaited_once_with(hass)
+
+
+async def test_card_resource_is_created_with_version() -> None:
+    resources = SimpleNamespace(
+        async_items=Mock(return_value=[]),
+        async_create_item=AsyncMock(),
+    )
+
+    await integration._async_sync_card_resource(resources, "1.2.0")
+
+    resources.async_create_item.assert_awaited_once_with(
+        {
+            "res_type": "module",
+            "url": "/translink_schedule/translink-schedule-card.js?v=1.2.0",
+        }
+    )
+
+
+async def test_card_resource_is_versioned_and_deduplicated() -> None:
+    resources = SimpleNamespace(
+        async_items=Mock(
+            return_value=[
+                {
+                    "id": "primary",
+                    "type": "module",
+                    "url": "/translink_schedule/translink-schedule-card.js",
+                },
+                {
+                    "id": "duplicate",
+                    "type": "module",
+                    "url": (
+                        "/translink_schedule/translink-schedule-card.js"
+                        "?v=1.1.2"
+                    ),
+                },
+            ]
+        ),
+        async_update_item=AsyncMock(),
+        async_delete_item=AsyncMock(),
+    )
+
+    await integration._async_sync_card_resource(resources, "1.2.0")
+
+    resources.async_update_item.assert_awaited_once_with(
+        "primary",
+        {
+            "url": "/translink_schedule/translink-schedule-card.js?v=1.2.0"
+        },
+    )
+    resources.async_delete_item.assert_awaited_once_with("duplicate")
 
 
 async def test_options_update_refreshes_entities_without_reload() -> None:

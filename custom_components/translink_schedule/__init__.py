@@ -5,14 +5,19 @@ from __future__ import annotations
 from pathlib import Path
 
 from homeassistant.components.http import StaticPathConfig
+from homeassistant.components.lovelace.const import DOMAIN as LOVELACE_DOMAIN
+from homeassistant.components.lovelace.resources import ResourceStorageCollection
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_ID, CONF_URL
 from homeassistant.core import HomeAssistant
+from homeassistant.loader import async_get_integration
 
 from .const import (
     CARD_CHUNKS_FOLDER,
     CARD_CHUNKS_URL,
     CARD_FILENAME,
     CARD_URL,
+    DOMAIN,
     PLATFORMS,
 )
 from .coordinator import (
@@ -41,7 +46,46 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
         ]
     )
     hass.http.register_view(TransLinkTripMapView())
+    await _async_register_card_resource(hass)
     return True
+
+
+async def _async_register_card_resource(hass: HomeAssistant) -> None:
+    resources = hass.data[LOVELACE_DOMAIN]["resources"]
+    if not isinstance(resources, ResourceStorageCollection):
+        return
+    if not resources.loaded:
+        await resources.async_load()
+        resources.loaded = True
+
+    integration = await async_get_integration(hass, DOMAIN)
+    if integration.version is None:
+        return
+    await _async_sync_card_resource(resources, str(integration.version))
+
+
+async def _async_sync_card_resource(
+    resources: ResourceStorageCollection, version: str
+) -> None:
+    desired_url = f"{CARD_URL}?v={version}"
+    matches = [
+        item
+        for item in resources.async_items()
+        if str(item.get(CONF_URL, "")).partition("?")[0] == CARD_URL
+    ]
+    if not matches:
+        await resources.async_create_item(
+            {"res_type": "module", CONF_URL: desired_url}
+        )
+        return
+
+    primary, *duplicates = matches
+    if primary[CONF_URL] != desired_url:
+        await resources.async_update_item(
+            primary[CONF_ID], {CONF_URL: desired_url}
+        )
+    for duplicate in duplicates:
+        await resources.async_delete_item(duplicate[CONF_ID])
 
 
 async def async_setup_entry(
