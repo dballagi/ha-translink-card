@@ -15,7 +15,6 @@ describe("findScheduleEntity", () => {
           state: "2026-10-06T18:30:00+00:00",
           attributes: {
             stops: [],
-            departures: [],
           },
         },
       },
@@ -36,7 +35,6 @@ describe("findScheduleEntity", () => {
           state: "unknown",
           attributes: {
             stops: [],
-            departures: [],
           },
         },
       },

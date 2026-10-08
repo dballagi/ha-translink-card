@@ -1,6 +1,6 @@
 """Tests for integration setup."""
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
@@ -12,7 +12,14 @@ from custom_components.translink_schedule.const import (
     CARD_URL,
 )
 from custom_components.translink_schedule.models import Departure
-from custom_components.translink_schedule.sensor import TransLinkScheduleSensor
+from custom_components.translink_schedule.sensor import (
+    ATTRIBUTE_SIZE_BUDGET,
+    MAX_EXPOSED_DEPARTURES_PER_STOP,
+    TransLinkScheduleSensor,
+    _attribute_size,
+    _departure_limit,
+    _fit_attributes_to_budget,
+)
 
 
 async def test_card_static_path_is_registered() -> None:
@@ -63,7 +70,65 @@ def test_sensor_state_skips_cancelled_departures() -> None:
     assert value == active.estimated_time
 
 
-def _departure(estimated_time: datetime, *, cancelled: bool) -> Departure:
+def test_departures_are_cached_for_coordinator_snapshot() -> None:
+    departures = [_departure(datetime(2026, 10, 6, 10, tzinfo=UTC))]
+    feed = SimpleNamespace(departures=Mock(return_value=departures))
+    coordinator = SimpleNamespace(
+        static_feed=feed,
+        data={"realtime": {}},
+    )
+    sensor = SimpleNamespace(
+        coordinator=coordinator,
+        _stop_ids=["stop"],
+        _stop_filters={},
+        _departure_window=timedelta(hours=3),
+        _cancelled_retention=timedelta(minutes=1),
+        _departure_cache_key=None,
+        _departure_cache=[],
+    )
+
+    first = TransLinkScheduleSensor._departures(sensor)
+    second = TransLinkScheduleSensor._departures(sensor)
+
+    assert first is second
+    feed.departures.assert_called_once()
+
+
+def test_departure_limit_respects_supported_card_maximum() -> None:
+    assert _departure_limit(None) == MAX_EXPOSED_DEPARTURES_PER_STOP
+    assert _departure_limit(3) == 3
+    assert _departure_limit(50) == MAX_EXPOSED_DEPARTURES_PER_STOP
+
+
+def test_sensor_attributes_are_trimmed_to_size_budget() -> None:
+    departures = [
+        {
+            "estimated_time": f"2026-10-06T10:{minute:02}:00+00:00",
+            "destination": "D" * 600,
+        }
+        for minute in range(30)
+    ]
+    first_departure = departures[0]
+    attributes = {
+        "stops": [{"departures": departures}],
+        "alerts": [],
+        "departure_count": len(departures),
+        "attributes_truncated": False,
+    }
+
+    _fit_attributes_to_budget(attributes)
+
+    assert _attribute_size(attributes) <= ATTRIBUTE_SIZE_BUDGET
+    assert attributes["attributes_truncated"] is True
+    assert attributes["departure_count"] == len(
+        attributes["stops"][0]["departures"]
+    )
+    assert attributes["stops"][0]["departures"][0] == first_departure
+
+
+def _departure(
+    estimated_time: datetime, *, cancelled: bool = False
+) -> Departure:
     return Departure(
         stop_id="stop",
         stop_name="Stop",

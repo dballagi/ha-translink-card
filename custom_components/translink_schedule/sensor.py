@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -26,6 +27,10 @@ from .const import (
     DEFAULT_DEPARTURE_WINDOW_MINUTES,
 )
 from .coordinator import TransLinkCoordinator
+from .models import Departure
+
+ATTRIBUTE_SIZE_BUDGET = 15_000
+MAX_EXPOSED_DEPARTURES_PER_STOP = 12
 
 
 async def async_setup_entry(
@@ -52,6 +57,8 @@ class TransLinkScheduleSensor(
         super().__init__(coordinator)
         self._entry = entry
         self._attr_unique_id = entry.entry_id
+        self._departure_cache_key: tuple[object, ...] | None = None
+        self._departure_cache: list[Departure] = []
 
     @property
     def name(self) -> str:
@@ -106,11 +113,21 @@ class TransLinkScheduleSensor(
             else None
         )
 
-    def _departures(self):
+    def _departures(self) -> list[Departure]:
         feed = self.coordinator.static_feed
         if feed is None or not self.coordinator.data:
             return []
-        return feed.departures(
+        cache_key = (
+            id(feed),
+            id(self.coordinator.data),
+            tuple(self._stop_ids),
+            repr(self._stop_filters),
+            self._departure_window,
+            self._cancelled_retention,
+        )
+        if cache_key == self._departure_cache_key:
+            return self._departure_cache
+        departures = feed.departures(
             self._stop_ids,
             datetime.now(UTC),
             self.coordinator.data["realtime"],
@@ -118,6 +135,9 @@ class TransLinkScheduleSensor(
             self._departure_window,
             self._cancelled_retention,
         )
+        self._departure_cache_key = cache_key
+        self._departure_cache = departures
+        return departures
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -154,9 +174,17 @@ class TransLinkScheduleSensor(
                 )
             )
         ]
-        grouped = defaultdict(list)
+        grouped: defaultdict[str, list[dict[str, object]]] = defaultdict(list)
         for departure in departures:
-            grouped[departure.stop_id].append(departure.as_dict())
+            settings = self._stop_filters.get(departure.stop_id, {})
+            configured_limit = (
+                settings.get(CONF_STOP_DEPARTURES)
+                if isinstance(settings, dict)
+                else None
+            )
+            limit = _departure_limit(configured_limit)
+            if len(grouped[departure.stop_id]) < limit:
+                grouped[departure.stop_id].append(departure.as_dict())
 
         stops = []
         for stop_id in self._stop_ids:
@@ -180,13 +208,16 @@ class TransLinkScheduleSensor(
                 }
             )
 
-        return {
+        attributes = {
             "config_entry_id": self._entry.entry_id,
             "board_name": self._board_name,
             "stops": stops,
-            "departures": [departure.as_dict() for departure in departures],
             "stop_count": len(stops),
-            "departure_count": len(departures),
+            "departure_count": sum(
+                len(stop["departures"]) for stop in stops
+            ),
+            "available_departure_count": len(departures),
+            "attributes_truncated": False,
             "departure_window_minutes": int(
                 self._departure_window.total_seconds() / 60
             ),
@@ -207,3 +238,44 @@ class TransLinkScheduleSensor(
                 "in this product or service."
             ),
         }
+        _fit_attributes_to_budget(attributes)
+        return attributes
+
+
+def _fit_attributes_to_budget(attributes: dict[str, Any]) -> None:
+    stops = attributes["stops"]
+    alerts = attributes["alerts"]
+    while _attribute_size(attributes) > ATTRIBUTE_SIZE_BUDGET:
+        populated_stops = [
+            stop for stop in stops if stop["departures"]
+        ]
+        if populated_stops:
+            latest_stop = max(
+                populated_stops,
+                key=lambda stop: stop["departures"][-1]["estimated_time"],
+            )
+            latest_stop["departures"].pop()
+        elif alerts:
+            alerts.pop()
+        else:
+            break
+        attributes["attributes_truncated"] = True
+        attributes["departure_count"] = sum(
+            len(stop["departures"]) for stop in stops
+        )
+
+
+def _attribute_size(attributes: dict[str, Any]) -> int:
+    return len(
+        json.dumps(
+            attributes,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    )
+
+
+def _departure_limit(configured_limit: object) -> int:
+    if isinstance(configured_limit, int) and configured_limit > 0:
+        return min(configured_limit, MAX_EXPOSED_DEPARTURES_PER_STOP)
+    return MAX_EXPOSED_DEPARTURES_PER_STOP

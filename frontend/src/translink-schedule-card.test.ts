@@ -345,7 +345,6 @@ function cardData() {
         attributes: {
           config_entry_id: "entry-1",
           stops: [stop],
-          departures: stop.departures,
           alerts: [],
         },
       },

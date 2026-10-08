@@ -391,10 +391,7 @@ export class TransLinkScheduleCard extends LitElement {
       </div></ha-card>`;
     }
     const stops = (entity.attributes.stops ?? []) as StopDepartures[];
-    const departures = (entity.attributes.departures ?? []) as Departure[];
-    const routeSource = departures.length
-      ? departures
-      : stops.flatMap((stop) => stop.departures);
+    const routeSource = stops.flatMap((stop) => stop.departures);
     const routeOptions = getRouteOptions(routeSource);
     const selectedRoutes = this.activeSelectedRoutes(routeOptions);
     const nextDeparture = getNextDeparture(routeSource, selectedRoutes);
@@ -464,7 +461,7 @@ export class TransLinkScheduleCard extends LitElement {
           : nothing}
         <main>
           ${this.config.view === "combined"
-            ? this.renderCombined(departures, stops, selectedRoutes)
+            ? this.renderCombined(routeSource, stops, selectedRoutes)
             : this.renderGrouped(stops, selectedRoutes)}
         </main>
       </ha-card>
