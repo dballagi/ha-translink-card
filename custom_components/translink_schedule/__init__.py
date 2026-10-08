@@ -51,7 +51,12 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
 
 async def _async_register_card_resource(hass: HomeAssistant) -> None:
-    resources = hass.data[LOVELACE_DOMAIN]["resources"]
+    lovelace_data = hass.data[LOVELACE_DOMAIN]
+    resources = (
+        lovelace_data["resources"]
+        if isinstance(lovelace_data, dict)
+        else lovelace_data.resources
+    )
     if not isinstance(resources, ResourceStorageCollection):
         return
     if not resources.loaded:

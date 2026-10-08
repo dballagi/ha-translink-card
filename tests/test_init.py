@@ -68,6 +68,37 @@ async def test_card_resource_is_created_with_version() -> None:
     )
 
 
+async def test_card_resource_supports_current_lovelace_data() -> None:
+    resources = SimpleNamespace(loaded=True)
+    hass = SimpleNamespace(
+        data={"lovelace": SimpleNamespace(resources=resources)}
+    )
+    sync_resource = AsyncMock()
+
+    with (
+        patch.object(
+            integration,
+            "ResourceStorageCollection",
+            type(resources),
+        ),
+        patch.object(
+            integration,
+            "_async_sync_card_resource",
+            sync_resource,
+        ),
+        patch.object(
+            integration,
+            "async_get_integration",
+            AsyncMock(
+                return_value=SimpleNamespace(version="1.1.4")
+            ),
+        ),
+    ):
+        await integration._async_register_card_resource(hass)
+
+    sync_resource.assert_awaited_once_with(resources, "1.1.4")
+
+
 async def test_card_resource_is_versioned_and_deduplicated() -> None:
     resources = SimpleNamespace(
         async_items=Mock(
