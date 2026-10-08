@@ -63,11 +63,16 @@ def test_sensor_state_skips_cancelled_departures() -> None:
         datetime(2026, 10, 6, 10, 5, tzinfo=UTC),
         cancelled=False,
     )
-    sensor = SimpleNamespace(_departures=lambda: [cancelled, active])
+    attributes = {"stops": []}
+    sensor = SimpleNamespace(
+        _departures=lambda: [cancelled, active],
+        _build_attributes=lambda departures: attributes,
+    )
 
-    value = TransLinkScheduleSensor.native_value.fget(sensor)
+    value, result_attributes = TransLinkScheduleSensor._build_snapshot(sensor)
 
     assert value == active.estimated_time
+    assert result_attributes is attributes
 
 
 def test_departures_are_cached_for_coordinator_snapshot() -> None:

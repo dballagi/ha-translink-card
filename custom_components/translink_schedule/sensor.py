@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
@@ -9,7 +10,7 @@ from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -59,6 +60,29 @@ class TransLinkScheduleSensor(
         self._attr_unique_id = entry.entry_id
         self._departure_cache_key: tuple[object, ...] | None = None
         self._departure_cache: list[Departure] = []
+        self._snapshot_lock = asyncio.Lock()
+
+    async def async_added_to_hass(self) -> None:
+        """Build the initial state outside the event loop."""
+        await super().async_added_to_hass()
+        await self._async_refresh_snapshot()
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Schedule a new precomputed sensor snapshot."""
+        self.hass.async_create_task(self._async_refresh_and_write())
+
+    async def _async_refresh_and_write(self) -> None:
+        await self._async_refresh_snapshot()
+        self.async_write_ha_state()
+
+    async def _async_refresh_snapshot(self) -> None:
+        async with self._snapshot_lock:
+            native_value, attributes = await self.hass.async_add_executor_job(
+                self._build_snapshot
+            )
+            self._attr_native_value = native_value
+            self._attr_extra_state_attributes = attributes
 
     @property
     def name(self) -> str:
@@ -96,22 +120,18 @@ class TransLinkScheduleSensor(
         )
         return timedelta(minutes=int(minutes))
 
-    @property
-    def native_value(self) -> datetime | None:
-        """Return the next departure time."""
+    def _build_snapshot(self) -> tuple[datetime | None, dict[str, Any]]:
+        departures = self._departures()
         departure = next(
-            (
-                item
-                for item in self._departures()
-                if not item.cancelled
-            ),
+            (item for item in departures if not item.cancelled),
             None,
         )
-        return (
+        native_value = (
             departure.estimated_time.astimezone(UTC)
             if departure
             else None
         )
+        return native_value, self._build_attributes(departures)
 
     def _departures(self) -> list[Departure]:
         feed = self.coordinator.static_feed
@@ -139,11 +159,11 @@ class TransLinkScheduleSensor(
         self._departure_cache = departures
         return departures
 
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return grouped and flattened departure data."""
+    def _build_attributes(
+        self, departures: list[Departure]
+    ) -> dict[str, Any]:
+        """Return bounded grouped departure data."""
         feed = self.coordinator.static_feed
-        departures = self._departures()
         now = datetime.now(UTC)
         selected_stop_ids = set(self._stop_ids)
         selected_route_ids: set[str] = set()
